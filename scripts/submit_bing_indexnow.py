@@ -49,6 +49,8 @@ FALLBACK_URLS = [
     "https://anykrillion.com/footbillion/",
     "https://anykrillion.com/nba-krillion/",
     "https://anykrillion.com/krillion-movies/",
+    "https://anykrillion.com/poople-unlimited/",
+    "https://anykrillion.com/games-like-krillion/",
     "https://anykrillion.com/guides/",
     "https://anykrillion.com/sources/",
     "https://anykrillion.com/privacy-policy/",
