@@ -27,6 +27,7 @@ from typing import Any, Dict, List, Optional, Tuple
 DOMAIN = "anykrillion.com"
 WWW_DOMAIN = f"www.{DOMAIN}"
 PAGES_PROJECT = "anykrillion"
+SPACESHIP_ACCOUNT = "emoq"
 GITHUB_REPO = "zjianchun/anykrillion"
 DEFAULT_BRANCH = "main"
 BUILD_COMMAND = "pnpm run build"
@@ -53,12 +54,26 @@ def load_cf_tokens() -> Dict[str, str]:
     }
 
 
-def load_spaceship_creds() -> Tuple[str, str]:
+def load_spaceship_creds(
+    account: str = SPACESHIP_ACCOUNT,
+    domain: str = DOMAIN,
+) -> Tuple[str, str]:
+    env_key = os.environ.get("SPACESHIP_API_KEY", "").strip()
+    env_secret = os.environ.get("SPACESHIP_API_SECRET", "").strip()
+    if env_key and env_secret:
+        return env_key, env_secret
+
     data: Dict[str, Any] = {}
     if SPACESHIP_CREDS_FILE.exists():
         data = json.loads(SPACESHIP_CREDS_FILE.read_text(encoding="utf-8"))
-    api_key = os.environ.get("SPACESHIP_API_KEY") or data.get("api_key", "")
-    api_secret = os.environ.get("SPACESHIP_API_SECRET") or data.get("api_secret", "")
+
+    accounts = data.get("accounts") or {}
+    mapped_account = (data.get("domain_account_map") or {}).get(domain)
+    resolved_name = account or mapped_account or data.get("default_account") or ""
+    entry = accounts.get(resolved_name) or (accounts.get(mapped_account) if mapped_account else None) or {}
+
+    api_key = entry.get("api_key") or data.get("api_key", "")
+    api_secret = entry.get("api_secret") or data.get("api_secret", "")
     if not (api_key and api_secret):
         raise RuntimeError(f"Missing Spaceship credentials in {SPACESHIP_CREDS_FILE} or environment.")
     return api_key.strip(), api_secret.strip()
@@ -124,13 +139,17 @@ def ensure_cloudflare_zone(tokens: Dict[str, str], dry_run: bool) -> Tuple[Optio
     return None, []
 
 
-def update_spaceship_nameservers(nameservers: List[str], dry_run: bool) -> bool:
-    print(f"\n[2/5] Updating Spaceship Nameservers for {DOMAIN} -> {nameservers}...")
+def update_spaceship_nameservers(
+    nameservers: List[str],
+    dry_run: bool,
+    spaceship_account: str = SPACESHIP_ACCOUNT,
+) -> bool:
+    print(f"\n[2/5] Updating Spaceship Nameservers for {DOMAIN} (account={spaceship_account}) -> {nameservers}...")
     if len(nameservers) < 2:
         print("  ⚠️ Need at least 2 Cloudflare nameservers; skipping Spaceship update.")
         return False
 
-    api_key, api_secret = load_spaceship_creds()
+    api_key, api_secret = load_spaceship_creds(spaceship_account, DOMAIN)
     headers = {
         "X-API-Key": api_key,
         "X-API-Secret": api_secret,
@@ -335,12 +354,17 @@ def bind_domains_dns_redirect(tokens: Dict[str, str], zone_id: Optional[str], dr
 def main() -> int:
     parser = argparse.ArgumentParser(description="Cloudflare + Spaceship + GitHub Pages Infrastructure Setup")
     parser.add_argument("--spaceship-only", action="store_true", help="Only update Spaceship Nameservers to Cloudflare NS")
+    parser.add_argument(
+        "--spaceship-account",
+        default=SPACESHIP_ACCOUNT,
+        help=f"Named Spaceship account in spaceship_token.json (default: {SPACESHIP_ACCOUNT})",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Preview changes without modifying cloud state")
     args = parser.parse_args()
 
     tokens = load_cf_tokens()
     zone_id, name_servers = ensure_cloudflare_zone(tokens, args.dry_run)
-    update_spaceship_nameservers(name_servers, args.dry_run)
+    update_spaceship_nameservers(name_servers, args.dry_run, args.spaceship_account)
 
     if args.spaceship_only:
         return 0
