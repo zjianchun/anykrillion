@@ -118,7 +118,7 @@ export default function PoopleUnlimitedPage() {
 
       <Navbar />
 
-      <main className="mx-auto max-w-6xl px-4 pb-16 pt-3 sm:pt-4">
+      <main className="mx-auto max-w-6xl pb-16 sm:px-4 sm:pt-3">
         <h1 className="sr-only">
           Poople Unlimited: Free 4-Letter Word Ladder Game, Daily Answer &amp; Solver
         </h1>
@@ -130,7 +130,7 @@ export default function PoopleUnlimitedPage() {
           <PoopleGameEngine />
         </section>
 
-        <div id="poople-guide" className="space-y-8 border-t border-white/10 pt-10">
+        <div id="poople-guide" className="space-y-8 border-t border-white/10 px-4 pt-10 sm:px-0">
           <div className="rounded-2xl border border-white/10 bg-[#051629]/65 p-5 sm:p-6">
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-cyan-300">
               <span className="inline-flex items-center gap-1.5 font-extrabold uppercase tracking-wider text-amber-300">

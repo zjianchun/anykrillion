@@ -18,6 +18,7 @@ import {
   VolumeX,
 } from "lucide-react";
 import ShareChallengePanel from "@/components/ShareChallengePanel";
+import PooplePipeScene from "@/components/PooplePipeScene";
 import poopleDataRaw from "@/data/poople_words.json";
 import {
   decodePoopleChallenge,
@@ -195,6 +196,20 @@ export default function PoopleGameEngine() {
   const [startWord, setStartWord] = useState<string>("COLD");
   const [chain, setChain] = useState<string[]>(["COLD"]);
   const [inputWord, setInputWord] = useState<string>("");
+  const [typingPulse, setTypingPulse] = useState(0);
+  const [discoveredPipes, setDiscoveredPipes] = useState<string[]>([]);
+  const [latestDiscovery, setLatestDiscovery] = useState<string | null>(null);
+
+  const handlePipeDiscovery = (label: string) => {
+    setLatestDiscovery(label);
+    setDiscoveredPipes((prev) => (prev.includes(label) ? prev : [...prev, label]));
+  };
+
+  useEffect(() => {
+    if (!latestDiscovery) return;
+    const t = window.setTimeout(() => setLatestDiscovery(null), 3200);
+    return () => window.clearTimeout(t);
+  }, [latestDiscovery]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [hintMode, setHintMode] = useState<"none" | "letter" | "word">("none");
   const [revealedDailyAnswer, setRevealedDailyAnswer] = useState<boolean>(false);
@@ -328,6 +343,7 @@ export default function PoopleGameEngine() {
     e.preventDefault();
     if (solved) return;
     const cand = inputWord.trim().toUpperCase();
+    setTypingPulse((n) => n + 1);
     if (cand.length !== 4) {
       playInvalidOrTimeoutSound();
       setErrorMsg("Enter a 4-letter English word.");
@@ -437,9 +453,20 @@ export default function PoopleGameEngine() {
   const nextHintPos = nextHintWord ? diffPositions(currentWord, nextHintWord)[0] : null;
 
   return (
-    <div className="rounded-3xl border border-amber-400/30 bg-gradient-to-b from-[#0b1b32] via-[#061528] to-[#030e1c] p-5 shadow-[0_0_50px_rgba(245,158,11,0.1)] sm:p-7">
+    <section
+      aria-label="Interactive Poople Pipeworks Game World"
+      className="relative h-[calc(100vh-80px)] min-h-[580px] max-h-[840px] w-full overflow-hidden border-y border-emerald-400/25 sm:rounded-3xl sm:border"
+    >
+      <PooplePipeScene
+        stepsTaken={stepsTaken}
+        parSteps={parSteps}
+        solved={solved}
+        typingPulse={typingPulse}
+        onDiscovery={handlePipeDiscovery}
+      >
+      <div className="flex flex-col gap-2">
       {/* Top Bar: Mode Switcher + Stats */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+      <div className="pointer-events-auto flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
@@ -511,7 +538,7 @@ export default function PoopleGameEngine() {
       </div>
 
       {friendChallengeSteps !== null && tab !== "solver" && (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-amber-400/50 bg-amber-500/15 px-4 py-2.5 text-xs sm:text-sm">
+        <div className="pointer-events-auto mt-2 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-amber-400/50 bg-amber-500/20 backdrop-blur-sm px-4 py-2.5 text-xs sm:text-sm">
           <div className="flex items-center gap-2 font-bold text-amber-100">
             <Swords className="h-4 w-4 text-amber-300" />
             <span>
@@ -528,9 +555,12 @@ export default function PoopleGameEngine() {
       )}
 
       {/* Mode 3: Shortest-Path BFS Solver */}
+      </div>
+
+      <div className="my-auto flex max-h-[calc(100%-108px)] w-full max-w-4xl flex-col gap-3 self-center overflow-y-auto pr-1">
       {tab === "solver" ? (
         <div className="mt-6 space-y-5">
-          <div className="rounded-2xl border border-cyan-500/25 bg-black/30 p-5">
+          <div data-hud-interactive className="pointer-events-auto rounded-2xl border border-emerald-400/30 bg-[#03191a]/45 p-4 backdrop-blur-[2px] sm:p-5">
             <p className="text-xs font-bold uppercase tracking-wider text-cyan-300">
               Instant Breadth-First Search Solver
             </p>
@@ -554,7 +584,7 @@ export default function PoopleGameEngine() {
                   value={solverStart}
                   onChange={(e) => setSolverStart(e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase())}
                   placeholder="PLAN"
-                  className="mt-1.5 w-full rounded-xl border border-cyan-400/35 bg-[#041222] px-4 py-3 font-mono text-lg font-black uppercase tracking-widest text-white outline-none focus:border-cyan-300"
+                  className="mt-1.5 w-full rounded-xl border border-emerald-400/35 bg-[#021215]/75 px-4 py-2.5 font-mono text-lg font-black uppercase tracking-widest text-white outline-none focus:border-cyan-300"
                 />
               </div>
 
@@ -572,7 +602,7 @@ export default function PoopleGameEngine() {
                   value={solverTarget}
                   onChange={(e) => setSolverTarget(e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase())}
                   placeholder="POOP"
-                  className="mt-1.5 w-full rounded-xl border border-amber-400/35 bg-[#041222] px-4 py-3 font-mono text-lg font-black uppercase tracking-widest text-amber-200 outline-none focus:border-amber-300"
+                  className="mt-1.5 w-full rounded-xl border border-amber-400/35 bg-[#021215]/75 px-4 py-2.5 font-mono text-lg font-black uppercase tracking-widest text-amber-200 outline-none focus:border-amber-300"
                 />
               </div>
             </div>
@@ -617,7 +647,7 @@ export default function PoopleGameEngine() {
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 {solverResult.path.map((w, idx) => (
                   <div key={`${w}-${idx}`} className="flex items-center gap-2">
-                    <div className="flex gap-1 rounded-xl border border-white/15 bg-[#041425] px-2.5 py-2">
+                    <div className="flex gap-1 rounded-xl border border-emerald-300/25 bg-[#021316]/65 px-2.5 py-2">
                       {w.split("").map((ch, cIdx) => {
                         const prev = idx > 0 ? solverResult.path![idx - 1] : null;
                         const changed = prev && prev[cIdx] !== ch;
@@ -653,7 +683,7 @@ export default function PoopleGameEngine() {
         /* Mode 1 & 2: Playable Unlimited & Daily Poople Board */
         <div className="mt-6 space-y-5">
           {tab === "daily" && (
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-400/30 bg-emerald-950/20 px-4 py-3">
+            <div data-hud-interactive className="pointer-events-auto flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-400/30 bg-[#03191a]/45 px-4 py-2.5 backdrop-blur-[2px]">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-emerald-300">
                   Daily Poople Challenge #{activeDailyBoard.dayNumber} · {activeDailyBoard.date}
@@ -669,7 +699,7 @@ export default function PoopleGameEngine() {
                   aria-label="Select daily Poople archive board"
                   value={selectedDailyDate}
                   onChange={(e) => handleSelectDailyDate(e.target.value)}
-                  className="rounded-xl border border-white/15 bg-[#041425] px-3 py-1.5 text-xs font-semibold text-slate-100 outline-none focus:border-emerald-400"
+                  className="rounded-xl border border-emerald-300/25 bg-[#021316]/65 px-3 py-1.5 text-xs font-semibold text-slate-100 outline-none focus:border-emerald-400"
                 >
                   {[...poopleData.dailyBoards].reverse().map((b) => (
                     <option key={b.date} value={b.date}>
@@ -690,7 +720,7 @@ export default function PoopleGameEngine() {
           )}
 
           {tab === "daily" && revealedDailyAnswer && (
-            <div className="rounded-2xl border border-amber-400/35 bg-amber-950/25 px-4 py-3 text-sm text-amber-100">
+            <div data-hud-interactive className="pointer-events-auto rounded-2xl border border-amber-400/35 bg-amber-950/40 px-4 py-2.5 text-sm text-amber-100 backdrop-blur-[2px]">
               <span className="font-bold text-amber-300">
                 Daily Poople #{activeDailyBoard.dayNumber} Optimal Solution ({activeDailyBoard.optimalSteps} steps):{" "}
               </span>
@@ -702,7 +732,7 @@ export default function PoopleGameEngine() {
 
           {/* HUD Strip */}
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-white/10 bg-black/25 px-4 py-3">
+            <div className="rounded-2xl border border-emerald-300/20 bg-[#03191a]/40 px-3 py-2 backdrop-blur-[2px]">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                 Current Rung → Goal
               </span>
@@ -713,7 +743,7 @@ export default function PoopleGameEngine() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-black/25 px-4 py-3">
+            <div className="rounded-2xl border border-emerald-300/20 bg-[#03191a]/40 px-3 py-2 backdrop-blur-[2px]">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                 Steps Taken vs. Par
               </span>
@@ -727,7 +757,7 @@ export default function PoopleGameEngine() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-black/25 px-4 py-3">
+            <div className="rounded-2xl border border-emerald-300/20 bg-[#03191a]/40 px-3 py-2 backdrop-blur-[2px]">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                 Starter Controls
               </span>
@@ -752,7 +782,7 @@ export default function PoopleGameEngine() {
           </div>
 
           {/* Ladder Chain Visual */}
-          <div className="rounded-2xl border border-white/15 bg-black/30 p-5">
+          <div data-hud-interactive className="pointer-events-auto rounded-2xl border border-emerald-300/25 bg-[#03191a]/45 p-4 backdrop-blur-[2px] sm:p-5">
             <div className="flex flex-wrap items-center gap-2">
               {chain.map((word, idx) => (
                 <div key={`${word}-${idx}`} className="flex items-center gap-2">
@@ -762,7 +792,7 @@ export default function PoopleGameEngine() {
                         ? "border-emerald-400/60 bg-emerald-500/15"
                         : idx === chain.length - 1
                           ? "border-amber-400/60 bg-amber-500/10"
-                          : "border-white/15 bg-[#041425]"
+                          : "border-emerald-300/25 bg-[#021316]/65"
                     }`}
                   >
                     {word.split("").map((letter, pos) => {
@@ -837,14 +867,14 @@ export default function PoopleGameEngine() {
                   </button>
                 </div>
 
-                <ShareChallengePanel
+                <div data-hud-interactive className="pointer-events-auto"><ShareChallengePanel
                   variant="summary"
                   accent="amber"
                   challengeUrl={poopleChallengeUrl}
                   shareText={poopleShareText}
                   shareTitle={`${modeLabel}: ${startWord} → POOP in ${stepsTaken} steps`}
                   fullResultCopyText={poopleFullCopyText}
-                />
+                /></div>
               </div>
             ) : (
               <div className="mt-5">
@@ -860,7 +890,7 @@ export default function PoopleGameEngine() {
                     }}
                     placeholder={`Change 1 letter in ${currentWord}...`}
                     aria-label="Enter next 4-letter ladder word"
-                    className="flex-1 rounded-xl border border-amber-400/40 bg-[#041426] px-4 py-3 font-mono text-lg font-black uppercase tracking-widest text-white placeholder:text-sm placeholder:font-normal placeholder:normal-case placeholder:tracking-normal placeholder:text-slate-500 focus:border-amber-300 focus:outline-none"
+                    className="flex-1 rounded-xl border border-amber-400/45 bg-[#021215]/75 px-4 py-2.5 font-mono text-lg font-black uppercase tracking-widest text-white placeholder:text-sm placeholder:font-normal placeholder:normal-case placeholder:tracking-normal placeholder:text-slate-500 focus:border-amber-300 focus:outline-none"
                   />
                   <button
                     type="submit"
@@ -962,15 +992,40 @@ export default function PoopleGameEngine() {
             ))}
           </div>
 
-          <ShareChallengePanel
+          <div data-hud-interactive className="pointer-events-auto"><ShareChallengePanel
             variant="inline"
             accent="amber"
             challengeUrl={poopleChallengeUrl}
             shareText={poopleShareText}
             shareTitle={`${modeLabel}: ${startWord} → POOP Challenge`}
-          />
+          /></div>
         </div>
       )}
-    </div>
+      </div>
+
+      {/* Bottom Pipeworks Interactive Discovery & Scroll Anchor Ticker */}
+      <div className="flex items-center justify-between gap-2 font-mono text-[11px] text-slate-300/85">
+        {latestDiscovery ? (
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-amber-300/45 bg-amber-500/20 px-2 py-0.5 text-amber-200 backdrop-blur-sm">
+            <span>✦</span>
+            <span>{latestDiscovery}</span>
+          </span>
+        ) : (
+          <span className="truncate">
+            <strong className="text-emerald-300">PIPEWORKS MATRIX</strong>
+            <span className="hidden sm:inline text-slate-300/75">
+              {" "}· 1 letter per rung toward POOP · Click pipes or golden bubbles to scan
+            </span>
+            {discoveredPipes.length > 0 && (
+              <span className="ml-1.5 text-amber-300">· {discoveredPipes.length} scanned</span>
+            )}
+          </span>
+        )}
+        <a href="#poople-guide" className="pointer-events-auto shrink-0 text-emerald-300/90 hover:text-white">
+          SOLVER &amp; RULES ↓
+        </a>
+      </div>
+      </PooplePipeScene>
+    </section>
   );
 }

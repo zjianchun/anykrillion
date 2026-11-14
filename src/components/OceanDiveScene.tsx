@@ -2,6 +2,15 @@
 
 import { useEffect, useMemo, useRef, type ReactNode } from "react";
 import { PixelBalloonSprite, PixelBoatSprite, ThemeHeroSprite } from "@/components/PixelSprites";
+import { ThemeHorizonBackdrop } from "@/components/ThemeHorizonBackdrop";
+import { getWorldThemeMeta } from "@/lib/worldThemesData";
+import {
+  drawThemeBackdropPattern,
+  drawThemeLandmark,
+  drawThemeSwimmers,
+  PX_PER_METER,
+  SURFACE_OFFSET_PX,
+} from "@/lib/worldCanvasDrawers";
 import { playSonarPingSound } from "@/lib/soundEffects";
 import type { ThemeVariant } from "@/lib/gameThemes";
 
@@ -22,266 +31,6 @@ export interface OceanDiveSceneProps {
   /** Invoked when player clicks a world landmark or mystery orb with sonar */
   onDiscovery?: (label: string) => void;
   children: ReactNode;
-}
-
-interface WorldMarker {
-  depth: number;
-  label: string;
-  sublabel?: string;
-  accent?: string;
-}
-
-interface WorldLandmark {
-  id:
-    | "kelp"
-    | "diver"
-    | "turtle"
-    | "submarine"
-    | "shipwreck"
-    | "jellyfish"
-    | "squid"
-    | "angler"
-    | "vents"
-    | "ufo"
-    | "leviathan"
-    | "paperplane"
-    | "birds"
-    | "biplane"
-    | "balloons"
-    | "rainbow"
-    | "satellite"
-    | "station"
-    | "astronaut";
-  depth: number;
-  xRatio: number;
-  title: string;
-  discoveryLog: string;
-  zone: string;
-}
-
-const PX_PER_METER = 3.1;
-const SURFACE_OFFSET_PX = 165;
-
-const DIVE_MARKERS: WorldMarker[] = [
-  { depth: 50, label: "— light begins to fade", accent: "text-cyan-200/55" },
-  { depth: 100, label: "PLANKTON · 10", sublabel: "crowd favorite zone", accent: "text-rose-300/75" },
-  { depth: 200, label: "most sunlight stops here", accent: "text-cyan-300/55" },
-  { depth: 300, label: "SCHOOLER · 30", sublabel: "moderate depth", accent: "text-sky-300/80" },
-  { depth: 332, label: "deepest scuba dive ever · -332m", accent: "text-slate-300/50" },
-  { depth: 550, label: "TWILIGHT ZONE · -550m", accent: "text-indigo-300/60" },
-  { depth: 700, label: "DEEP DIVER · 70", sublabel: "rare knowledge band", accent: "text-cyan-300/85" },
-  { depth: 1000, label: "ONE IN A KRILLION · 100", sublabel: "single-question max sink", accent: "text-amber-300/90" },
-  { depth: 1500, label: "giant squid hunting ground", accent: "text-purple-300/60" },
-  { depth: 2200, label: "MIDNIGHT ZONE · -2,200m", accent: "text-slate-400/60" },
-  { depth: 3000, label: "sunken shipwreck abyss", accent: "text-cyan-400/65" },
-  { depth: 4000, label: "ABYSSAL PLAIN · -4,000m", accent: "text-emerald-300/75" },
-  { depth: 5000, label: "HADAL TRENCH · -5,000m", accent: "text-amber-300/80" },
-  { depth: 6200, label: "CHALLENGER DEEP TRAIL", accent: "text-emerald-300/90" },
-];
-
-const SKY_MARKERS: WorldMarker[] = [
-  { depth: 50, label: "treetop updraft", accent: "text-emerald-200/65" },
-  { depth: 100, label: "DEEP CUT PENALTY · 10", sublabel: "barely left the ground", accent: "text-rose-300/75" },
-  { depth: 300, label: "MAINSTREAM BREEZE · 30", accent: "text-sky-200/80" },
-  { depth: 700, label: "CUMULUS CLIMBER · 70", accent: "text-amber-200/85" },
-  { depth: 1000, label: "CROWD FAVORITE #1 · 100", sublabel: "max single-round lift", accent: "text-amber-300/95" },
-  { depth: 2000, label: "jetstream golden hour", accent: "text-orange-300/75" },
-  { depth: 3500, label: "stratosphere cruise", accent: "text-fuchsia-300/75" },
-  { depth: 5000, label: "LOW EARTH ORBIT · +5,000 ft", accent: "text-amber-300/90" },
-];
-
-const DIVE_LANDMARKS: WorldLandmark[] = [
-  {
-    id: "kelp",
-    depth: 95,
-    xRatio: 0.78,
-    title: "Giant Kelp Forest",
-    discoveryLog: "Kelp Canopy (-95m): swaying fronds shelter early plankton.",
-    zone: "Sunlight Reef",
-  },
-  {
-    id: "diver",
-    depth: 145,
-    xRatio: 0.76,
-    title: "Research Diver",
-    discoveryLog: "Research Diver (-145m): signaling your descent with a floodlight!",
-    zone: "Sunlight Reef",
-  },
-  {
-    id: "turtle",
-    depth: 225,
-    xRatio: 0.22,
-    title: "Green Sea Turtle",
-    discoveryLog: "Green Sea Turtle (-225m): gliding along the reef drop-off.",
-    zone: "Sunlight Reef",
-  },
-  {
-    id: "submarine",
-    depth: 365,
-    xRatio: 0.74,
-    title: "Submarine ALVIN-7",
-    discoveryLog: "ALVIN-7 Research Sub (-365m): floodlights sweeping the thermocline.",
-    zone: "Twilight Zone",
-  },
-  {
-    id: "shipwreck",
-    depth: 690,
-    xRatio: 0.24,
-    title: "Sunken Galleon",
-    discoveryLog: "Sunken Galleon (-690m): faint gold glinting inside the hull.",
-    zone: "Twilight Zone",
-  },
-  {
-    id: "jellyfish",
-    depth: 1120,
-    xRatio: 0.77,
-    title: "Neon Jellyfish",
-    discoveryLog: "Neon Jelly Swarm (-1,120m): bioluminescent bells pulsing below.",
-    zone: "Bioluminescent Zone",
-  },
-  {
-    id: "squid",
-    depth: 1720,
-    xRatio: 0.23,
-    title: "Giant Squid",
-    discoveryLog: "Architeuthis (-1,720m): giant tentacles drifting in dark water.",
-    zone: "Bioluminescent Zone",
-  },
-  {
-    id: "angler",
-    depth: 2580,
-    xRatio: 0.75,
-    title: "Abyssal Anglerfish",
-    discoveryLog: "Anglerfish (-2,580m): hypnotic golden lantern spotted in the dark.",
-    zone: "Midnight Zone",
-  },
-  {
-    id: "vents",
-    depth: 3500,
-    xRatio: 0.25,
-    title: "Black Smoker Vents",
-    discoveryLog: "Hydrothermal Vents (-3,500m): mineral plumes rising from the crust.",
-    zone: "Abyssal Plain",
-  },
-  {
-    id: "ufo",
-    depth: 4700,
-    xRatio: 0.75,
-    title: "Sunken Relay Disc",
-    discoveryLog: "Anomalous Relay (-4,700m): unexplained cyan pulse beneath the silt.",
-    zone: "Hadal Trench",
-  },
-  {
-    id: "leviathan",
-    depth: 5800,
-    xRatio: 0.3,
-    title: "Golden Leviathan",
-    discoveryLog: "Golden Leviathan (-5,800m): mythical guardian of One-in-a-Krillion.",
-    zone: "Hadal Trench",
-  },
-];
-
-const SKY_LANDMARKS: WorldLandmark[] = [
-  {
-    id: "paperplane",
-    depth: 110,
-    xRatio: 0.77,
-    title: "Paper Glider",
-    discoveryLog: "Paper Glider (+110ft): riding warm morning thermals.",
-    zone: "Treetop Updraft",
-  },
-  {
-    id: "birds",
-    depth: 195,
-    xRatio: 0.23,
-    title: "Swallow Flock",
-    discoveryLog: "Swallow Flock (+195ft): drafting beside your balloon envelope.",
-    zone: "Treetop Updraft",
-  },
-  {
-    id: "biplane",
-    depth: 480,
-    xRatio: 0.75,
-    title: "Vintage Biplane",
-    discoveryLog: "Crimson Biplane (+480ft): circling the cumulus ridge!",
-    zone: "Cumulus Climb",
-  },
-  {
-    id: "balloons",
-    depth: 860,
-    xRatio: 0.24,
-    title: "Rival Balloons",
-    discoveryLog: "Sky Festival (+860ft): neighboring gondolas cheering you up.",
-    zone: "Cumulus Climb",
-  },
-  {
-    id: "rainbow",
-    depth: 1550,
-    xRatio: 0.75,
-    title: "Prism Rainbow",
-    discoveryLog: "Stratocumulus Arc (+1,550ft): double rainbow over thunderheads.",
-    zone: "Jetstream Golden Hour",
-  },
-  {
-    id: "satellite",
-    depth: 2700,
-    xRatio: 0.75,
-    title: "Weather Satellite",
-    discoveryLog: "Orbital Relay (+2,700ft): solar wings glinting in lavender air.",
-    zone: "Stratosphere",
-  },
-  {
-    id: "station",
-    depth: 3650,
-    xRatio: 0.25,
-    title: "Space Station",
-    discoveryLog: "Orbital Module (+3,650ft): cruising along Earth curvature.",
-    zone: "Stratosphere",
-  },
-  {
-    id: "astronaut",
-    depth: 4600,
-    xRatio: 0.74,
-    title: "EV-Suit Astronaut",
-    discoveryLog: "Spacewalk (+4,600ft): waving beside northern aurora ribbons!",
-    zone: "Low Earth Orbit",
-  },
-];
-
-const OCEAN_SPECIMENS = [
-  "Bioluminescent Comb Jelly",
-  "Glowing Nautilus Shell",
-  "Sunken Message Bottle",
-  "Luminous Sea Butterfly",
-  "Hydrothermal Amber Pearl",
-];
-
-const SKY_SPECIMENS = [
-  "Stray Weather Balloon",
-  "Monarch Butterfly Swarm",
-  "Golden Cumulus Spark",
-  "Meteoric Stardust Mote",
-  "Radio Telemetry Probe",
-];
-
-/** Compute the current story zone & nearby landmark hint for HUD status bar */
-export function getZoneNarrative(depth: number, isReverse: boolean): { zone: string; hint: string } {
-  const list = isReverse ? SKY_LANDMARKS : DIVE_LANDMARKS;
-  let closest = list[0];
-  let minDiff = Infinity;
-  for (const lm of list) {
-    const diff = Math.abs(lm.depth - depth);
-    if (diff < minDiff) {
-      minDiff = diff;
-      closest = lm;
-    }
-  }
-  const unit = isReverse ? "ft" : "m";
-  const sign = isReverse ? "+" : "-";
-  return {
-    zone: closest.zone,
-    hint: `${closest.title} (${sign}${closest.depth.toLocaleString()}${unit})`,
-  };
 }
 
 function lerpColor(c1: [number, number, number], c2: [number, number, number], t: number): string {
@@ -319,8 +68,8 @@ function getWorldPalette(themeId: ThemeVariant, isReverse: boolean): {
         shallowBottom: [4, 65, 52],
         mid: [3, 40, 34],
         abyss: [2, 16, 15],
-        skyTop: "#67e8f9",
-        skyBottom: "#bae6fd",
+        skyTop: "#03261a",
+        skyBottom: "#064e3b",
         particleRgb: "74, 222, 128",
       };
     case "hardwood":
@@ -329,8 +78,8 @@ function getWorldPalette(themeId: ThemeVariant, isReverse: boolean): {
         shallowBottom: [78, 30, 16],
         mid: [38, 17, 12],
         abyss: [14, 8, 7],
-        skyTop: "#fdba74",
-        skyBottom: "#fed7aa",
+        skyTop: "#1c0a05",
+        skyBottom: "#431407",
         particleRgb: "251, 146, 60",
       };
     case "pokedex":
@@ -339,8 +88,8 @@ function getWorldPalette(themeId: ThemeVariant, isReverse: boolean): {
         shallowBottom: [76, 20, 56],
         mid: [29, 16, 48],
         abyss: [10, 8, 22],
-        skyTop: "#fca5a5",
-        skyBottom: "#fecdd3",
+        skyTop: "#2c071b",
+        skyBottom: "#6b1138",
         particleRgb: "250, 204, 21",
       };
     case "cinema":
@@ -349,8 +98,8 @@ function getWorldPalette(themeId: ThemeVariant, isReverse: boolean): {
         shallowBottom: [46, 16, 101],
         mid: [24, 12, 58],
         abyss: [8, 5, 22],
-        skyTop: "#d8b4fe",
-        skyBottom: "#f5d0fe",
+        skyTop: "#160730",
+        skyBottom: "#3b0764",
         particleRgb: "232, 121, 249",
       };
     case "atlas":
@@ -359,9 +108,19 @@ function getWorldPalette(themeId: ThemeVariant, isReverse: boolean): {
         shallowBottom: [8, 74, 84],
         mid: [5, 42, 56],
         abyss: [2, 15, 24],
-        skyTop: "#99f6e4",
-        skyBottom: "#ccfbf1",
+        skyTop: "#082f49",
+        skyBottom: "#0e7490",
         particleRgb: "45, 212, 191",
+      };
+    case "stadium":
+      return {
+        shallowTop: [110, 24, 46],
+        shallowBottom: [68, 16, 46],
+        mid: [24, 20, 54],
+        abyss: [8, 8, 22],
+        skyTop: "#171438",
+        skyBottom: "#4c0519",
+        particleRgb: "251, 191, 36",
       };
     default:
       return {
@@ -374,317 +133,6 @@ function getWorldPalette(themeId: ThemeVariant, isReverse: boolean): {
         particleRgb: "103, 232, 249",
       };
   }
-}
-
-function drawLandmarkSprite(
-  ctx: CanvasRenderingContext2D,
-  lm: WorldLandmark,
-  x: number,
-  y: number,
-  dpr: number,
-  t: number,
-): void {
-  const s = dpr;
-  ctx.save();
-  ctx.translate(x, y);
-
-  switch (lm.id) {
-    case "kelp": {
-      for (let f = -1; f <= 1; f++) {
-        ctx.beginPath();
-        ctx.moveTo(f * 10 * s, 32 * s);
-        for (let seg = 1; seg <= 6; seg++) {
-          const sway = Math.sin(t * 2.1 + seg * 0.8 + f) * 6 * s;
-          ctx.lineTo(f * 10 * s + sway, (32 - seg * 10) * s);
-        }
-        ctx.strokeStyle = f === 0 ? "rgba(52, 211, 153, 0.55)" : "rgba(16, 185, 129, 0.42)";
-        ctx.lineWidth = 4 * s;
-        ctx.lineCap = "round";
-        ctx.stroke();
-      }
-      break;
-    }
-    case "diver": {
-      const bob = Math.sin(t * 2.4) * 4 * s;
-      ctx.translate(0, bob);
-      // Conical flashlight beam pointing left toward stage center
-      const beam = ctx.createLinearGradient(-16 * s, 0, -110 * s, 10 * s);
-      beam.addColorStop(0, "rgba(254, 240, 138, 0.42)");
-      beam.addColorStop(1, "rgba(254, 240, 138, 0)");
-      ctx.fillStyle = beam;
-      ctx.beginPath();
-      ctx.moveTo(-14 * s, -3 * s);
-      ctx.lineTo(-105 * s, -22 * s);
-      ctx.lineTo(-105 * s, 18 * s);
-      ctx.closePath();
-      ctx.fill();
-      // Scuba body & yellow tank
-      ctx.fillStyle = "#0ea5e9";
-      ctx.fillRect(-10 * s, -6 * s, 20 * s, 10 * s);
-      ctx.fillStyle = "#facc15";
-      ctx.fillRect(-5 * s, -12 * s, 12 * s, 5 * s);
-      // Helmet & visor
-      ctx.fillStyle = "#e2e8f0";
-      ctx.fillRect(-16 * s, -9 * s, 8 * s, 8 * s);
-      ctx.fillStyle = "#38bdf8";
-      ctx.fillRect(-16 * s, -7 * s, 4 * s, 4 * s);
-      // Flippers
-      const kick = Math.sin(t * 6) * 3 * s;
-      ctx.fillStyle = "#f43f5e";
-      ctx.fillRect(10 * s, -6 * s + kick, 9 * s, 3 * s);
-      ctx.fillRect(10 * s, 2 * s - kick, 9 * s, 3 * s);
-      break;
-    }
-    case "turtle": {
-      const flap = Math.sin(t * 3.2) * 5 * s;
-      const drift = Math.sin(t * 0.7) * 18 * s;
-      ctx.translate(drift, 0);
-      ctx.fillStyle = "#34d399";
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 16 * s, 9 * s, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#10b981";
-      ctx.fillRect(14 * s, -3 * s, 7 * s, 6 * s);
-      ctx.fillRect(-4 * s, -14 * s + flap * 0.4, 7 * s, 6 * s);
-      ctx.fillRect(-4 * s, 8 * s - flap * 0.4, 7 * s, 6 * s);
-      break;
-    }
-    case "submarine": {
-      const sweep = Math.sin(t * 1.4) * 14 * s;
-      // Searchlight cone pointing left
-      const cone = ctx.createLinearGradient(-24 * s, 0, -145 * s, sweep);
-      cone.addColorStop(0, "rgba(165, 243, 252, 0.35)");
-      cone.addColorStop(1, "rgba(165, 243, 252, 0)");
-      ctx.fillStyle = cone;
-      ctx.beginPath();
-      ctx.moveTo(-24 * s, 0);
-      ctx.lineTo(-145 * s, sweep - 26 * s);
-      ctx.lineTo(-145 * s, sweep + 26 * s);
-      ctx.closePath();
-      ctx.fill();
-      // Yellow hull
-      ctx.fillStyle = "#f59e0b";
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 26 * s, 13 * s, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#d97706";
-      ctx.fillRect(-6 * s, -20 * s, 12 * s, 8 * s);
-      // Glowing viewport windows
-      ctx.fillStyle = "#67e8f9";
-      ctx.beginPath();
-      ctx.arc(-10 * s, 0, 3.8 * s, 0, Math.PI * 2);
-      ctx.arc(2 * s, 0, 3.8 * s, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-    }
-    case "shipwreck": {
-      ctx.rotate(-0.14);
-      ctx.fillStyle = "rgba(120, 53, 15, 0.72)";
-      ctx.fillRect(-26 * s, -6 * s, 52 * s, 16 * s);
-      ctx.fillRect(-6 * s, -28 * s, 4 * s, 22 * s);
-      ctx.fillRect(12 * s, -20 * s, 3 * s, 14 * s);
-      // Treasure chest glow
-      const pulse = 0.55 + Math.sin(t * 4) * 0.35;
-      ctx.fillStyle = `rgba(250, 204, 21, ${pulse})`;
-      ctx.fillRect(-20 * s, -12 * s, 12 * s, 8 * s);
-      break;
-    }
-    case "jellyfish": {
-      for (let j = 0; j < 2; j++) {
-        const jx = (j === 0 ? -10 : 14) * s;
-        const jy = Math.sin(t * 2.5 + j * 1.6) * 7 * s + (j === 1 ? -14 * s : 4 * s);
-        const pulse = 1 + Math.sin(t * 4 + j) * 0.12;
-        ctx.fillStyle = j === 0 ? "rgba(244, 114, 182, 0.7)" : "rgba(167, 139, 250, 0.65)";
-        ctx.beginPath();
-        ctx.arc(jx, jy, 10 * s * pulse, Math.PI, 0);
-        ctx.fill();
-        ctx.strokeStyle = j === 0 ? "rgba(244, 114, 182, 0.45)" : "rgba(167, 139, 250, 0.45)";
-        ctx.lineWidth = 1.5 * s;
-        for (let k = -1; k <= 1; k++) {
-          ctx.beginPath();
-          ctx.moveTo(jx + k * 4 * s, jy);
-          ctx.quadraticCurveTo(jx + k * 5 * s + Math.sin(t * 4 + k) * 4 * s, jy + 12 * s, jx + k * 4 * s, jy + 22 * s);
-          ctx.stroke();
-        }
-      }
-      break;
-    }
-    case "squid": {
-      ctx.fillStyle = "rgba(190, 24, 93, 0.52)";
-      ctx.beginPath();
-      ctx.ellipse(-6 * s, -8 * s, 22 * s, 11 * s, -0.25, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#fde047";
-      ctx.beginPath();
-      ctx.arc(-18 * s, -6 * s, 2.8 * s, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = "rgba(244, 63, 94, 0.55)";
-      ctx.lineWidth = 2.2 * s;
-      for (let a = 0; a < 4; a++) {
-        ctx.beginPath();
-        ctx.moveTo(10 * s, (-8 + a * 4) * s);
-        ctx.quadraticCurveTo(28 * s, (-6 + a * 5 + Math.sin(t * 3 + a) * 6) * s, 44 * s, (-4 + a * 4) * s);
-        ctx.stroke();
-      }
-      break;
-    }
-    case "angler": {
-      ctx.fillStyle = "rgba(30, 41, 59, 0.85)";
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 18 * s, 13 * s, 0, 0, Math.PI * 2);
-      ctx.fill();
-      // Hanging lure stalk & lantern
-      const sway = Math.sin(t * 3) * 3 * s;
-      ctx.strokeStyle = "#94a3b8";
-      ctx.lineWidth = 1.5 * s;
-      ctx.beginPath();
-      ctx.moveTo(-6 * s, -12 * s);
-      ctx.quadraticCurveTo(-18 * s, -24 * s, -24 * s + sway, -12 * s);
-      ctx.stroke();
-      ctx.fillStyle = "#fef08a";
-      ctx.beginPath();
-      ctx.arc(-24 * s + sway, -11 * s, 4.2 * s, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#e2e8f0";
-      ctx.fillRect(-14 * s, 2 * s, 3 * s, 4 * s);
-      ctx.fillRect(-8 * s, 2 * s, 3 * s, 4 * s);
-      break;
-    }
-    case "vents": {
-      ctx.fillStyle = "rgba(51, 65, 85, 0.9)";
-      ctx.fillRect(-18 * s, 0, 12 * s, 24 * s);
-      ctx.fillRect(4 * s, 6 * s, 10 * s, 18 * s);
-      for (let p = 0; p < 5; p++) {
-        const rise = ((t * 28 + p * 9) % 36) * s;
-        ctx.fillStyle = `rgba(251, 146, 60, ${Math.max(0, 0.8 - rise / (40 * s))})`;
-        ctx.fillRect(-14 * s + Math.sin(t * 3 + p) * 3 * s, -rise, 4 * s, 4 * s);
-      }
-      break;
-    }
-    case "ufo": {
-      const hover = Math.sin(t * 2) * 5 * s;
-      ctx.translate(0, hover);
-      ctx.fillStyle = "#67e8f9";
-      ctx.beginPath();
-      ctx.arc(0, -6 * s, 10 * s, Math.PI, 0);
-      ctx.fill();
-      ctx.fillStyle = "#334155";
-      ctx.beginPath();
-      ctx.ellipse(0, -2 * s, 22 * s, 6 * s, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#fde047";
-      ctx.fillRect(-12 * s, -3 * s, 4 * s, 2 * s);
-      ctx.fillRect(-2 * s, -3 * s, 4 * s, 2 * s);
-      ctx.fillRect(8 * s, -3 * s, 4 * s, 2 * s);
-      break;
-    }
-    case "leviathan": {
-      for (let seg = 0; seg < 6; seg++) {
-        const sx = seg * 10 * s;
-        const sy = Math.sin(t * 3.5 + seg * 0.7) * 6 * s;
-        ctx.fillStyle = seg === 0 ? "#fbbf24" : "rgba(245, 158, 11, 0.78)";
-        ctx.beginPath();
-        ctx.arc(sx, sy, (8 - seg * 0.8) * s, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      break;
-    }
-    case "paperplane": {
-      const bob = Math.sin(t * 2.2) * 4 * s;
-      ctx.fillStyle = "#f8fafc";
-      ctx.beginPath();
-      ctx.moveTo(-16 * s, bob);
-      ctx.lineTo(14 * s, -6 * s + bob);
-      ctx.lineTo(8 * s, 6 * s + bob);
-      ctx.closePath();
-      ctx.fill();
-      break;
-    }
-    case "birds": {
-      ctx.strokeStyle = "rgba(255,255,255,0.85)";
-      ctx.lineWidth = 2 * s;
-      for (let b = 0; b < 3; b++) {
-        const bx = b * 14 * s;
-        const by = (b % 2 === 0 ? -4 : 5) * s + Math.sin(t * 5 + b) * 3 * s;
-        ctx.beginPath();
-        ctx.moveTo(bx - 5 * s, by - 3 * s);
-        ctx.lineTo(bx, by);
-        ctx.lineTo(bx + 5 * s, by - 3 * s);
-        ctx.stroke();
-      }
-      break;
-    }
-    case "biplane": {
-      ctx.fillStyle = "#ef4444";
-      ctx.fillRect(-18 * s, -5 * s, 32 * s, 8 * s);
-      ctx.fillStyle = "#fef08a";
-      ctx.fillRect(-14 * s, -12 * s, 24 * s, 3 * s);
-      ctx.fillRect(-14 * s, 4 * s, 24 * s, 3 * s);
-      ctx.fillStyle = "#e2e8f0";
-      ctx.fillRect(-20 * s, -9 * s, 2 * s, 14 * s);
-      break;
-    }
-    case "balloons": {
-      const colors = ["#fb7185", "#facc15"];
-      for (let i = 0; i < 2; i++) {
-        const bx = i * 20 * s;
-        const by = Math.sin(t * 1.8 + i) * 5 * s;
-        ctx.fillStyle = colors[i];
-        ctx.beginPath();
-        ctx.arc(bx, by, 9 * s, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "#78350f";
-        ctx.fillRect(bx - 3 * s, by + 11 * s, 6 * s, 4 * s);
-      }
-      break;
-    }
-    case "rainbow": {
-      const cols = ["#f43f5e", "#fb923c", "#facc15", "#4ade80", "#38bdf8"];
-      cols.forEach((c, idx) => {
-        ctx.strokeStyle = c;
-        ctx.globalAlpha = 0.48;
-        ctx.lineWidth = 2.5 * s;
-        ctx.beginPath();
-        ctx.arc(0, 12 * s, (26 - idx * 3) * s, Math.PI, 0);
-        ctx.stroke();
-      });
-      break;
-    }
-    case "satellite": {
-      ctx.fillStyle = "#38bdf8";
-      ctx.fillRect(-22 * s, -4 * s, 14 * s, 8 * s);
-      ctx.fillRect(8 * s, -4 * s, 14 * s, 8 * s);
-      ctx.fillStyle = "#e2e8f0";
-      ctx.fillRect(-5 * s, -6 * s, 10 * s, 12 * s);
-      if (Math.sin(t * 6) > 0) {
-        ctx.fillStyle = "#f43f5e";
-        ctx.beginPath();
-        ctx.arc(0, -10 * s, 2.4 * s, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      break;
-    }
-    case "station": {
-      ctx.fillStyle = "#cbd5e1";
-      ctx.fillRect(-20 * s, -3 * s, 40 * s, 6 * s);
-      ctx.fillStyle = "#0ea5e9";
-      ctx.fillRect(-16 * s, -16 * s, 8 * s, 26 * s);
-      ctx.fillRect(8 * s, -16 * s, 8 * s, 26 * s);
-      break;
-    }
-    case "astronaut": {
-      const floatY = Math.sin(t * 2) * 5 * s;
-      ctx.translate(0, floatY);
-      ctx.fillStyle = "#f8fafc";
-      ctx.fillRect(-7 * s, -14 * s, 14 * s, 12 * s);
-      ctx.fillRect(-6 * s, -1 * s, 12 * s, 14 * s);
-      ctx.fillStyle = "#facc15";
-      ctx.fillRect(-5 * s, -12 * s, 10 * s, 7 * s);
-      break;
-    }
-  }
-
-  ctx.restore();
 }
 
 export default function OceanDiveScene({
@@ -743,8 +191,9 @@ export default function OceanDiveScene({
     if (!ctx) return;
 
     const palette = getWorldPalette(themeId, isReverse);
-    const landmarks = isReverse ? SKY_LANDMARKS : DIVE_LANDMARKS;
-    const specimenNames = isReverse ? SKY_SPECIMENS : OCEAN_SPECIMENS;
+    const themeMeta = getWorldThemeMeta(themeId, isReverse);
+    const landmarks = themeMeta.landmarks;
+    const specimenNames = themeMeta.specimens;
 
     interface Particle {
       x: number;
@@ -855,20 +304,8 @@ export default function OceanDiveScene({
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, w, h);
 
-      // 2. Diagonal sunbeams near the surface
-      if (!isReverse && d < 340) {
-        const beamAlpha = Math.max(0, 0.09 * (1 - d / 340));
-        ctx.fillStyle = `rgba(186, 230, 253, ${beamAlpha})`;
-        for (const ox of [0.22, 0.44, 0.68, 0.84]) {
-          ctx.beginPath();
-          ctx.moveTo(w * ox, 0);
-          ctx.lineTo(w * (ox + 0.06), 0);
-          ctx.lineTo(w * (ox + 0.22), h);
-          ctx.lineTo(w * (ox + 0.08), h);
-          ctx.closePath();
-          ctx.fill();
-        }
-      }
+      // 2. Theme-distinctive background architectural / atmospheric pattern
+      drawThemeBackdropPattern(ctx, w, h, d, dpr, themeId, isReverse, t);
 
       // 3. Ambient particles & rising bubbles
       const scrollNorm = (delta * PX_PER_METER) / Math.max(400, h);
@@ -898,33 +335,11 @@ export default function OceanDiveScene({
         const ly = SURFACE_OFFSET_PX * dpr + worldDeltaPx;
         if (ly < -80 * dpr || ly > h + 80 * dpr) continue;
         const lx = w * lm.xRatio;
-        drawLandmarkSprite(ctx, lm, lx, ly, dpr, t);
+        drawThemeLandmark(ctx, lm.id, lx, ly, dpr, t);
       }
 
-      // 5. Schooling silhouettes (swim & gently slow back down after sonar scatter)
-      for (const s of swimmers) {
-        s.x += s.vx;
-        const sign = s.vx >= 0 ? 1 : -1;
-        if (Math.abs(s.vx) > 0.0007) {
-          s.vx *= 0.96;
-          if (Math.abs(s.vx) < 0.00035) s.vx = sign * 0.00035;
-        }
-        if (s.x > 1.08) s.x = -0.08;
-        if (s.x < -0.08) s.x = 1.08;
-
-        const worldDeltaPx = isReverse
-          ? (d - s.depth) * PX_PER_METER * dpr
-          : (s.depth - d) * PX_PER_METER * dpr;
-        const sy = SURFACE_OFFSET_PX * dpr + worldDeltaPx;
-        if (sy < -40 || sy > h + 40) continue;
-
-        const sx = s.x * w;
-        const dir = s.vx >= 0 ? 1 : -1;
-        const sz = s.size * dpr;
-        ctx.fillStyle = isReverse ? "rgba(255, 255, 255, 0.35)" : "rgba(2, 12, 24, 0.5)";
-        ctx.fillRect(sx - sz, sy - sz * 0.35, sz * 1.6, sz * 0.7);
-        ctx.fillRect(sx - dir * sz * 1.35, sy - sz * 0.55, sz * 0.55, sz * 1.1);
-      }
+      // 5. Ambient moving world objects (fish / birds / balls / sparks / planes / stars)
+      drawThemeSwimmers(ctx, swimmers, w, h, d, dpr, themeId, isReverse, t);
 
       // 6. Clickable Golden Mystery Specimen Orbs drifting across background
       for (const orb of orbs) {
@@ -1121,7 +536,8 @@ export default function OceanDiveScene({
     };
   }, [isReverse, themeId]);
 
-  const markers = isReverse ? SKY_MARKERS : DIVE_MARKERS;
+  const themeMeta = getWorldThemeMeta(themeId, isReverse);
+  const markers = themeMeta.markers;
 
   const horizonTopPx = isReverse
     ? SURFACE_OFFSET_PX + cameraDepth * PX_PER_METER
@@ -1147,73 +563,22 @@ export default function OceanDiveScene({
       {/* 1. Dynamic 60FPS Canvas Ocean / Sky Column */}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
-      {/* 2. Surface Sky / Clouds / Boat (scrolls up out of view as player dives deeper) */}
-      {!isReverse && horizonTopPx > -220 && (
-        <div
-          className="pointer-events-none absolute inset-x-0 z-10 overflow-hidden"
-          style={{
-            top: 0,
-            height: `${Math.max(0, horizonTopPx)}px`,
-            background: `linear-gradient(180deg, ${palette.skyTop} 0%, ${palette.skyBottom} 100%)`,
-          }}
-          aria-hidden="true"
-        >
-          <div className="absolute right-[10%] top-[18%] h-14 w-14 rounded-full bg-[#fef08a] shadow-[0_0_45px_rgba(254,240,138,0.9)] sm:h-20 sm:w-20" />
-          <div className="animate-ak-float absolute left-[12%] top-[24%] h-7 w-28 rounded-sm bg-white/90 shadow-[12px_-10px_0_0_rgba(255,255,255,0.9),28px_-4px_0_0_rgba(255,255,255,0.85)]" />
-          <div className="animate-ak-float absolute left-[56%] top-[34%] h-6 w-24 rounded-sm bg-white/85 shadow-[-10px_-8px_0_0_rgba(255,255,255,0.85)]" />
-        </div>
-      )}
-
-      {/* Wave Horizon Line + Bobbing Trawler Boat (Dive Modes) */}
-      {!isReverse && horizonTopPx > -60 && horizonTopPx < 900 && (
-        <div
-          className="pointer-events-none absolute inset-x-0 z-10"
-          style={{ top: `${horizonTopPx - 36}px` }}
-          aria-hidden="true"
-        >
-          <div className="animate-ak-bob ml-[22%] inline-block">
-            <PixelBoatSprite className="h-12 w-24 sm:h-14 sm:w-28" />
-          </div>
-          <div className="h-2.5 w-full bg-gradient-to-b from-cyan-300/35 to-transparent" />
-        </div>
-      )}
-
-      {/* Meadow Launch Pad, Clouds, Sun & Mascot Balloon when Noillirk is near launch altitude */}
-      {isReverse && cameraDepth < 650 && (
-        <div
-          className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
-          style={{ opacity: Math.max(0, 1 - cameraDepth / 650) }}
-          aria-hidden="true"
-        >
-          <div
-            className="absolute right-[12%] top-[12%] h-14 w-14 rounded-full bg-[#fef08a] shadow-[0_0_45px_rgba(254,240,138,0.9)] sm:h-20 sm:w-20"
-            style={{ transform: `translateY(${Math.round(cameraDepth * 0.25)}px)` }}
-          />
-          <div
-            className="animate-ak-float absolute left-[10%] top-[18%] h-7 w-28 rounded-sm bg-white/90 shadow-[12px_-10px_0_0_rgba(255,255,255,0.9),28px_-4px_0_0_rgba(255,255,255,0.85)]"
-            style={{ transform: `translateY(${Math.round(cameraDepth * 0.55)}px)` }}
-          />
-          <div
-            className="animate-ak-float absolute right-[18%] top-[30%] h-6 w-24 rounded-sm bg-white/85 shadow-[-10px_-8px_0_0_rgba(255,255,255,0.85)]"
-            style={{ transform: `translateY(${Math.round(cameraDepth * 0.7)}px)` }}
-          />
-          <div
-            className="animate-ak-float hidden sm:block absolute left-[58%] top-[54%] h-6 w-24 rounded-sm bg-white/75 shadow-[10px_-8px_0_0_rgba(255,255,255,0.8)]"
-            style={{ transform: `translateY(${Math.round(cameraDepth * 0.85)}px)` }}
-          />
-        </div>
-      )}
-
-      {isReverse && horizonTopPx < 900 && (
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-10"
-          style={{ opacity: Math.max(0, 1 - cameraDepth / 220) }}
-          aria-hidden="true"
-        >
-          <div className="h-6 w-full bg-gradient-to-t from-emerald-600/55 via-emerald-700/25 to-transparent" />
-          <div className="h-14 w-full border-t-2 border-emerald-400/45 bg-gradient-to-t from-emerald-950/95 via-emerald-900/80 to-emerald-800/60" />
-        </div>
-      )}
+      {/* 2. Theme-Distinctive Surface Horizon / Stadium Lights / Arena Jumbotron / Meadow */}
+      <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden" aria-hidden="true">
+        <ThemeHorizonBackdrop
+          themeId={themeId}
+          isReverse={isReverse}
+          horizonTopPx={horizonTopPx}
+          cameraDepth={cameraDepth}
+          skyTop={palette.skyTop}
+          skyBottom={palette.skyBottom}
+          abyssHero={
+            <div className="animate-ak-bob">
+              <PixelBoatSprite className="h-12 w-24 sm:h-14 sm:w-28" />
+            </div>
+          }
+        />
+      </div>
 
       {/* 3. Scrolling World Depth Milestone Lines & Labels */}
       <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden" aria-hidden="true">
@@ -1256,7 +621,7 @@ export default function OceanDiveScene({
             >
               {isMajor && (
                 <span className="font-mono text-[9px] font-bold text-slate-300/65">
-                  {isReverse ? `${m}ft` : `-${m}m`}
+                  {`${themeMeta.unitPrefix}${m}${themeMeta.unitSuffix}`}
                 </span>
               )}
               <span
@@ -1316,7 +681,7 @@ export default function OceanDiveScene({
             </div>
           </div>
           <p className="mt-6 font-mono text-xs font-bold uppercase tracking-widest text-cyan-200/90 animate-pulse">
-            {isReverse ? "Ascending through sky..." : "Sinking into the deep..."}
+            {themeMeta.sinkingVerb}
           </p>
         </div>
       )}

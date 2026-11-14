@@ -23,7 +23,8 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import OceanDiveScene, { getZoneNarrative } from "@/components/OceanDiveScene";
+import OceanDiveScene from "@/components/OceanDiveScene";
+import { getWorldThemeMeta, getZoneNarrative } from "@/lib/worldThemesData";
 import { TierCreatureSprite } from "@/components/PixelSprites";
 import ShareChallengePanel from "@/components/ShareChallengePanel";
 import type {
@@ -155,48 +156,44 @@ function tierToEmoji(tier: RoundOutcome["tier"], isReverse: boolean): string {
 function getCreatureTitleAndTagline(
   outcome: RoundOutcome,
   isReverse: boolean,
+  themeId: ThemeVariant,
 ): {
   title: string;
   tagline: string;
   titleColorClass: string;
 } {
+  const { tiers } = getWorldThemeMeta(themeId, isReverse);
   if (!outcome.matchedAnswer || outcome.points <= 0) {
     return {
-      title: outcome.tier === "Skipped" ? "SKIPPED ROUTE" : "NOTHING LANDED",
-      tagline: "The clock closed this route.",
+      title: outcome.tier === "Skipped" ? "SKIPPED ROUTE" : tiers.miss.title,
+      tagline: tiers.miss.tagline,
       titleColorClass: "text-rose-300 drop-shadow-[0_0_16px_rgba(244,63,94,0.65)]",
     };
   }
   if (outcome.points >= 85) {
     return {
-      title: isReverse ? "CROWD FAVORITE #1" : "ONE IN A KRILLION",
-      tagline: isReverse
-        ? "Everyone on earth thought of that!"
-        : "Almost nobody went there.",
+      title: tiers.rare.title,
+      tagline: tiers.rare.tagline,
       titleColorClass: "text-amber-300 drop-shadow-[0_0_18px_rgba(251,191,36,0.8)]",
     };
   }
   if (outcome.points >= 55) {
     return {
-      title: "DEEP DIVER",
-      tagline: isReverse
-        ? "Strong mainstream instincts."
-        : "Far below the crowded surface.",
+      title: tiers.high.title,
+      tagline: tiers.high.tagline,
       titleColorClass: "text-cyan-300 drop-shadow-[0_0_16px_rgba(34,211,238,0.75)]",
     };
   }
   if (outcome.points >= 25) {
     return {
-      title: "SCHOOLER",
-      tagline: "A strong answer with a crowd.",
+      title: tiers.mid.title,
+      tagline: tiers.mid.tagline,
       titleColorClass: "text-sky-300 drop-shadow-[0_0_14px_rgba(56,189,248,0.65)]",
     };
   }
   return {
-    title: isReverse ? "OBSCURE TRAP" : "PLANKTON",
-    tagline: isReverse
-      ? "Way too obscure for reverse mode!"
-      : "The answer everyone blurts out.",
+    title: tiers.low.title,
+    tagline: tiers.low.tagline,
     titleColorClass: "text-slate-200 drop-shadow-[0_0_12px_rgba(226,232,240,0.5)]",
   };
 }
@@ -442,6 +439,7 @@ export default function KrillionGameEngine({
   const activeThemeId = resolveThemeVariant(mode, packFilter, themeVariant);
   const theme = THEME_CONFIGS[activeThemeId];
   const worldTitle = getWorldDisplayTitle(activeThemeId, isReverse);
+  const worldMeta = getWorldThemeMeta(activeThemeId, isReverse);
 
   const totalScore = useMemo(
     () => outcomes.reduce((sum, item) => sum + item.points, 0),
@@ -723,13 +721,11 @@ export default function KrillionGameEngine({
     };
   }, [currentPrompt, isReverse]);
 
-  const depthMetricLabel = isReverse
-    ? `+${cameraDepth.toLocaleString()}ft`
-    : `-${cameraDepth.toLocaleString()}m`;
+  const depthMetricLabel = `${worldMeta.unitPrefix}${cameraDepth.toLocaleString()}${worldMeta.unitSuffix}`;
 
   const zoneStory = useMemo(
-    () => getZoneNarrative(cameraDepth, isReverse),
-    [cameraDepth, isReverse],
+    () => getZoneNarrative(cameraDepth, isReverse, activeThemeId),
+    [cameraDepth, isReverse, activeThemeId],
   );
 
   const challengeUrl = useMemo(() => {
@@ -787,7 +783,7 @@ export default function KrillionGameEngine({
             {/* Top Left: Depth / Altitude Plaque */}
             <div className="pointer-events-auto rounded-xl border border-cyan-400/30 bg-[#041425]/45 px-3 py-1.5 backdrop-blur-[2px] sm:px-4 sm:py-2">
               <span className="block font-mono text-[10px] font-bold uppercase tracking-widest text-slate-300/80">
-                {isReverse ? "ALTITUDE" : "DEPTH"}
+                {worldMeta.hudMetricTitle}
               </span>
               <span
                 className={`font-pixel text-base font-bold sm:text-xl ${
@@ -1181,6 +1177,7 @@ export default function KrillionGameEngine({
                 const { title, tagline, titleColorClass } = getCreatureTitleAndTagline(
                   currentOutcome,
                   isReverse,
+                  activeThemeId,
                 );
                 const sinkDistance = currentOutcome.points * 10;
                 return (
@@ -1199,9 +1196,8 @@ export default function KrillionGameEngine({
                       </p>
                     )}
                     <p className="mt-1 font-mono text-sm font-bold text-amber-300">
-                      +{currentOutcome.points} PTS · {isReverse ? "climb" : "sink"}{" "}
-                      {sinkDistance.toLocaleString()}
-                      {isReverse ? "ft" : "m"}
+                      +{currentOutcome.points} PTS · {sinkDistance.toLocaleString()}
+                      {worldMeta.unitSuffix}
                     </p>
                     <p className="mt-1 max-w-md font-mono text-xs text-slate-300">
                       {currentOutcome.matchedAnswer
@@ -1217,9 +1213,7 @@ export default function KrillionGameEngine({
                     >
                       {qIndex + 1 >= deck.length
                         ? "VIEW EXPEDITION SUMMARY"
-                        : isReverse
-                          ? "ASCEND ▲"
-                          : "DESCEND ▼"}
+                        : worldMeta.actionDescendLabel}
                     </button>
 
                     <button
@@ -1381,7 +1375,7 @@ export default function KrillionGameEngine({
               <strong className="text-cyan-300">{zoneStory.zone.toUpperCase()}</strong>
               <span className="hidden sm:inline text-slate-300/75">
                 {" "}
-                · {zoneStory.hint} · {isReverse ? "Click sky to scan" : "Click water to ping sonar"}
+                · {zoneStory.hint} · {worldMeta.scanPromptLabel}
               </span>
               {discoveredLogs.length > 0 && (
                 <span className="ml-1.5 text-amber-300">
