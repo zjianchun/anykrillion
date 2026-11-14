@@ -10,17 +10,30 @@ import { DAILY_BOARDS, TODAY_BOARD, getBoardPrompts } from "@/lib/datasets";
 import type { AnswerEntity, TriviaPrompt } from "@/types/game";
 
 export const metadata: Metadata = {
-  title: "Krillion Answers Today & Daily Hints (Updated Daily) | AnyKrillion",
+  title: "Krillion Answers Today & Daily Hints (Live) | AnyKrillion",
   description:
     "Check Krillion answers today, spoiler-free hints, and One in a Krillion top picks for all 7 daily prompts. Avoid common Plankton answers and boost your score.",
   alternates: {
     canonical: "/krillion-answers-today/",
   },
   openGraph: {
-    title: "Krillion Answers Today & Daily Hints (Updated Daily) | AnyKrillion",
-    description:
-      "Spoiler-free Krillion hints, One in a Krillion 85–100 pt picks, and Plankton traps to avoid for Today's 7 Daily Dive prompts.",
+    title: "Krillion Answers Today & Daily Hints (Live) | AnyKrillion",
+    description: "Spoiler-free Krillion hints, One in a Krillion 85–100 pt picks, and Plankton traps to avoid for Today's 7 Daily Dive prompts.",
     url: "https://anykrillion.com/krillion-answers-today/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Krillion Answers Today & Daily Hints (Live) | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Krillion Answers Today & Daily Hints (Live) | AnyKrillion",
+    description: "Spoiler-free Krillion hints, One in a Krillion 85–100 pt picks, and Plankton traps to avoid for Today's 7 Daily Dive prompts.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -68,7 +81,7 @@ export default function KrillionAnswersTodayPage() {
     <>
       <JsonLd
         canonicalUrl="https://anykrillion.com/krillion-answers-today/"
-        pageTitle="Krillion Answers Today & Daily Hints (Updated Daily) | AnyKrillion"
+        pageTitle="Krillion Answers Today & Daily Hints (Live) | AnyKrillion"
         pageDescription="Check Krillion answers today, spoiler-free hints, and One in a Krillion top picks for all 7 daily prompts. Avoid common Plankton answers and boost your score."
         pageType="WebPage"
         faqs={FAQS}

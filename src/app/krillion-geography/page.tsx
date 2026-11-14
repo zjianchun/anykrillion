@@ -4,17 +4,30 @@ import PackPageShell from "@/components/PackPageShell";
 import { DAILY_BOARDS, getPromptsByPack } from "@/lib/datasets";
 
 export const metadata: Metadata = {
-  title: "Krillion Geography — World Countries & Map Trivia | AnyKrillion",
+  title: "Krillion Geography — World Map Trivia Game | AnyKrillion",
   description:
     "Play Krillion Geography online! Guess rare countries, capitals, lakes, and landmarks before time runs out, backed by verified Wikidata geographic rarity scores.",
   alternates: {
     canonical: "/krillion-geography/",
   },
   openGraph: {
-    title: "Krillion Geography — World Countries & Map Trivia | AnyKrillion",
-    description:
-      "Play Krillion Geography online! Guess rare sovereign countries, capitals, borders, and world landmarks with open geographic rarity scores.",
+    title: "Krillion Geography — World Map Trivia Game | AnyKrillion",
+    description: "Play Krillion Geography online! Guess rare sovereign countries, capitals, borders, and world landmarks with open geographic rarity scores.",
     url: "https://anykrillion.com/krillion-geography/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Krillion Geography — World Map Trivia Game | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Krillion Geography — World Map Trivia Game | AnyKrillion",
+    description: "Play Krillion Geography online! Guess rare sovereign countries, capitals, borders, and world landmarks with open geographic rarity scores.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -48,7 +61,7 @@ export default function KrillionGeographyPage() {
   return (
     <PackPageShell
       canonicalUrl="https://anykrillion.com/krillion-geography/"
-      pageTitle="Krillion Geography — World Countries & Map Trivia | AnyKrillion"
+      pageTitle="Krillion Geography — World Map Trivia Game | AnyKrillion"
       pageDescription="Play Krillion Geography online! Guess rare countries, capitals, lakes, and landmarks before time runs out, backed by verified Wikidata geographic rarity scores."
       h1="Krillion Geography: Countries, Capitals & World Trivia"
       heroSubtitle={`Explore ${geoPrompts.length} world-map challenges and ${totalAnswers.toLocaleString()} precomputed geographic answers—spanning landlocked states, island micro-nations, capital puzzles, and U.S. states.`}

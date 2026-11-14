@@ -28,7 +28,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://anykrillion.com"),
   title: {
-    default: "Krillion Unlimited — Play Free Krillion Game Online | AnyKrillion",
+    default: "Krillion Unlimited — Play Free Trivia Game | AnyKrillion",
     template: "%s",
   },
   description:
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Krillion Unlimited — Play Free Krillion Game Online | AnyKrillion",
+    title: "Krillion Unlimited — Play Free Trivia Game | AnyKrillion",
     description:
       "Play Krillion Unlimited, Today's Daily Dive, Noillirk reverse mode, and topic packs with verified open datasets and smart typo tolerance.",
     url: "https://anykrillion.com/",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Krillion Unlimited — Play Free Krillion Game Online | AnyKrillion",
+    title: "Krillion Unlimited — Play Free Trivia Game | AnyKrillion",
     description:
       "Play Krillion Unlimited, Daily Dive, Noillirk reverse mode, Sports, Geography, Pokekrillion, Footbillion, NBA, and Movies free online.",
     images: ["/og-image.png"],

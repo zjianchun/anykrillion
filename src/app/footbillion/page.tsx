@@ -4,17 +4,30 @@ import PackPageShell from "@/components/PackPageShell";
 import { DAILY_BOARDS, getPromptsByPack } from "@/lib/datasets";
 
 export const metadata: Metadata = {
-  title: "Footbillion — Play Football Krillion & Goalillion Trivia | AnyKrillion",
+  title: "Footbillion — Football Krillion Trivia | AnyKrillion",
   description:
     "Play Footbillion free online! Guess rare World Cup, Premier League, and Champions League players within 40 seconds using verified open football records.",
   alternates: {
     canonical: "/footbillion/",
   },
   openGraph: {
-    title: "Footbillion — Play Football Krillion & Goalillion Trivia | AnyKrillion",
-    description:
-      "Play Footbillion & Goalillion soccer rarity trivia free online with World Cup squads, Premier League clubs, and Champions League icons.",
+    title: "Footbillion — Football Krillion Trivia | AnyKrillion",
+    description: "Play Footbillion & Goalillion soccer rarity trivia free online with World Cup squads, Premier League clubs, and Champions League icons.",
     url: "https://anykrillion.com/footbillion/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Footbillion — Football Krillion Trivia | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Footbillion — Football Krillion Trivia | AnyKrillion",
+    description: "Play Footbillion & Goalillion soccer rarity trivia free online with World Cup squads, Premier League clubs, and Champions League icons.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -48,7 +61,7 @@ export default function FootbillionPage() {
   return (
     <PackPageShell
       canonicalUrl="https://anykrillion.com/footbillion/"
-      pageTitle="Footbillion — Play Football Krillion & Goalillion Trivia | AnyKrillion"
+      pageTitle="Footbillion — Football Krillion Trivia | AnyKrillion"
       pageDescription="Play Footbillion free online! Guess rare World Cup, Premier League, and Champions League players within 40 seconds using verified open football records."
       h1="Footbillion: Football Krillion & Goalillion Trivia Game"
       heroSubtitle={`Test your pitch memory across ${footballPrompts.length} football prompts and ${totalAnswers.toLocaleString()} verified players & clubs—powered by Fjelstul FIFA World Cup CSV records and a 40-second match clock.`}

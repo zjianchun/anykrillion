@@ -3,18 +3,21 @@
 import { useMemo, useState } from "react";
 import { Calendar, Eye, Filter, Play } from "lucide-react";
 import KrillionGameEngine from "@/components/KrillionGameEngine";
+import { DAILY_BOARDS, getDailyPromptCorpus } from "@/lib/datasets";
 import type { DailyBoard, PackId, TriviaPrompt } from "@/types/game";
 import { PACK_METAS } from "@/types/game";
 
 interface ArchiveExplorerProps {
-  dailyBoards: DailyBoard[];
-  prompts: TriviaPrompt[];
+  dailyBoards?: DailyBoard[];
+  prompts?: TriviaPrompt[];
 }
 
 export default function ArchiveExplorer({
-  dailyBoards,
-  prompts,
+  dailyBoards: dailyBoardsProp,
+  prompts: promptsProp,
 }: ArchiveExplorerProps) {
+  const dailyBoards = dailyBoardsProp ?? DAILY_BOARDS;
+  const prompts = useMemo(() => promptsProp ?? getDailyPromptCorpus(), [promptsProp]);
   const [selectedDate, setSelectedDate] = useState<string>(
     dailyBoards[0]?.date ?? "2026-11-14",
   );

@@ -8,17 +8,30 @@ import Navbar from "@/components/Navbar";
 import { getCorpusStats } from "@/lib/datasets";
 
 export const metadata: Metadata = {
-  title: "Games Like Krillion — 9 Best Rarity & Daily Trivia Alternatives",
+  title: "Games Like Krillion — 9 Best Trivia Games | AnyKrillion",
   description:
     "Discover the best games like Krillion! Compare playable rarity trivia alternatives including Noillirk, Footbillion, Pokekrillion, NBA Krillion, and Poople.",
   alternates: {
     canonical: "/games-like-krillion/",
   },
   openGraph: {
-    title: "Games Like Krillion — 9 Best Rarity & Daily Trivia Alternatives",
-    description:
-      "Play all 9 best games like Krillion right in your browser: Noillirk reverse mode, Footbillion, Pokekrillion, NBA Krillion, Geography, Movies & Poople.",
+    title: "Games Like Krillion — 9 Best Trivia Games | AnyKrillion",
+    description: "Play all 9 best games like Krillion right in your browser: Noillirk reverse mode, Footbillion, Pokekrillion, NBA Krillion, Geography, Movies & Poople.",
     url: "https://anykrillion.com/games-like-krillion/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Games Like Krillion — 9 Best Trivia Games | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Games Like Krillion — 9 Best Trivia Games | AnyKrillion",
+    description: "Play all 9 best games like Krillion right in your browser: Noillirk reverse mode, Footbillion, Pokekrillion, NBA Krillion, Geography, Movies & Poople.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -145,7 +158,7 @@ export default function GamesLikeKrillionPage() {
     <>
       <JsonLd
         canonicalUrl="https://anykrillion.com/games-like-krillion/"
-        pageTitle="Games Like Krillion — 9 Best Rarity & Daily Trivia Alternatives"
+        pageTitle="Games Like Krillion — 9 Best Trivia Games | AnyKrillion"
         pageDescription="Discover the best games like Krillion! Compare playable rarity trivia alternatives including Noillirk, Footbillion, Pokekrillion, NBA Krillion, and Poople."
         pageType="CollectionPage"
         faqs={FAQS}

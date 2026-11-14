@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { BookOpen } from "lucide-react";
@@ -34,8 +35,8 @@ interface PackPageShellProps {
     genre: string;
     keywords: string[];
   };
-  prompts: TriviaPrompt[];
-  dailyBoards: DailyBoard[];
+  prompts?: TriviaPrompt[];
+  dailyBoards?: DailyBoard[];
   defaultMode?: GameMode;
   defaultPack?: PackId;
   allowModeSwitch?: boolean;
@@ -62,8 +63,6 @@ export default function PackPageShell({
   badgeText,
   breadcrumbs,
   gameSchema,
-  prompts,
-  dailyBoards,
   defaultMode = "unlimited",
   defaultPack = "general",
   allowModeSwitch = true,
@@ -103,8 +102,6 @@ export default function PackPageShell({
             {engineSectionTitle}
           </h2>
           <KrillionGameEngine
-            prompts={prompts}
-            dailyBoards={dailyBoards}
             defaultMode={defaultMode}
             defaultPack={defaultPack}
             allowModeSwitch={allowModeSwitch}
@@ -118,34 +115,43 @@ export default function PackPageShell({
           id="game-guide"
           className="space-y-8 border-t border-white/10 px-4 pt-10 sm:px-0"
         >
-          <div className="rounded-2xl border border-white/10 bg-[#051629]/65 p-5 sm:p-6">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-cyan-300">
-                  <BookOpen className="h-4 w-4" />
-                  {h1}
-                </span>
-                <span className="rounded-full border border-cyan-400/25 bg-cyan-500/10 px-2.5 py-0.5 text-[11px] font-bold text-cyan-200">
-                  {badgeText}
-                </span>
-              </div>
-              {quickLinks.length > 0 && (
-                <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-cyan-300">
-                  {quickLinks.map((ql) => (
-                    <Link
-                      key={ql.href}
-                      href={ql.href}
-                      className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white"
-                    >
-                      {ql.label}
-                    </Link>
-                  ))}
+          <div className="grid gap-5 rounded-2xl border border-white/10 bg-[#051629]/65 p-5 sm:grid-cols-[1fr_210px] sm:items-center sm:p-6">
+            <div>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-cyan-300">
+                    <BookOpen className="h-4 w-4" />
+                    {h1}
+                  </span>
+                  <span className="rounded-full border border-cyan-400/25 bg-cyan-500/10 px-2.5 py-0.5 text-[11px] font-bold text-cyan-200">
+                    {badgeText}
+                  </span>
                 </div>
-              )}
+                {quickLinks.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-cyan-300">
+                    {quickLinks.map((ql) => (
+                      <Link
+                        key={ql.href}
+                        href={ql.href}
+                        className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white"
+                      >
+                        {ql.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <p className="mt-2.5 max-w-4xl text-sm leading-relaxed text-slate-300 sm:text-base">
+                {heroSubtitle}
+              </p>
             </div>
-            <p className="mt-2.5 max-w-4xl text-sm leading-relaxed text-slate-300 sm:text-base">
-              {heroSubtitle}
-            </p>
+            <Image
+              src="/og-image.png"
+              alt={`${h1} interactive rarity trivia preview`}
+              width={1200}
+              height={630}
+              className="hidden h-auto w-full rounded-xl border border-cyan-400/25 object-cover shadow-lg sm:block"
+            />
           </div>
 
           {sections.map((section) => (

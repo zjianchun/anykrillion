@@ -4,17 +4,30 @@ import PackPageShell from "@/components/PackPageShell";
 import { ALL_PROMPTS, DAILY_BOARDS, getCorpusStats } from "@/lib/datasets";
 
 export const metadata: Metadata = {
-  title: "Krillion Unlimited — Play Free Krillion Game Online | AnyKrillion",
+  title: "Krillion Unlimited — Play Free Trivia Game | AnyKrillion",
   description:
     "Play Krillion Unlimited free online with endless trivia rounds, smart typo tolerance, and Today's 7-question Daily Dive. Chase One in a Krillion answers now.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Krillion Unlimited — Play Free Krillion Game Online | AnyKrillion",
-    description:
-      "Play Krillion Unlimited free online with endless trivia rounds, smart typo tolerance, and Today's 7-question Daily Dive.",
+    title: "Krillion Unlimited — Play Free Trivia Game | AnyKrillion",
+    description: "Play Krillion Unlimited free online with endless trivia rounds, smart typo tolerance, and Today's 7-question Daily Dive.",
     url: "https://anykrillion.com/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Krillion Unlimited — Play Free Trivia Game | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Krillion Unlimited — Play Free Trivia Game | AnyKrillion",
+    description: "Play Krillion Unlimited free online with endless trivia rounds, smart typo tolerance, and Today's 7-question Daily Dive.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -52,7 +65,7 @@ export default function HomePage() {
   return (
     <PackPageShell
       canonicalUrl="https://anykrillion.com/"
-      pageTitle="Krillion Unlimited — Play Free Krillion Game Online | AnyKrillion"
+      pageTitle="Krillion Unlimited — Play Free Trivia Game | AnyKrillion"
       pageDescription="Play Krillion Unlimited free online with endless trivia rounds, smart typo tolerance, and Today's 7-question Daily Dive. Chase One in a Krillion answers now."
       isRoot={true}
       h1="Krillion Unlimited: Free Endless & Daily Dive Trivia Game"
@@ -164,6 +177,57 @@ export default function HomePage() {
                 </Link>{" "}
                 where naming the #1 most obvious Plankton pick scores 100 points and launches your
                 hot-air balloon into the stratosphere.
+              </p>
+            </>
+          ),
+        },
+        {
+          id: "krillion-strategy-open-data",
+          heading: "Krillion Strategy & Open Dataset Transparency",
+          body: (
+            <>
+              <p>
+                Winning consistently in <strong>Krillion Unlimited</strong> comes down to mental
+                branching: instead of blurting out the capital city, starter Pokémon, or household
+                MVP that 80% of players type first, scan one era deeper—think pre-1990 tournament
+                rosters, middle-stage evolutions, island microstates, or character-actor Oscar
+                nominees. Each valid pick locks in your dive depth before the countdown reaches
+                zero, rewarding breadth of memory rather than lucky guessing.
+              </p>
+              <p>
+                Every prompt on AnyKrillion runs 100% locally in your browser against precomputed
+                rarity tiers verified from open, auditable knowledge bases including{" "}
+                <a
+                  href="https://www.wikidata.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-cyan-300 hover:underline"
+                >
+                  Wikidata
+                </a>{" "}
+                and{" "}
+                <a
+                  href="https://pokeapi.co/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-cyan-300 hover:underline"
+                >
+                  PokéAPI
+                </a>
+                , as well as public sports and geography catalogs. Want full methodology notes or
+                deep category playbooks? Read our{" "}
+                <Link href="/sources/" className="font-semibold text-cyan-300 hover:underline">
+                  Open Data Sources
+                </Link>{" "}
+                and{" "}
+                <Link href="/guides/" className="font-semibold text-cyan-300 hover:underline">
+                  Krillion Strategy Guides
+                </Link>{" "}
+                to push past 600+ points per 7-round dive and challenge friends with your exact
+                board seed. Every round records your depth curve, tier badges, and personal best
+                locally without logins or paywalls—so whether you are chasing a top-100 rarity
+                streak or practicing for Daily Dles streams, you can launch a fresh 7-prompt dive
+                in one click from desktop or mobile.
               </p>
             </>
           ),

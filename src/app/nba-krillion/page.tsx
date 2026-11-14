@@ -4,17 +4,30 @@ import PackPageShell from "@/components/PackPageShell";
 import { DAILY_BOARDS, getPromptsByPack } from "@/lib/datasets";
 
 export const metadata: Metadata = {
-  title: "NBA Krillion — Basketball Rarity Trivia Game Free | AnyKrillion",
+  title: "NBA Krillion — Basketball Rarity Trivia | AnyKrillion",
   description:
     "Challenge yourself with NBA Krillion online. Name obscure NBA players, draft picks, All-Stars, and championship rosters to hit One in a Krillion scores.",
   alternates: {
     canonical: "/nba-krillion/",
   },
   openGraph: {
-    title: "NBA Krillion — Basketball Rarity Trivia Game Free | AnyKrillion",
-    description:
-      "Play NBA Krillion & Hoopillion basketball rarity trivia free online across NBA champions, MVPs, draft classes, and All-Star rosters.",
+    title: "NBA Krillion — Basketball Rarity Trivia | AnyKrillion",
+    description: "Play NBA Krillion & Hoopillion basketball rarity trivia free online across NBA champions, MVPs, draft classes, and All-Star rosters.",
     url: "https://anykrillion.com/nba-krillion/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "NBA Krillion — Basketball Rarity Trivia | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NBA Krillion — Basketball Rarity Trivia | AnyKrillion",
+    description: "Play NBA Krillion & Hoopillion basketball rarity trivia free online across NBA champions, MVPs, draft classes, and All-Star rosters.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -43,7 +56,7 @@ export default function NbaKrillionPage() {
   return (
     <PackPageShell
       canonicalUrl="https://anykrillion.com/nba-krillion/"
-      pageTitle="NBA Krillion — Basketball Rarity Trivia Game Free | AnyKrillion"
+      pageTitle="NBA Krillion — Basketball Rarity Trivia | AnyKrillion"
       pageDescription="Challenge yourself with NBA Krillion online. Name obscure NBA players, draft picks, All-Stars, and championship rosters to hit One in a Krillion scores."
       h1="NBA Krillion: Play Basketball Rarity Trivia Online"
       heroSubtitle={`Drain deep-cut buzzer beaters across ${nbaPrompts.length} NBA trivia prompts and ${totalAnswers.toLocaleString()} verified players, champions, and draft legends.`}

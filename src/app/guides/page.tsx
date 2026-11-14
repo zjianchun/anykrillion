@@ -17,9 +17,22 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Krillion Strategy Guides & Rules Playbook | AnyKrillion",
-    description:
-      "Complete Krillion & Noillirk strategy manual: dodge Plankton traps, conquer geography borders, and boost your 7-round Dive score.",
+    description: "Complete Krillion & Noillirk strategy manual: dodge Plankton traps, conquer geography borders, and boost your 7-round Dive score.",
     url: "https://anykrillion.com/guides/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Krillion Strategy Guides & Rules Playbook | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Krillion Strategy Guides & Rules Playbook | AnyKrillion",
+    description: "Complete Krillion & Noillirk strategy manual: dodge Plankton traps, conquer geography borders, and boost your 7-round Dive score.",
+    images: ["/og-image.png"],
   },
 };
 

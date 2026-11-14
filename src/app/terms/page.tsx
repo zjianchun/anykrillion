@@ -13,9 +13,22 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Terms of Use & Open Dataset Disclaimer | AnyKrillion",
-    description:
-      "Review the Terms of Use, fair play guidelines, and independent open-dataset non-affiliation notice for AnyKrillion.com and all rarity trivia game modes.",
+    description: "Review the Terms of Use, fair play guidelines, and independent open-dataset non-affiliation notice for AnyKrillion.com and all rarity trivia game modes.",
     url: "https://anykrillion.com/terms/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Terms of Use & Open Dataset Disclaimer | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Terms of Use & Open Dataset Disclaimer | AnyKrillion",
+    description: "Review the Terms of Use, fair play guidelines, and independent open-dataset non-affiliation notice for AnyKrillion.com and all rarity trivia game modes.",
+    images: ["/og-image.png"],
   },
 };
 

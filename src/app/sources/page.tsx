@@ -16,9 +16,22 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Open Data Sources & Rarity Methodology | AnyKrillion",
-    description:
-      "Transparent dataset provenance and quantile rarity scoring methodology behind AnyKrillion's 136 trivia prompts and 7,092+ entities.",
+    description: "Transparent dataset provenance and quantile rarity scoring methodology behind AnyKrillion's 136 trivia prompts and 7,092+ entities.",
     url: "https://anykrillion.com/sources/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Open Data Sources & Rarity Methodology | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Open Data Sources & Rarity Methodology | AnyKrillion",
+    description: "Transparent dataset provenance and quantile rarity scoring methodology behind AnyKrillion's 136 trivia prompts and 7,092+ entities.",
+    images: ["/og-image.png"],
   },
 };
 

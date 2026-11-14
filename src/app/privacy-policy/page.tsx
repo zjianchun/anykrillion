@@ -13,9 +13,22 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Privacy Policy & Local Storage Notice | AnyKrillion",
-    description:
-      "Read the AnyKrillion.com privacy policy covering local browser score storage via localStorage, zero mandatory accounts, and transparent cookie practices.",
+    description: "Read the AnyKrillion.com privacy policy covering local browser score storage via localStorage, zero mandatory accounts, and transparent cookie practices.",
     url: "https://anykrillion.com/privacy-policy/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Privacy Policy & Local Storage Notice | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy Policy & Local Storage Notice | AnyKrillion",
+    description: "Read the AnyKrillion.com privacy policy covering local browser score storage via localStorage, zero mandatory accounts, and transparent cookie practices.",
+    images: ["/og-image.png"],
   },
 };
 

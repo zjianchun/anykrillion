@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { BookOpen, Compass, Eye, Flame, Layers } from "lucide-react";
 import FaqAccordion from "@/components/FaqAccordion";
@@ -27,17 +28,30 @@ const poopleData = poopleDataRaw as {
 const TODAY_POOPLE = poopleData.dailyBoards[poopleData.dailyBoards.length - 1];
 
 export const metadata: Metadata = {
-  title: "Poople Unlimited — Free Word Ladder Game & Solver | AnyKrillion",
+  title: "Poople Unlimited — Word Ladder & Solver | AnyKrillion",
   description:
     "Play Poople Unlimited free online! Turn any 4-letter word into POOP in minimum steps, check today's Poople answer, or use the shortest-path word solver.",
   alternates: {
     canonical: "/poople-unlimited/",
   },
   openGraph: {
-    title: "Poople Unlimited — Free Word Ladder Game & Solver | AnyKrillion",
-    description:
-      "Play Poople Unlimited free online, view Today's Poople answer, or find the shortest 1-letter word ladder to POOP instantly.",
+    title: "Poople Unlimited — Word Ladder & Solver | AnyKrillion",
+    description: "Play Poople Unlimited free online, view Today's Poople answer, or find the shortest 1-letter word ladder to POOP instantly.",
     url: "https://anykrillion.com/poople-unlimited/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Poople Unlimited — Word Ladder & Solver | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Poople Unlimited — Word Ladder & Solver | AnyKrillion",
+    description: "Play Poople Unlimited free online, view Today's Poople answer, or find the shortest 1-letter word ladder to POOP instantly.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -87,7 +101,7 @@ export default function PoopleUnlimitedPage() {
     <>
       <JsonLd
         canonicalUrl="https://anykrillion.com/poople-unlimited/"
-        pageTitle="Poople Unlimited — Free Word Ladder Game & Solver | AnyKrillion"
+        pageTitle="Poople Unlimited — Word Ladder & Solver | AnyKrillion"
         pageDescription="Play Poople Unlimited free online! Turn any 4-letter word into POOP in minimum steps, check today's Poople answer, or use the shortest-path word solver."
         pageType="WebPage"
         webAppSchema={{
@@ -131,29 +145,38 @@ export default function PoopleUnlimitedPage() {
         </section>
 
         <div id="poople-guide" className="space-y-8 border-t border-white/10 px-4 pt-10 sm:px-0">
-          <div className="rounded-2xl border border-white/10 bg-[#051629]/65 p-5 sm:p-6">
-            <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-cyan-300">
-              <span className="inline-flex items-center gap-1.5 font-extrabold uppercase tracking-wider text-amber-300">
-                <BookOpen className="h-4 w-4" />
-                Poople Unlimited: Free 4-Letter Word Ladder Game &amp; Daily #{TODAY_POOPLE.dayNumber} Solver
-              </span>
-              <div className="flex flex-wrap gap-3">
-                <Link href="/" className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white">
-                  Krillion Unlimited
-                </Link>
-                <Link href="/games-like-krillion/" className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white">
-                  All Games Like Krillion
-                </Link>
-                <Link href="/krillion-answers-today/" className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white">
-                  Krillion Answers Today
-                </Link>
+          <div className="grid gap-5 rounded-2xl border border-white/10 bg-[#051629]/65 p-5 sm:grid-cols-[1fr_210px] sm:items-center sm:p-6">
+            <div>
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-cyan-300">
+                <span className="inline-flex items-center gap-1.5 font-extrabold uppercase tracking-wider text-amber-300">
+                  <BookOpen className="h-4 w-4" />
+                  Poople Unlimited: Free 4-Letter Word Ladder Game &amp; Daily #{TODAY_POOPLE.dayNumber} Solver
+                </span>
+                <div className="flex flex-wrap gap-3">
+                  <Link href="/" className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white">
+                    Krillion Unlimited
+                  </Link>
+                  <Link href="/games-like-krillion/" className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white">
+                    All Games Like Krillion
+                  </Link>
+                  <Link href="/krillion-answers-today/" className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white">
+                    Krillion Answers Today
+                  </Link>
+                </div>
               </div>
+              <p className="mt-2.5 max-w-4xl text-sm leading-relaxed text-slate-300 sm:text-base">
+                Play unlimited rounds of the viral Daily Dles word-ladder puzzle, verify{" "}
+                <strong>Poople answer today</strong> without accidental spoilers, or solve any 4-letter
+                starting word into <strong>POOP</strong> in the fewest guaranteed moves.
+              </p>
             </div>
-            <p className="mt-2.5 max-w-4xl text-sm leading-relaxed text-slate-300 sm:text-base">
-              Play unlimited rounds of the viral Daily Dles word-ladder puzzle, verify{" "}
-              <strong>Poople answer today</strong> without accidental spoilers, or solve any 4-letter
-              starting word into <strong>POOP</strong> in the fewest guaranteed moves.
-            </p>
+            <Image
+              src="/og-image.png"
+              alt="Poople Unlimited 4-letter word ladder game and shortest-path solver preview"
+              width={1200}
+              height={630}
+              className="hidden h-auto w-full rounded-xl border border-emerald-400/25 object-cover shadow-lg sm:block"
+            />
           </div>
           <section
             aria-labelledby="poople-today-heading"

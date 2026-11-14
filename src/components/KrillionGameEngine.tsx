@@ -35,6 +35,7 @@ import type {
   RarityTier,
   TriviaPrompt,
 } from "@/types/game";
+import { ALL_PROMPTS, DAILY_BOARDS, getPromptsByPack } from "@/lib/datasets";
 import { PACK_METAS } from "@/types/game";
 import {
   computeRoundPoints,
@@ -77,8 +78,8 @@ interface ActiveFriendChallenge {
 }
 
 interface KrillionGameEngineProps {
-  prompts: TriviaPrompt[];
-  dailyBoards: DailyBoard[];
+  prompts?: TriviaPrompt[];
+  dailyBoards?: DailyBoard[];
   defaultMode?: GameMode;
   defaultPack?: PackId;
   allowModeSwitch?: boolean;
@@ -248,8 +249,8 @@ function getWorldDisplayTitle(themeId: ThemeVariant, isReverse: boolean): {
 }
 
 export default function KrillionGameEngine({
-  prompts,
-  dailyBoards,
+  prompts: promptsProp,
+  dailyBoards: dailyBoardsProp,
   defaultMode = "unlimited",
   defaultPack = "general",
   allowModeSwitch = true,
@@ -257,6 +258,11 @@ export default function KrillionGameEngine({
   initialDailyDate,
   themeVariant,
 }: KrillionGameEngineProps) {
+  const prompts = useMemo(
+    () => promptsProp ?? (allowPackFilter ? ALL_PROMPTS : getPromptsByPack(defaultPack)),
+    [promptsProp, allowPackFilter, defaultPack],
+  );
+  const dailyBoards = dailyBoardsProp ?? DAILY_BOARDS;
   const [mode, setMode] = useState<GameMode>(defaultMode);
   const [packFilter, setPackFilter] = useState<PackId | "all">(
     defaultPack === "general" ? "all" : defaultPack,

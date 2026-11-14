@@ -4,17 +4,30 @@ import PackPageShell from "@/components/PackPageShell";
 import { DAILY_BOARDS, getPromptsByPack } from "@/lib/datasets";
 
 export const metadata: Metadata = {
-  title: "Krillion Sports — Play Sports Rarity Trivia Online | AnyKrillion",
+  title: "Krillion Sports — Sports Rarity Trivia Free | AnyKrillion",
   description:
     "Test your sports knowledge in Krillion Sports. Name rare athletes, champions, and records across football, basketball, Olympics, and more with endless rounds.",
   alternates: {
     canonical: "/krillion-sports/",
   },
   openGraph: {
-    title: "Krillion Sports — Play Sports Rarity Trivia Online | AnyKrillion",
-    description:
-      "Play Krillion Sports free online with endless rounds across Olympic hosts, tennis majors, F1 champions, NFL, MLB, and NHL trivia.",
+    title: "Krillion Sports — Sports Rarity Trivia Free | AnyKrillion",
+    description: "Play Krillion Sports free online with endless rounds across Olympic hosts, tennis majors, F1 champions, NFL, MLB, and NHL trivia.",
     url: "https://anykrillion.com/krillion-sports/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Krillion Sports — Sports Rarity Trivia Free | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Krillion Sports — Sports Rarity Trivia Free | AnyKrillion",
+    description: "Play Krillion Sports free online with endless rounds across Olympic hosts, tennis majors, F1 champions, NFL, MLB, and NHL trivia.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -48,7 +61,7 @@ export default function KrillionSportsPage() {
   return (
     <PackPageShell
       canonicalUrl="https://anykrillion.com/krillion-sports/"
-      pageTitle="Krillion Sports — Play Sports Rarity Trivia Online | AnyKrillion"
+      pageTitle="Krillion Sports — Sports Rarity Trivia Free | AnyKrillion"
       pageDescription="Test your sports knowledge in Krillion Sports. Name rare athletes, champions, and records across football, basketball, Olympics, and more with endless rounds."
       h1="Krillion Sports: Endless Sports Rarity Trivia Game"
       heroSubtitle={`Dive into ${sportsPrompts.length} multi-sport rarity prompts and ${totalAnswers.toLocaleString()} verified champions across Olympics, F1, Tennis Grand Slams, NFL, MLB, NHL, and global athletics.`}

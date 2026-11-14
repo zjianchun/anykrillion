@@ -6,20 +6,32 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import Navbar from "@/components/Navbar";
 import TopicPacksGrid from "@/components/TopicPacksGrid";
-import { DAILY_BOARDS, getDailyPromptCorpus } from "@/lib/datasets";
 
 export const metadata: Metadata = {
-  title: "Krillion Archive — Play Past Daily Krillion Games | AnyKrillion",
+  title: "Krillion Archive — Past Daily Krillion Games | AnyKrillion",
   description:
     "Missed a Daily Dive? Browse the Krillion Archive to replay past daily boards, practice old prompts in unlimited mode, and compare One in a Krillion answers.",
   alternates: {
     canonical: "/krillion-archive/",
   },
   openGraph: {
-    title: "Krillion Archive — Play Past Daily Krillion Games | AnyKrillion",
-    description:
-      "Browse 30 past Daily Krillion Dive boards, filter by topic pack, replay archived games, and compare rare answers.",
+    title: "Krillion Archive — Past Daily Krillion Games | AnyKrillion",
+    description: "Browse 30 past Daily Krillion Dive boards, filter by topic pack, replay archived games, and compare rare answers.",
     url: "https://anykrillion.com/krillion-archive/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Krillion Archive — Past Daily Krillion Games | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Krillion Archive — Past Daily Krillion Games | AnyKrillion",
+    description: "Browse 30 past Daily Krillion Dive boards, filter by topic pack, replay archived games, and compare rare answers.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -42,13 +54,12 @@ const FAQS = [
 ];
 
 export default function KrillionArchivePage() {
-  const dailyPrompts = getDailyPromptCorpus();
 
   return (
     <>
       <JsonLd
         canonicalUrl="https://anykrillion.com/krillion-archive/"
-        pageTitle="Krillion Archive — Play Past Daily Krillion Games | AnyKrillion"
+        pageTitle="Krillion Archive — Past Daily Krillion Games | AnyKrillion"
         pageDescription="Missed a Daily Dive? Browse the Krillion Archive to replay past daily boards, practice old prompts in unlimited mode, and compare One in a Krillion answers."
         pageType="CollectionPage"
         faqs={FAQS}
@@ -78,7 +89,7 @@ export default function KrillionArchivePage() {
           </Link>
         </header>
 
-        <ArchiveExplorer dailyBoards={DAILY_BOARDS} prompts={dailyPrompts} />
+        <ArchiveExplorer />
 
         <p className="mt-8 rounded-2xl border border-white/10 bg-[#051629]/60 p-5 text-sm leading-relaxed text-slate-300">
           Missed yesterday&apos;s dive or want to binge past daily sets? Pick any archived board

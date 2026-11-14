@@ -28,7 +28,7 @@ PLANNED_ROUTES: Dict[str, dict] = {
     "/": {
         "batch": "Root",
         "primary_kw": "krillion unlimited",
-        "expected_title": "Krillion Unlimited — Play Free Krillion Game Online | AnyKrillion",
+        "expected_title": "Krillion Unlimited — Play Free Trivia Game | AnyKrillion",
         "expected_h1": "Krillion Unlimited: Free Endless & Daily Dive Trivia Game",
         "required_h2s": [
             "Play Endless Krillion Game Online",
@@ -43,7 +43,7 @@ PLANNED_ROUTES: Dict[str, dict] = {
     "/krillion-answers-today/": {
         "batch": "P0",
         "primary_kw": "krillion answers today",
-        "expected_title": "Krillion Answers Today & Daily Hints (Updated Daily) | AnyKrillion",
+        "expected_title": "Krillion Answers Today & Daily Hints (Live) | AnyKrillion",
         "expected_h1": "Krillion Answers Today, Spoiler-Free Hints & Top Picks",
         "required_h2s": [
             "Today's 7 Krillion Questions & Progressive Hints",
@@ -57,7 +57,7 @@ PLANNED_ROUTES: Dict[str, dict] = {
     "/noillirk/": {
         "batch": "P0",
         "primary_kw": "noillirk",
-        "expected_title": "Noillirk Unlimited — Play Reverse Krillion Game Free | AnyKrillion",
+        "expected_title": "Noillirk Unlimited — Reverse Krillion Game | AnyKrillion",
         "expected_h1": "Noillirk: Play Reverse Krillion Game & Endless Mode",
         "required_h2s": [
             "Play Noillirk Unlimited Online",
@@ -71,7 +71,7 @@ PLANNED_ROUTES: Dict[str, dict] = {
     "/krillion-sports/": {
         "batch": "P0",
         "primary_kw": "krillion sports",
-        "expected_title": "Krillion Sports — Play Sports Rarity Trivia Online | AnyKrillion",
+        "expected_title": "Krillion Sports — Sports Rarity Trivia Free | AnyKrillion",
         "expected_h1": "Krillion Sports: Endless Sports Rarity Trivia Game",
         "required_h2s": [
             "Play Sports Krillion & Endless Challenges",
@@ -85,7 +85,7 @@ PLANNED_ROUTES: Dict[str, dict] = {
     "/krillion-geography/": {
         "batch": "P0",
         "primary_kw": "krillion geography",
-        "expected_title": "Krillion Geography — World Countries & Map Trivia | AnyKrillion",
+        "expected_title": "Krillion Geography — World Map Trivia Game | AnyKrillion",
         "expected_h1": "Krillion Geography: Countries, Capitals & World Trivia",
         "required_h2s": [
             "Play Krillion Geography Unlimited",
@@ -99,7 +99,7 @@ PLANNED_ROUTES: Dict[str, dict] = {
     "/krillion-archive/": {
         "batch": "P0",
         "primary_kw": "krillion archive",
-        "expected_title": "Krillion Archive — Play Past Daily Krillion Games | AnyKrillion",
+        "expected_title": "Krillion Archive — Past Daily Krillion Games | AnyKrillion",
         "expected_h1": "Krillion Archive: Replay Past Daily Krillion Games",
         "required_h2s": [
             "Past Daily Krillion Boards Calendar",
@@ -113,7 +113,7 @@ PLANNED_ROUTES: Dict[str, dict] = {
     "/pokekrillion/": {
         "batch": "P1",
         "primary_kw": "pokekrillion",
-        "expected_title": "Pokekrillion — Play Pokemon Krillion Trivia Free | AnyKrillion",
+        "expected_title": "Pokekrillion — Free Pokemon Krillion Trivia | AnyKrillion",
         "expected_h1": "Pokekrillion: Play Pokemon Krillion Rarity Trivia",
         "required_h2s": [
             "Play Pokekrillion Unlimited (Gen 1–9)",
@@ -127,7 +127,7 @@ PLANNED_ROUTES: Dict[str, dict] = {
     "/footbillion/": {
         "batch": "P1",
         "primary_kw": "footbillion",
-        "expected_title": "Footbillion — Play Football Krillion & Goalillion Trivia | AnyKrillion",
+        "expected_title": "Footbillion — Football Krillion Trivia | AnyKrillion",
         "expected_h1": "Footbillion: Football Krillion & Goalillion Trivia Game",
         "required_h2s": [
             "Play Footbillion & Goalillion Unlimited",
@@ -141,7 +141,7 @@ PLANNED_ROUTES: Dict[str, dict] = {
     "/nba-krillion/": {
         "batch": "P1",
         "primary_kw": "nba krillion",
-        "expected_title": "NBA Krillion — Basketball Rarity Trivia Game Free | AnyKrillion",
+        "expected_title": "NBA Krillion — Basketball Rarity Trivia | AnyKrillion",
         "expected_h1": "NBA Krillion: Play Basketball Rarity Trivia Online",
         "required_h2s": [
             "Play NBA Krillion & Hoopillion Unlimited",
@@ -155,7 +155,7 @@ PLANNED_ROUTES: Dict[str, dict] = {
     "/krillion-movies/": {
         "batch": "P1",
         "primary_kw": "krillion movies",
-        "expected_title": "Krillion Movies — Film, Oscars & Cinema Trivia Game | AnyKrillion",
+        "expected_title": "Krillion Movies — Film & Oscars Trivia Free | AnyKrillion",
         "expected_h1": "Krillion Movies: Play Cinema & Oscar Rarity Trivia",
         "required_h2s": [
             "Play Krillion at the Movies Unlimited",
@@ -169,7 +169,7 @@ PLANNED_ROUTES: Dict[str, dict] = {
     "/poople-unlimited/": {
         "batch": "P2",
         "primary_kw": "poople unlimited",
-        "expected_title": "Poople Unlimited — Free Word Ladder Game & Solver | AnyKrillion",
+        "expected_title": "Poople Unlimited — Word Ladder & Solver | AnyKrillion",
         "expected_h1": "Poople Unlimited: Free 4-Letter Word Ladder Game, Daily Answer & Solver",
         "required_h2s": [
             "Play Poople Unlimited & Daily Word Ladder",
@@ -185,7 +185,7 @@ PLANNED_ROUTES: Dict[str, dict] = {
     "/games-like-krillion/": {
         "batch": "P2",
         "primary_kw": "games like krillion",
-        "expected_title": "Games Like Krillion — 9 Best Rarity & Daily Trivia Alternatives",
+        "expected_title": "Games Like Krillion — 9 Best Trivia Games | AnyKrillion",
         "expected_h1": "Games Like Krillion: Best Free Rarity Trivia & Daily Dles Alternatives",
         "required_h2s": [
             "Play All -illion & Daily Trivia Alternatives Online",

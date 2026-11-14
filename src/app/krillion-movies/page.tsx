@@ -4,17 +4,30 @@ import PackPageShell from "@/components/PackPageShell";
 import { DAILY_BOARDS, getPromptsByPack } from "@/lib/datasets";
 
 export const metadata: Metadata = {
-  title: "Krillion Movies — Film, Oscars & Cinema Trivia Game | AnyKrillion",
+  title: "Krillion Movies — Film & Oscars Trivia Free | AnyKrillion",
   description:
     "Play Krillion Movies free online! Discover rare films, directors, Oscar winners, and cast connections powered by verified TMDB vote-count rarity data.",
   alternates: {
     canonical: "/krillion-movies/",
   },
   openGraph: {
-    title: "Krillion Movies — Film, Oscars & Cinema Trivia Game | AnyKrillion",
-    description:
-      "Play Krillion Movies endless rarity trivia: Oscars Best Picture, Pixar features, acclaimed directors, and blockbuster cinema franchises.",
+    title: "Krillion Movies — Film & Oscars Trivia Free | AnyKrillion",
+    description: "Play Krillion Movies endless rarity trivia: Oscars Best Picture, Pixar features, acclaimed directors, and blockbuster cinema franchises.",
     url: "https://anykrillion.com/krillion-movies/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Krillion Movies — Film & Oscars Trivia Free | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Krillion Movies — Film & Oscars Trivia Free | AnyKrillion",
+    description: "Play Krillion Movies endless rarity trivia: Oscars Best Picture, Pixar features, acclaimed directors, and blockbuster cinema franchises.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -43,7 +56,7 @@ export default function KrillionMoviesPage() {
   return (
     <PackPageShell
       canonicalUrl="https://anykrillion.com/krillion-movies/"
-      pageTitle="Krillion Movies — Film, Oscars & Cinema Trivia Game | AnyKrillion"
+      pageTitle="Krillion Movies — Film & Oscars Trivia Free | AnyKrillion"
       pageDescription="Play Krillion Movies free online! Discover rare films, directors, Oscar winners, and cast connections powered by verified TMDB vote-count rarity data."
       h1="Krillion Movies: Play Cinema & Oscar Rarity Trivia"
       heroSubtitle={`Put your filmography memory to the test across ${moviePrompts.length} cinema prompts and ${totalAnswers.toLocaleString()} precomputed films, Oscar winners, directors, and franchise entries.`}

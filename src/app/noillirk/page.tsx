@@ -4,17 +4,30 @@ import PackPageShell from "@/components/PackPageShell";
 import { ALL_PROMPTS, DAILY_BOARDS, getCorpusStats } from "@/lib/datasets";
 
 export const metadata: Metadata = {
-  title: "Noillirk Unlimited — Play Reverse Krillion Game Free | AnyKrillion",
+  title: "Noillirk Unlimited — Reverse Krillion Game | AnyKrillion",
   description:
     "Play Noillirk online for free! Flip the Krillion rules, guess the most obvious popular answers, and climb the hot-air balloon leaderboard in endless mode.",
   alternates: {
     canonical: "/noillirk/",
   },
   openGraph: {
-    title: "Noillirk Unlimited — Play Reverse Krillion Game Free | AnyKrillion",
-    description:
-      "Play Noillirk online for free! Flip Krillion upside down, pick the most obvious consensus answers, and ascend in endless mode.",
+    title: "Noillirk Unlimited — Reverse Krillion Game | AnyKrillion",
+    description: "Play Noillirk online for free! Flip Krillion upside down, pick the most obvious consensus answers, and ascend in endless mode.",
     url: "https://anykrillion.com/noillirk/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Noillirk Unlimited — Reverse Krillion Game | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Noillirk Unlimited — Reverse Krillion Game | AnyKrillion",
+    description: "Play Noillirk online for free! Flip Krillion upside down, pick the most obvious consensus answers, and ascend in endless mode.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -47,7 +60,7 @@ export default function NoillirkPage() {
   return (
     <PackPageShell
       canonicalUrl="https://anykrillion.com/noillirk/"
-      pageTitle="Noillirk Unlimited — Play Reverse Krillion Game Free | AnyKrillion"
+      pageTitle="Noillirk Unlimited — Reverse Krillion Game | AnyKrillion"
       pageDescription="Play Noillirk online for free! Flip the Krillion rules, guess the most obvious popular answers, and climb the hot-air balloon leaderboard in endless mode."
       h1="Noillirk: Play Reverse Krillion Game & Endless Mode"
       heroSubtitle={`Flip the ocean abyss upside down: Noillirk is the Krillion in reverse trivia game where the most famous crowd-favorite answer earns top points across ${stats.totalPrompts} endless prompts.`}

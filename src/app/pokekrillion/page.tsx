@@ -4,17 +4,30 @@ import PackPageShell from "@/components/PackPageShell";
 import { DAILY_BOARDS, getPromptsByPack } from "@/lib/datasets";
 
 export const metadata: Metadata = {
-  title: "Pokekrillion — Play Pokemon Krillion Trivia Free | AnyKrillion",
+  title: "Pokekrillion — Free Pokemon Krillion Trivia | AnyKrillion",
   description:
     "Play Pokekrillion free online with all 1,025 Pokemon across every generation, type, ability, and move. Find obscure dex picks and test Pokemillion mastery.",
   alternates: {
     canonical: "/pokekrillion/",
   },
   openGraph: {
-    title: "Pokekrillion — Play Pokemon Krillion Trivia Free | AnyKrillion",
-    description:
-      "Play Pokekrillion endless rarity trivia spanning Gen 1–9 Pokemon types, base stat totals, starters, legendaries, and hidden gems.",
+    title: "Pokekrillion — Free Pokemon Krillion Trivia | AnyKrillion",
+    description: "Play Pokekrillion endless rarity trivia spanning Gen 1–9 Pokemon types, base stat totals, starters, legendaries, and hidden gems.",
     url: "https://anykrillion.com/pokekrillion/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Pokekrillion — Free Pokemon Krillion Trivia | AnyKrillion",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pokekrillion — Free Pokemon Krillion Trivia | AnyKrillion",
+    description: "Play Pokekrillion endless rarity trivia spanning Gen 1–9 Pokemon types, base stat totals, starters, legendaries, and hidden gems.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -48,7 +61,7 @@ export default function PokekrillionPage() {
   return (
     <PackPageShell
       canonicalUrl="https://anykrillion.com/pokekrillion/"
-      pageTitle="Pokekrillion — Play Pokemon Krillion Trivia Free | AnyKrillion"
+      pageTitle="Pokekrillion — Free Pokemon Krillion Trivia | AnyKrillion"
       pageDescription="Play Pokekrillion free online with all 1,025 Pokemon across every generation, type, ability, and move. Find obscure dex picks and test Pokemillion mastery."
       h1="Pokekrillion: Play Pokemon Krillion Rarity Trivia"
       heroSubtitle={`Dive through ${pokePrompts.length} Pokédex rarity prompts and ${totalAnswers.toLocaleString()} precomputed entries spanning Gen 1 Kanto through Gen 9 Paldea—built from open PokéAPI CSV tables.`}
