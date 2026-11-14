@@ -10,29 +10,21 @@ import {
 } from "react";
 import Link from "next/link";
 import {
-  Anchor,
-  ArrowRight,
-  Award,
   Check,
   Clock,
-  Compass,
-  Copy,
-  Film,
-  Flame,
+  Eye,
   HelpCircle,
-  Infinity as InfinityIcon,
-  Radar,
+  Maximize2,
+  Minimize2,
   RotateCcw,
   SkipForward,
-  Sparkles,
   Swords,
   TimerOff,
-  Trophy,
   Volume2,
   VolumeX,
-  Waves,
-  Wind,
 } from "lucide-react";
+import OceanDiveScene from "@/components/OceanDiveScene";
+import { TierCreatureSprite } from "@/components/PixelSprites";
 import ShareChallengePanel from "@/components/ShareChallengePanel";
 import type {
   AnswerEntity,
@@ -47,7 +39,6 @@ import {
   computeRoundPoints,
   getDisplayTier,
   getNonSpoilerSuggestions,
-  getTierBadgeClasses,
   matchAnswer,
 } from "@/lib/fuzzyMatch";
 import {
@@ -56,12 +47,12 @@ import {
 } from "@/lib/challengeCodec";
 import {
   THEME_CONFIGS,
-  getThemeProgressStatus,
   resolveThemeVariant,
   type ThemeVariant,
 } from "@/lib/gameThemes";
 import {
   isSoundEnabled,
+  playDiveDescentSound,
   playInvalidOrTimeoutSound,
   playLockInSound,
   playRarityRevealSound,
@@ -94,6 +85,8 @@ interface KrillionGameEngineProps {
   initialDailyDate?: string;
   themeVariant?: ThemeVariant;
 }
+
+type EnginePhase = "splash" | "countdown" | "playing" | "sinking" | "revealed" | "summary";
 
 const QUESTIONS_PER_DIVE = 7;
 
@@ -159,105 +152,101 @@ function tierToEmoji(tier: RoundOutcome["tier"], isReverse: boolean): string {
   return "🟠";
 }
 
-function ThemeBackdrop({ themeId }: { themeId: ThemeVariant }) {
-  return (
-    <div
-      className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl"
-      aria-hidden="true"
-    >
-      {themeId === "abyss" && (
-        <>
-          <div className="animate-ak-radar absolute -right-24 -top-24 h-72 w-72 rounded-full border border-dashed border-cyan-400/15" />
-          <div className="animate-ak-bubble-1 absolute bottom-6 left-[12%] h-3 w-3 rounded-full bg-cyan-300/25" />
-          <div className="animate-ak-bubble-2 absolute bottom-4 left-[48%] h-2 w-2 rounded-full bg-emerald-300/30" />
-          <div className="animate-ak-bubble-3 absolute bottom-8 right-[18%] h-4 w-4 rounded-full border border-cyan-300/25" />
-        </>
-      )}
-
-      {themeId === "sky" && (
-        <>
-          <div className="animate-ak-float absolute -right-12 -top-12 h-56 w-56 rounded-full bg-amber-400/10 blur-2xl" />
-          <div className="animate-ak-float absolute bottom-8 left-[8%] h-10 w-32 rounded-full bg-white/[0.04] blur-md" />
-          <div className="animate-ak-float absolute right-[12%] top-16 h-8 w-24 rounded-full bg-amber-200/[0.05] blur-md" />
-        </>
-      )}
-
-      {themeId === "pitch" && (
-        <svg
-          className="absolute inset-0 h-full w-full opacity-[0.07]"
-          viewBox="0 0 800 400"
-          preserveAspectRatio="none"
-        >
-          <line x1="400" y1="0" x2="400" y2="400" stroke="#34d399" strokeWidth="2" />
-          <circle cx="400" cy="200" r="70" stroke="#34d399" strokeWidth="2" fill="none" />
-          <rect x="0" y="95" width="90" height="210" stroke="#34d399" strokeWidth="2" fill="none" />
-          <rect x="710" y="95" width="90" height="210" stroke="#34d399" strokeWidth="2" fill="none" />
-        </svg>
-      )}
-
-      {themeId === "hardwood" && (
-        <svg
-          className="absolute inset-0 h-full w-full opacity-[0.08]"
-          viewBox="0 0 800 400"
-          preserveAspectRatio="none"
-        >
-          <circle cx="400" cy="200" r="65" stroke="#fb923c" strokeWidth="2" fill="none" />
-          <path d="M 0 60 A 180 180 0 0 1 0 340" stroke="#fb923c" strokeWidth="2" fill="none" />
-          <path d="M 800 60 A 180 180 0 0 0 800 340" stroke="#fb923c" strokeWidth="2" fill="none" />
-        </svg>
-      )}
-
-      {themeId === "pokedex" && (
-        <div className="flex items-center gap-2 px-5 pt-3.5 opacity-80">
-          <span className="h-3.5 w-3.5 rounded-full border-2 border-white/70 bg-cyan-400 shadow-[0_0_10px_#22d3ee]" />
-          <span className="h-2 w-2 rounded-full bg-rose-400" />
-          <span className="h-2 w-2 rounded-full bg-amber-300" />
-          <span className="h-2 w-2 rounded-full bg-emerald-400" />
-        </div>
-      )}
-
-      {themeId === "atlas" && (
-        <div
-          className="absolute inset-0 opacity-[0.07]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #2dd4bf 1px, transparent 1px), linear-gradient(to bottom, #2dd4bf 1px, transparent 1px)",
-            backgroundSize: "48px 48px",
-          }}
-        />
-      )}
-
-      {themeId === "cinema" && (
-        <>
-          <div className="absolute inset-x-0 top-0 h-3 bg-[radial-gradient(circle,#ffffff18_2px,transparent_2px)] [background-size:18px_12px]" />
-          <div className="absolute inset-x-0 bottom-0 h-3 bg-[radial-gradient(circle,#ffffff18_2px,transparent_2px)] [background-size:18px_12px]" />
-        </>
-      )}
-
-      {themeId === "stadium" && (
-        <div className="absolute -top-24 left-1/2 h-48 w-96 -translate-x-1/2 rounded-full bg-sky-400/10 blur-3xl" />
-      )}
-    </div>
-  );
+function getCreatureTitleAndTagline(
+  outcome: RoundOutcome,
+  isReverse: boolean,
+): {
+  title: string;
+  tagline: string;
+  titleColorClass: string;
+} {
+  if (!outcome.matchedAnswer || outcome.points <= 0) {
+    return {
+      title: outcome.tier === "Skipped" ? "SKIPPED ROUTE" : "NOTHING LANDED",
+      tagline: "The clock closed this route.",
+      titleColorClass: "text-rose-300 drop-shadow-[0_0_16px_rgba(244,63,94,0.65)]",
+    };
+  }
+  if (outcome.points >= 85) {
+    return {
+      title: isReverse ? "CROWD FAVORITE #1" : "ONE IN A KRILLION",
+      tagline: isReverse
+        ? "Everyone on earth thought of that!"
+        : "Almost nobody went there.",
+      titleColorClass: "text-amber-300 drop-shadow-[0_0_18px_rgba(251,191,36,0.8)]",
+    };
+  }
+  if (outcome.points >= 55) {
+    return {
+      title: "DEEP DIVER",
+      tagline: isReverse
+        ? "Strong mainstream instincts."
+        : "Far below the crowded surface.",
+      titleColorClass: "text-cyan-300 drop-shadow-[0_0_16px_rgba(34,211,238,0.75)]",
+    };
+  }
+  if (outcome.points >= 25) {
+    return {
+      title: "SCHOOLER",
+      tagline: "A strong answer with a crowd.",
+      titleColorClass: "text-sky-300 drop-shadow-[0_0_14px_rgba(56,189,248,0.65)]",
+    };
+  }
+  return {
+    title: isReverse ? "OBSCURE TRAP" : "PLANKTON",
+    tagline: isReverse
+      ? "Way too obscure for reverse mode!"
+      : "The answer everyone blurts out.",
+    titleColorClass: "text-slate-200 drop-shadow-[0_0_12px_rgba(226,232,240,0.5)]",
+  };
 }
 
-function ThemeVehicleIcon({ themeId }: { themeId: ThemeVariant }) {
+function getWorldDisplayTitle(themeId: ThemeVariant, isReverse: boolean): {
+  logoText: string;
+  subtitle: string;
+} {
+  if (isReverse || themeId === "sky") {
+    return {
+      logoText: "NOILLIRK",
+      subtitle: "THE REVERSE ASCENT: 7 prompts · name the MOST OBVIOUS answer",
+    };
+  }
   switch (themeId) {
-    case "sky":
-      return <Wind className="h-4 w-4 text-amber-300" />;
     case "pitch":
-    case "stadium":
-      return <Trophy className="h-4 w-4 text-emerald-300" />;
+      return {
+        logoText: "FOOTBILLION",
+        subtitle: "WORLD CUP & CLUB DIVE: 7 prompts · 40s clock · rarest players sink deeper",
+      };
     case "hardwood":
-      return <Flame className="h-4 w-4 text-orange-300" />;
+      return {
+        logoText: "NBA KRILLION",
+        subtitle: "BASKETBALL ARENA DIVE: 7 prompts · 30s clock · deep-cut picks score highest",
+      };
     case "pokedex":
-      return <Radar className="h-4 w-4 text-amber-300" />;
+      return {
+        logoText: "POKEKRILLION",
+        subtitle: "GEN 1–9 DEX DIVE: 7 prompts · avoid Pikachu traps · catch rare spawns",
+      };
     case "atlas":
-      return <Compass className="h-4 w-4 text-teal-300" />;
+      return {
+        logoText: "KRILLION GEO",
+        subtitle: "WORLD ATLAS DIVE: 7 prompts · chart obscure nations & capitals",
+      };
     case "cinema":
-      return <Film className="h-4 w-4 text-purple-300" />;
+      return {
+        logoText: "CINE KRILLION",
+        subtitle: "ACADEMY ARCHIVE DIVE: 7 prompts · skip blockbusters · pick indie gems",
+      };
+    case "stadium":
+      return {
+        logoText: "SPORTS KRILLION",
+        subtitle: "ALL-SPORTS DIVE: 7 prompts · 35s clock · rarest champions go deepest",
+      };
     default:
-      return <Waves className="h-4 w-4 text-cyan-300" />;
+      return {
+        logoText: "KRILLION",
+        subtitle: "THE ENDLESS DIVE: 7 prompts · 25s each · rarer answers sink deeper",
+      };
   }
 }
 
@@ -279,8 +268,10 @@ export default function KrillionGameEngine({
     initialDailyDate ?? dailyBoards[0]?.date ?? "2026-11-14",
   );
   const [relaxedTimer, setRelaxedTimer] = useState<boolean>(false);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [friendChallenge, setFriendChallenge] = useState<ActiveFriendChallenge | null>(null);
   const [copiedQuickInvite, setCopiedQuickInvite] = useState<boolean>(false);
+  const [showCompareDrawer, setShowCompareDrawer] = useState<boolean>(false);
 
   const promptById = useMemo(() => {
     const map = new Map<string, TriviaPrompt>();
@@ -317,7 +308,7 @@ export default function KrillionGameEngine({
     [dailyBoards, promptById, prompts],
   );
 
-  // Deterministic initial slice for SSR hydration safety
+  // Deterministic SSR initial deck
   const initialDeck = useMemo(() => {
     if (defaultMode === "daily") {
       return buildDeck(
@@ -342,8 +333,18 @@ export default function KrillionGameEngine({
   const [inputValue, setInputValue] = useState<string>("");
   const [feedbackError, setFeedbackError] = useState<string | null>(null);
   const [revealedHints, setRevealedHints] = useState<number>(0);
-  const [roundPhase, setRoundPhase] = useState<"playing" | "revealed" | "summary">("playing");
+
+  // Core game phase & physical camera coordinates
+  const [phase, setPhase] = useState<EnginePhase>("splash");
+  const [countdownNum, setCountdownNum] = useState<number>(2);
   const [timeLeft, setTimeLeft] = useState<number>(initialDeck[0]?.timerSeconds ?? 25);
+  const [cameraDepth, setCameraDepth] = useState<number>(0);
+  const [displayScore, setDisplayScore] = useState<number>(0);
+  const [sinkingText, setSinkingText] = useState<string>("");
+
+  const stageRef = useRef<HTMLElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const animRafRef = useRef<number>(0);
 
   const bestScore = useSyncExternalStore(
     subscribeBestScore,
@@ -356,49 +357,112 @@ export default function KrillionGameEngine({
     getTrueServer,
   );
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  // On client mount, decode ?challenge=... friend PK token without useSearchParams
+  // On mount: shuffle unlimited deck so returning players don't get the exact same SSR starter board,
+  // unless a ?challenge= URL token specifies an exact deck!
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const token = params.get("challenge");
-    if (!token) return;
-    const decoded = decodeKrillionChallenge(token);
-    if (!decoded) return;
-    const resolvedDeck = decoded.p
-      .map((id) => promptById.get(id))
-      .filter((p): p is TriviaPrompt => Boolean(p));
-    if (resolvedDeck.length === 0) return;
+    if (token) {
+      const decoded = decodeKrillionChallenge(token);
+      if (decoded) {
+        const resolved = decoded.p
+          .map((id) => promptById.get(id))
+          .filter((p): p is TriviaPrompt => Boolean(p));
+        if (resolved.length > 0) {
+          queueMicrotask(() => {
+            setMode(decoded.m);
+            setDeck(resolved);
+            setQIndex(0);
+            setOutcomes([]);
+            setPhase("splash");
+            setCameraDepth(0);
+            setDisplayScore(0);
+            setTimeLeft(resolved[0]?.timerSeconds ?? 25);
+            setFriendChallenge({ score: decoded.s, metric: decoded.d });
+          });
+          return;
+        }
+      }
+    }
 
-    queueMicrotask(() => {
-      setMode(decoded.m);
-      setDeck(resolvedDeck);
-      setQIndex(0);
-      setOutcomes([]);
-      setInputValue("");
-      setFeedbackError(null);
-      setRevealedHints(0);
-      setRoundPhase("playing");
-      setTimeLeft(resolvedDeck[0]?.timerSeconds ?? 25);
-      setFriendChallenge({
-        score: decoded.s,
-        metric: decoded.d,
+    if (defaultMode !== "daily") {
+      const pool =
+        defaultPack === "general"
+          ? prompts
+          : prompts.filter((p) => p.pack === defaultPack);
+      const fresh = shufflePrompts(
+        pool.length >= QUESTIONS_PER_DIVE ? pool : prompts,
+        QUESTIONS_PER_DIVE,
+      );
+      queueMicrotask(() => {
+        setDeck(fresh);
+        setTimeLeft(fresh[0]?.timerSeconds ?? 25);
       });
-    });
-  }, [promptById]);
+    }
+  }, [defaultMode, defaultPack, promptById, prompts]);
+
+  // Listen to browser fullscreen changes
+  useEffect(() => {
+    const onFsChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener("fullscreenchange", onFsChange);
+    return () => document.removeEventListener("fullscreenchange", onFsChange);
+  }, []);
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement && stageRef.current) {
+        await stageRef.current.requestFullscreen();
+      } else if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      }
+    } catch {
+      // fallback CSS fullscreen state if API restricted
+      setIsFullscreen((prev) => !prev);
+    }
+  };
 
   const isReverse = mode === "noillirk";
   const currentPrompt = deck[qIndex];
   const activeThemeId = resolveThemeVariant(mode, packFilter, themeVariant);
   const theme = THEME_CONFIGS[activeThemeId];
+  const worldTitle = getWorldDisplayTitle(activeThemeId, isReverse);
+
+  const totalScore = useMemo(
+    () => outcomes.reduce((sum, item) => sum + item.points, 0),
+    [outcomes],
+  );
+
+  const beginRunFromSplash = useCallback(() => {
+    playLockInSound();
+    setPhase("countdown");
+    setCountdownNum(2);
+    // Smooth glide from horizon 0m -> initial underwater view 45m
+    const startT = performance.now();
+    const startD = cameraDepth;
+    const targetD = 45;
+    const glide = (now: number) => {
+      const p = Math.min(1, (now - startT) / 850);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setCameraDepth(Math.round(startD + (targetD - startD) * eased));
+      if (p < 1) {
+        animRafRef.current = window.requestAnimationFrame(glide);
+      }
+    };
+    window.cancelAnimationFrame(animRafRef.current);
+    animRafRef.current = window.requestAnimationFrame(glide);
+  }, [cameraDepth]);
 
   const startFreshDive = useCallback(
     (
       nextMode: GameMode = mode,
       nextPack: PackId | "all" = packFilter,
       nextDate: string = selectedDate,
+      autoEnterGame = false,
     ) => {
+      window.cancelAnimationFrame(animRafRef.current);
       const currentIds = deck.map((p) => p.id);
       const nextDeck = buildDeck(nextMode, nextPack, nextDate, currentIds);
       setMode(nextMode);
@@ -410,63 +474,125 @@ export default function KrillionGameEngine({
       setInputValue("");
       setFeedbackError(null);
       setRevealedHints(0);
-      setRoundPhase("playing");
+      setShowCompareDrawer(false);
+      setDisplayScore(0);
       setTimeLeft(nextDeck[0]?.timerSeconds ?? 25);
       setFriendChallenge(null);
-      setTimeout(() => inputRef.current?.focus(), 40);
+
+      if (autoEnterGame) {
+        setCameraDepth(45);
+        setPhase("countdown");
+        setCountdownNum(2);
+      } else {
+        setCameraDepth(0);
+        setPhase("splash");
+      }
     },
     [buildDeck, deck, mode, packFilter, selectedDate],
   );
 
-  const finishQuestion = useCallback(
+  // Brief countdown before starting clock on each prompt
+  useEffect(() => {
+    if (phase !== "countdown") return;
+    const t = window.setTimeout(() => {
+      if (countdownNum <= 1) {
+        setPhase("playing");
+        setTimeLeft(currentPrompt?.timerSeconds ?? 25);
+        setTimeout(() => inputRef.current?.focus(), 40);
+      } else {
+        setCountdownNum(countdownNum - 1);
+      }
+    }, 450);
+    return () => window.clearTimeout(t);
+  }, [countdownNum, currentPrompt?.timerSeconds, phase]);
+
+  // Animate physical camera descent & score climb during "sinking"
+  const triggerSinkAndReveal = useCallback(
     (outcome: RoundOutcome) => {
       const updated = [...outcomes, outcome];
-      const total = updated.reduce((acc, r) => acc + r.points, 0);
+      const prevScore = outcomes.reduce((acc, r) => acc + r.points, 0);
+      const nextScore = prevScore + outcome.points;
+      const prevDepth = Math.max(45, prevScore * 10);
+      const targetDepth = Math.max(45, nextScore * 10);
+
       setOutcomes(updated);
-
-      if (outcome.matchedAnswer) {
-        playRarityRevealSound(outcome.points);
-      } else {
-        playInvalidOrTimeoutSound();
-      }
-
-      if (updated.length >= deck.length && total >= 420) {
-        import("canvas-confetti")
-          .then((mod) => {
-            mod.default({
-              particleCount: 75,
-              spread: 70,
-              origin: { y: 0.65 },
-            });
-          })
-          .catch(() => {});
-      }
-
-      try {
-        if (total > bestScore) {
-          window.localStorage.setItem("anykrillion_best_score", String(total));
-          window.dispatchEvent(new Event("anykrillion-best-score"));
-        }
-      } catch {
-        // ignore storage failure
-      }
-
-      setRoundPhase("revealed");
       setFeedbackError(null);
+      setShowCompareDrawer(false);
+
+      if (!outcome.matchedAnswer || outcome.points <= 0) {
+        // Quick miss settle (no big sink)
+        playInvalidOrTimeoutSound();
+        setPhase("revealed");
+        return;
+      }
+
+      setSinkingText(outcome.matchedAnswer.name);
+      setPhase("sinking");
+
+      const durationMs = outcome.points >= 80 ? 1850 : outcome.points >= 40 ? 1500 : 1200;
+      playDiveDescentSound(durationMs, outcome.points, mode === "noillirk");
+
+      const startTime = performance.now();
+      window.cancelAnimationFrame(animRafRef.current);
+
+      const stepFrame = (now: number) => {
+        const progress = Math.min(1, (now - startTime) / durationMs);
+        // Smooth easeInOutCubic for heavy sinking feel
+        const eased =
+          progress < 0.5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+        setCameraDepth(Math.round(prevDepth + (targetDepth - prevDepth) * eased));
+        setDisplayScore(Math.round(prevScore + (nextScore - prevScore) * eased));
+
+        if (progress < 1) {
+          animRafRef.current = window.requestAnimationFrame(stepFrame);
+        } else {
+          setCameraDepth(targetDepth);
+          setDisplayScore(nextScore);
+          playRarityRevealSound(outcome.points);
+
+          if (updated.length >= deck.length && nextScore >= 420) {
+            import("canvas-confetti")
+              .then((mod) => {
+                mod.default({
+                  particleCount: 80,
+                  spread: 75,
+                  origin: { y: 0.65 },
+                });
+              })
+              .catch(() => {});
+          }
+
+          try {
+            if (nextScore > bestScore) {
+              window.localStorage.setItem("anykrillion_best_score", String(nextScore));
+              window.dispatchEvent(new Event("anykrillion-best-score"));
+            }
+          } catch {
+            // ignore storage errors
+          }
+
+          setPhase("revealed");
+        }
+      };
+
+      animRafRef.current = window.requestAnimationFrame(stepFrame);
     },
-    [bestScore, deck.length, outcomes],
+    [bestScore, deck.length, mode, outcomes],
   );
 
-  // Countdown timer with last-5-second subtle audio pulse
+  // Active round countdown timer
   useEffect(() => {
-    if (roundPhase !== "playing" || relaxedTimer || !currentPrompt || timeLeft <= 0) {
+    if (phase !== "playing" || relaxedTimer || !currentPrompt || timeLeft <= 0) {
       return;
     }
 
     const timeout = window.setTimeout(() => {
       if (timeLeft <= 1) {
         setTimeLeft(0);
-        finishQuestion({
+        triggerSinkAndReveal({
           prompt: currentPrompt,
           matchedAnswer: null,
           points: 0,
@@ -484,34 +610,33 @@ export default function KrillionGameEngine({
     }, 1000);
 
     return () => window.clearTimeout(timeout);
-  }, [currentPrompt, finishQuestion, relaxedTimer, roundPhase, timeLeft]);
+  }, [currentPrompt, phase, relaxedTimer, timeLeft, triggerSinkAndReveal]);
 
-  const totalScore = useMemo(
-    () => outcomes.reduce((sum, item) => sum + item.points, 0),
-    [outcomes],
-  );
+  useEffect(() => {
+    return () => window.cancelAnimationFrame(animRafRef.current);
+  }, []);
 
   const suggestions = useMemo(() => {
-    if (!currentPrompt || roundPhase !== "playing") return [];
+    if (!currentPrompt || phase !== "playing") return [];
     return getNonSpoilerSuggestions(inputValue, currentPrompt.answers, 3);
-  }, [currentPrompt, inputValue, roundPhase]);
+  }, [currentPrompt, inputValue, phase]);
 
   const submitCandidate = (rawText: string) => {
-    if (!currentPrompt || roundPhase !== "playing") return;
+    if (!currentPrompt || phase !== "playing") return;
     const trimmed = rawText.trim();
     if (!trimmed) return;
 
     const result = matchAnswer(trimmed, currentPrompt.answers);
     if (result.status === "miss") {
       playInvalidOrTimeoutSound();
-      setFeedbackError("Not in our verified list — check spelling or tap a Hint.");
+      setFeedbackError("Not recognized in dataset — try another or check spelling.");
       return;
     }
 
     playLockInSound();
     const pts = computeRoundPoints(result.answer.rarity, mode);
     const tier = getDisplayTier(pts, mode);
-    finishQuestion({
+    triggerSinkAndReveal({
       prompt: currentPrompt,
       matchedAnswer: result.answer,
       points: pts,
@@ -527,8 +652,8 @@ export default function KrillionGameEngine({
   };
 
   const handleSkip = () => {
-    if (!currentPrompt || roundPhase !== "playing") return;
-    finishQuestion({
+    if (!currentPrompt || phase !== "playing") return;
+    triggerSinkAndReveal({
       prompt: currentPrompt,
       matchedAnswer: null,
       points: 0,
@@ -541,7 +666,7 @@ export default function KrillionGameEngine({
   const handleNext = () => {
     if (qIndex + 1 >= deck.length) {
       playVictorySound();
-      setRoundPhase("summary");
+      setPhase("summary");
       return;
     }
     const nextIdx = qIndex + 1;
@@ -549,13 +674,14 @@ export default function KrillionGameEngine({
     setInputValue("");
     setFeedbackError(null);
     setRevealedHints(0);
-    setRoundPhase("playing");
+    setShowCompareDrawer(false);
+    setCountdownNum(2);
+    setPhase("countdown");
     setTimeLeft(deck[nextIdx]?.timerSeconds ?? 25);
-    setTimeout(() => inputRef.current?.focus(), 40);
   };
 
   const handleRevealHint = () => {
-    if (!currentPrompt || revealedHints >= 3 || roundPhase !== "playing") return;
+    if (!currentPrompt || revealedHints >= 3 || phase !== "playing") return;
     playLockInSound();
     setRevealedHints((prev) => prev + 1);
     if (!relaxedTimer) {
@@ -563,12 +689,12 @@ export default function KrillionGameEngine({
     }
   };
 
-  const progressStatus = getThemeProgressStatus(theme, totalScore);
   const currentOutcome = outcomes[qIndex];
   const maxSeconds = currentPrompt?.timerSeconds ?? 25;
-  const timerPercent = relaxedTimer
-    ? 100
-    : Math.max(0, Math.min(100, Math.round((timeLeft / maxSeconds) * 100)));
+  const ringCircumference = 2 * Math.PI * 19;
+  const ringOffset = relaxedTimer
+    ? 0
+    : ringCircumference * (1 - Math.max(0, Math.min(1, timeLeft / maxSeconds)));
 
   const sortedAnswersForReveal = useMemo(() => {
     if (!currentPrompt) return { gems: [], plankton: null as AnswerEntity | null };
@@ -581,32 +707,27 @@ export default function KrillionGameEngine({
     };
   }, [currentPrompt, isReverse]);
 
+  const depthMetricLabel = isReverse
+    ? `+${cameraDepth.toLocaleString()}ft`
+    : `-${cameraDepth.toLocaleString()}m`;
+
   const challengeUrl = useMemo(() => {
     const token = encodeKrillionChallenge({
       p: deck.map((p) => p.id),
       m: mode,
       s: outcomes.length > 0 ? totalScore : undefined,
-      d: outcomes.length > 0 ? progressStatus.metric : undefined,
+      d: outcomes.length > 0 ? depthMetricLabel : undefined,
     });
     const basePath =
       typeof window !== "undefined"
         ? `${window.location.origin}${window.location.pathname}`
         : `https://anykrillion.com${isReverse ? "/noillirk/" : "/"}`;
     return `${basePath}?challenge=${token}`;
-  }, [deck, isReverse, mode, outcomes.length, progressStatus.metric, totalScore]);
+  }, [deck, depthMetricLabel, isReverse, mode, outcomes.length, totalScore]);
 
   const emojiGrid = outcomes.map((o) => tierToEmoji(o.tier, isReverse)).join("");
-  const activeBoard = dailyBoards.find((b) => b.date === selectedDate);
-  const shareHeader =
-    mode === "daily" && activeBoard
-      ? `AnyKrillion Daily #${activeBoard.dayNumber}`
-      : isReverse
-        ? "AnyKrillion — Noillirk"
-        : `AnyKrillion — ${theme.vehicleLabel}`;
-
-  const summaryShareText = `Can you beat my ${totalScore}/700 (${progressStatus.metric}) on this exact 7-question board? ${emojiGrid}`;
-  const midGameShareText = `Play these exact 7 trivia questions with me on AnyKrillion!`;
-  const fullCopyGridText = `${shareHeader} · ${totalScore}/700 (${progressStatus.metric})\n${emojiGrid}\nChallenge my exact 7 questions:\n${challengeUrl}`;
+  const summaryShareText = `Can you beat my ${totalScore}/700 (${depthMetricLabel}) dive on this exact 7-question board? ${emojiGrid}`;
+  const fullCopyGridText = `${worldTitle.logoText} · ${totalScore}/700 (${depthMetricLabel})\n${emojiGrid}\nPlay my exact board:\n${challengeUrl}`;
 
   const handleQuickInviteCopy = async () => {
     try {
@@ -620,256 +741,525 @@ export default function KrillionGameEngine({
 
   return (
     <section
-      aria-label="Interactive Krillion Game Canvas"
-      className={`relative overflow-hidden rounded-3xl border p-4 sm:p-6 transition-colors duration-300 ${theme.shellClass}`}
+      ref={stageRef}
+      aria-label="Interactive Krillion Ocean Dive Canvas"
+      className={`relative overflow-hidden border-y border-cyan-400/25 sm:rounded-3xl sm:border ${
+        isFullscreen
+          ? "fixed inset-0 z-50 h-screen w-screen rounded-none border-0"
+          : "h-[calc(100vh-80px)] min-h-[560px] max-h-[820px] w-full"
+      }`}
     >
-      <ThemeBackdrop themeId={theme.id} />
-
-      <div className="relative z-10">
-        {/* Compact Arcade Header Strip */}
-        <div className="flex flex-wrap items-center justify-between gap-2.5 border-b border-white/10 pb-3.5">
-          {allowModeSwitch ? (
-            <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Game modes">
-              <button
-                type="button"
-                onClick={() => startFreshDive("unlimited", packFilter, selectedDate)}
-                className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-extrabold transition sm:text-sm ${
-                  mode === "unlimited"
-                    ? `${theme.accentBgClass} shadow-lg`
-                    : "border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10"
+      <OceanDiveScene
+        cameraDepth={cameraDepth}
+        isReverse={isReverse}
+        themeId={activeThemeId}
+        phase={phase}
+        sinkingPlaqueText={sinkingText}
+      >
+        {/* TOP HUD BAR: DEPTH + ROUND PIPS + SCORE + QUICK CONTROLS */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-start justify-between gap-2">
+            {/* Top Left: Depth / Altitude Plaque */}
+            <div className="rounded-xl border border-cyan-400/35 bg-[#041425]/85 px-3 py-1.5 backdrop-blur-sm sm:px-4 sm:py-2">
+              <span className="block font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                {isReverse ? "ALTITUDE" : "DEPTH"}
+              </span>
+              <span
+                className={`font-pixel text-base font-bold sm:text-xl ${
+                  isReverse ? "text-amber-300" : "text-cyan-300"
                 }`}
               >
-                <InfinityIcon className="h-3.5 w-3.5" />
-                Unlimited
+                {depthMetricLabel}
+              </span>
+            </div>
+
+            {/* Center: 7 Pixel Progress Blocks + Mode Switch */}
+            <div className="flex flex-col items-center gap-1.5">
+              <div className="flex items-center gap-1 rounded-xl border border-white/15 bg-[#041425]/80 px-2.5 py-1.5 backdrop-blur-sm">
+                {deck.map((item, idx) => {
+                  const out = outcomes[idx];
+                  const isCurrent = idx === qIndex && phase !== "splash" && phase !== "summary";
+                  let cls = "bg-slate-800 border-white/15";
+                  if (out) {
+                    cls =
+                      out.points >= 85
+                        ? "bg-amber-300 border-amber-200 shadow-[0_0_8px_rgba(252,211,77,0.8)]"
+                        : out.points > 0
+                          ? "bg-cyan-400 border-cyan-200"
+                          : "bg-rose-500 border-rose-300";
+                  } else if (isCurrent) {
+                    cls = "bg-rose-400 border-white animate-pulse";
+                  }
+                  return (
+                    <span
+                      key={item.id}
+                      className={`h-3 w-3 rounded-[2px] border transition sm:h-3.5 sm:w-3.5 ${cls}`}
+                    />
+                  );
+                })}
+              </div>
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-200/80 drop-shadow">
+                {phase === "splash"
+                  ? "READY TO DIVE"
+                  : phase === "summary"
+                    ? "EXPEDITION LOG"
+                    : `PROMPT ${qIndex + 1} OF ${deck.length}`}
+              </span>
+            </div>
+
+            {/* Top Right: Score + Mini Utility Controls */}
+            <div className="flex items-start gap-1.5">
+              <div className="rounded-xl border border-rose-400/35 bg-[#041425]/85 px-3 py-1.5 text-right backdrop-blur-sm sm:px-4 sm:py-2">
+                <span className="block font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  SCORE
+                </span>
+                <span className="font-pixel text-base font-bold text-rose-400 sm:text-xl">
+                  {displayScore}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Floating Mode & Audio Strip */}
+          <div className="flex flex-wrap items-center justify-between gap-1.5">
+            {allowModeSwitch ? (
+              <div className="flex flex-wrap items-center gap-1 rounded-xl border border-white/10 bg-[#041425]/75 p-1 backdrop-blur-sm">
+                {(
+                  [
+                    { id: "unlimited", label: "Unlimited ∞" },
+                    { id: "daily", label: "Daily (7)" },
+                    { id: "noillirk", label: "Noillirk ↑" },
+                  ] as const
+                ).map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => startFreshDive(m.id, packFilter, selectedDate, false)}
+                    className={`rounded-lg px-2.5 py-1 text-[11px] font-bold transition ${
+                      mode === m.id
+                        ? m.id === "noillirk"
+                          ? "bg-amber-400 text-slate-950"
+                          : "bg-cyan-400 text-slate-950"
+                        : "text-slate-300 hover:bg-white/10 hover:text-white"
+                    }`}
+                  >
+                    {m.label}
+                  </button>
+                ))}
+                {allowPackFilter && mode !== "daily" && (
+                  <select
+                    aria-label="Filter topic pack"
+                    value={packFilter}
+                    onChange={(e) =>
+                      startFreshDive(mode, e.target.value as PackId | "all", selectedDate, false)
+                    }
+                    className="rounded-lg bg-black/40 px-2 py-1 text-[11px] font-semibold text-cyan-200 outline-none"
+                  >
+                    <option value="all">All Packs</option>
+                    {PACK_METAS.map((pm) => (
+                      <option key={pm.id} value={pm.id}>
+                        {pm.shortName}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            ) : (
+              <span className="rounded-lg border border-white/15 bg-[#041425]/75 px-2.5 py-1 font-mono text-[11px] font-bold text-cyan-200 backdrop-blur-sm">
+                {theme.vehicleLabel} Mode
+              </span>
+            )}
+
+            <div className="flex items-center gap-1 rounded-xl border border-white/10 bg-[#041425]/75 p-1 backdrop-blur-sm">
+              <button
+                type="button"
+                onClick={() => setRelaxedTimer((v) => !v)}
+                className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold transition ${
+                  relaxedTimer
+                    ? "bg-emerald-500/25 text-emerald-200"
+                    : "text-slate-300 hover:bg-white/10"
+                }`}
+                title="Toggle Timed vs Relaxed"
+              >
+                {relaxedTimer ? <TimerOff className="h-3.5 w-3.5" /> : <Clock className="h-3.5 w-3.5" />}
+                <span className="hidden sm:inline">{relaxedTimer ? "Relaxed" : "Timed"}</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => startFreshDive("daily", packFilter, selectedDate)}
-                className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-extrabold transition sm:text-sm ${
-                  mode === "daily"
-                    ? "bg-emerald-400 text-slate-950 shadow-lg"
-                    : "border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10"
-                }`}
+                onClick={() => setSoundEnabled(!soundOn)}
+                aria-label={soundOn ? "Mute audio" : "Enable audio"}
+                className="rounded-lg p-1.5 text-slate-200 hover:bg-white/10"
+                title={soundOn ? "Sound On" : "Muted"}
               >
-                <Sparkles className="h-3.5 w-3.5" />
-                Daily (7)
+                {soundOn ? <Volume2 className="h-3.5 w-3.5 text-cyan-300" /> : <VolumeX className="h-3.5 w-3.5 text-slate-500" />}
               </button>
 
               <button
                 type="button"
-                onClick={() => startFreshDive("noillirk", packFilter, selectedDate)}
-                className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-extrabold transition sm:text-sm ${
-                  mode === "noillirk"
-                    ? "bg-amber-400 text-slate-950 shadow-lg"
-                    : "border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10"
-                }`}
+                onClick={handleQuickInviteCopy}
+                className="inline-flex items-center gap-1 rounded-lg bg-amber-400/20 px-2 py-1 text-[11px] font-bold text-amber-200 hover:bg-amber-400/30"
+                title="Copy Friend Challenge URL (same 7 questions)"
               >
-                <Wind className="h-3.5 w-3.5" />
-                Noillirk
+                {copiedQuickInvite ? <Check className="h-3.5 w-3.5" /> : <Swords className="h-3.5 w-3.5" />}
+                <span className="hidden sm:inline">{copiedQuickInvite ? "Copied!" : "PK Friend"}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => startFreshDive(mode, packFilter, selectedDate, false)}
+                className="rounded-lg p-1.5 text-slate-300 hover:bg-white/10"
+                title="Reset to surface"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleFullscreen}
+                aria-label="Toggle fullscreen game view"
+                className="rounded-lg p-1.5 text-slate-300 hover:bg-white/10"
+                title="Fullscreen"
+              >
+                {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
               </button>
             </div>
-          ) : (
-            <div className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-bold text-white sm:text-sm">
-              <ThemeVehicleIcon themeId={theme.id} />
-              <span>{theme.hudTitle}</span>
+          </div>
+
+          {friendChallenge && phase !== "summary" && (
+            <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-amber-400/60 bg-amber-500/20 px-3.5 py-1 text-xs font-bold text-amber-100 backdrop-blur-sm">
+              <Swords className="h-3.5 w-3.5 text-amber-300" />
+              <span>
+                Friend PK Challenge — Exact same 7 questions
+                {typeof friendChallenge.score === "number"
+                  ? ` · Beat ${friendChallenge.score} pts (${friendChallenge.metric ?? ""})`
+                  : ""}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* CENTER WORLD INTERACTION STAGE */}
+        <div className="my-auto flex flex-col items-center justify-center px-2">
+          {/* PHASE 1: ICONIC SURFACE SPLASH */}
+          {phase === "splash" && (
+            <div className="flex max-w-xl flex-col items-center text-center">
+              <h2 className="font-pixel text-4xl font-bold tracking-wider text-white drop-shadow-[3px_3px_0_#ff2a6d] sm:text-6xl">
+                {worldTitle.logoText}
+              </h2>
+              <p className="mt-2 font-mono text-xs font-bold tracking-wide text-cyan-200 drop-shadow sm:text-sm">
+                {worldTitle.subtitle}
+              </p>
+
+              <button
+                type="button"
+                onClick={beginRunFromSplash}
+                autoFocus
+                className="mt-8 inline-flex items-center gap-3 rounded-lg border-2 border-cyan-300 bg-[#041527]/95 px-8 py-4 font-pixel text-sm font-bold tracking-widest text-white shadow-[0_0_32px_rgba(34,211,238,0.45)] transition hover:scale-[1.03] hover:bg-cyan-400 hover:text-slate-950 sm:text-base"
+              >
+                {isReverse ? "▲ BEGIN ASCENT ▲" : "▼ BEGIN DESCENT ▼"}
+              </button>
+
+              {bestScore > 0 && (
+                <p className="mt-3 font-mono text-xs text-slate-300/80">
+                  Personal Best: <strong className="text-amber-300">{bestScore} pts</strong>
+                </p>
+              )}
             </div>
           )}
 
-          <div className="flex flex-wrap items-center gap-1.5">
-            {allowPackFilter && mode !== "daily" && (
-              <select
-                aria-label="Filter topic pack"
-                value={packFilter}
-                onChange={(e) => {
-                  const nextPack = e.target.value as PackId | "all";
-                  startFreshDive(mode, nextPack, selectedDate);
-                }}
-                className="rounded-xl border border-white/15 bg-black/40 px-2.5 py-1.5 text-xs font-semibold text-slate-100 outline-none focus:border-cyan-400"
-              >
-                <option value="all">All Packs</option>
-                {PACK_METAS.map((pm) => (
-                  <option key={pm.id} value={pm.id}>
-                    {pm.shortName}
-                  </option>
-                ))}
-              </select>
-            )}
-
-            <button
-              type="button"
-              onClick={() => setRelaxedTimer((v) => !v)}
-              className={`inline-flex items-center gap-1 rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition ${
-                relaxedTimer
-                  ? "border-emerald-400/50 bg-emerald-500/15 text-emerald-200"
-                  : "border-white/15 bg-white/5 text-slate-300 hover:bg-white/10"
-              }`}
-              title="Toggle timed vs relaxed practice"
-            >
-              {relaxedTimer ? <TimerOff className="h-3.5 w-3.5" /> : <Clock className="h-3.5 w-3.5" />}
-              <span className="hidden sm:inline">{relaxedTimer ? "Relaxed" : "Timed"}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setSoundEnabled(!soundOn)}
-              aria-label={soundOn ? "Mute sound effects" : "Enable sound effects"}
-              className={`inline-flex items-center gap-1 rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition ${
-                soundOn
-                  ? "border-cyan-400/35 bg-cyan-500/15 text-cyan-200"
-                  : "border-white/15 bg-white/5 text-slate-400"
-              }`}
-              title={soundOn ? "Sound On" : "Sound Muted"}
-            >
-              {soundOn ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
-            </button>
-
-            <button
-              type="button"
-              onClick={handleQuickInviteCopy}
-              className="inline-flex items-center gap-1 rounded-xl border border-amber-400/40 bg-amber-500/15 px-2.5 py-1.5 text-xs font-bold text-amber-200 transition hover:bg-amber-500/25"
-              title="Copy Challenge Link so a friend plays these exact 7 questions"
-            >
-              {copiedQuickInvite ? <Check className="h-3.5 w-3.5" /> : <Swords className="h-3.5 w-3.5" />}
-              <span className="hidden sm:inline">{copiedQuickInvite ? "Copied!" : "PK Friend"}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => startFreshDive(mode, packFilter, selectedDate)}
-              className="inline-flex items-center gap-1 rounded-xl border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-slate-200 transition hover:bg-white/10"
-              title="Start New 7-Question Run"
-            >
-              <RotateCcw className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">New</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Friend Challenge Banner when opened via ?challenge=... */}
-        {friendChallenge && (
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-amber-400/50 bg-amber-500/15 px-4 py-2.5 text-xs sm:text-sm">
-            <div className="flex items-center gap-2 font-bold text-amber-100">
-              <Swords className="h-4 w-4 text-amber-300" />
-              <span>
-                Friend Challenge Active! Playing the exact same 7 questions
-                {typeof friendChallenge.score === "number"
-                  ? ` — Target to beat: ${friendChallenge.score}/700 (${friendChallenge.metric ?? ""})`
-                  : "."}
-              </span>
+          {/* PHASE 2: BRISK COUNTDOWN TRANSITION */}
+          {phase === "countdown" && (
+            <div className="rounded-xl border border-cyan-400/40 bg-[#041425]/85 px-6 py-3 text-center backdrop-blur-sm">
+              <p className="font-mono text-sm font-bold tracking-wider text-cyan-200">
+                {isReverse ? "ascending" : "descending"} · the clock starts in{" "}
+                <span className="font-pixel text-lg text-amber-300">{countdownNum}</span>
+              </p>
             </div>
-            <span className="font-mono text-xs font-extrabold text-amber-300">
-              Your Score: {totalScore}
-            </span>
-          </div>
-        )}
+          )}
 
-        {/* Unified Interactive Progress + Vehicle Track + Countdown Strip */}
-        <div className="mt-3.5 rounded-2xl border border-white/10 bg-black/30 p-3.5">
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div className="flex items-center gap-2">
-              <ThemeVehicleIcon themeId={theme.id} />
-              <span className="font-extrabold text-white">
-                {progressStatus.label}
-              </span>
-              <span className={`font-mono font-black ${theme.accentTextClass}`}>
-                {progressStatus.metric}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="font-mono font-bold text-slate-200">
-                {totalScore} <span className="text-slate-400">/ 700 pts</span>
-              </span>
-              {roundPhase === "playing" && (
-                <span
-                  className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-0.5 font-mono text-sm font-black ${
-                    relaxedTimer
-                      ? "border-emerald-400/40 bg-emerald-500/15 text-emerald-200"
-                      : timeLeft <= 5
-                        ? "animate-pulse border-rose-400 bg-rose-500/25 text-rose-200"
-                        : "border-white/15 bg-white/5 text-white"
-                  }`}
-                >
-                  {relaxedTimer ? "∞" : `${timeLeft}s`}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Track Bar + Moving Vessel Marker */}
-          <div className="relative mt-2.5 h-2.5 w-full overflow-hidden rounded-full bg-white/10">
-            <div
-              className={`h-full rounded-full bg-gradient-to-r transition-all duration-500 ${theme.progressBarClass}`}
-              style={{ width: `${progressStatus.percent}%` }}
-            />
-          </div>
-
-          {/* 7-Question Rarity Pips */}
-          <div className="mt-2.5 flex items-center justify-between gap-1.5">
-            {deck.map((item, idx) => {
-              const out = outcomes[idx];
-              const isCurrent = idx === qIndex && roundPhase !== "summary";
-              let pipClass = "border-white/10 bg-white/5 text-slate-400";
-              if (out) {
-                pipClass =
-                  out.points >= 85
-                    ? "border-emerald-300/70 bg-emerald-400/25 text-emerald-100"
-                    : out.points > 0
-                      ? "border-cyan-400/50 bg-cyan-500/20 text-cyan-100"
-                      : "border-rose-400/50 bg-rose-500/20 text-rose-200";
-              } else if (isCurrent) {
-                pipClass = `border-white/50 bg-white/15 text-white ring-1 ring-white/30`;
-              }
-              return (
-                <div
-                  key={item.id}
-                  className={`flex flex-1 items-center justify-center gap-1 rounded-lg border py-1 font-mono text-[11px] font-bold transition ${pipClass}`}
-                >
-                  <span>Q{idx + 1}</span>
-                  {out && <span className="hidden sm:inline">·{out.points}</span>}
+          {/* PHASE 3: ACTIVE PROMPT QUESTION + FLOATING CONTROL BOX */}
+          {phase === "playing" && currentPrompt && (
+            <div className="flex w-full max-w-2xl flex-col items-center gap-4">
+              {/* Centered Retro Framed Prompt Card */}
+              <div className="w-full rounded-xl border-2 border-cyan-400/50 bg-[#041322]/90 p-5 text-center shadow-[0_18px_50px_rgba(0,0,0,0.6)] backdrop-blur-sm sm:p-7">
+                <div className="flex items-center justify-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest text-rose-400">
+                  <span>PROMPT {qIndex + 1} OF {deck.length}</span>
+                  <span className="text-slate-500">·</span>
+                  <span className="text-cyan-300">{currentPrompt.categoryLabel}</span>
                 </div>
-              );
-            })}
-          </div>
-        </div>
 
-        {/* Main Centerpiece Play / Reveal / Summary Stage */}
-        {roundPhase === "summary" ? (
-          <div className="mt-4 space-y-4">
-            <div className={`rounded-2xl border p-5 sm:p-6 ${theme.cardClass}`}>
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-200">
-                    <Award className="h-4 w-4" />
-                    {progressStatus.label}
+                <p className="mt-3 text-xl font-black leading-snug text-white sm:text-3xl">
+                  {currentPrompt.question}
+                </p>
+
+                <p className="mt-2 font-mono text-[11px] tracking-wider text-slate-400">
+                  {isReverse
+                    ? "▲ obvious answers fly higher ▲"
+                    : "▼ rarer answers sink deeper ▼"}
+                </p>
+
+                {revealedHints > 0 && (
+                  <div className="mt-3 space-y-1 rounded-lg border border-cyan-500/30 bg-black/45 px-3 py-2 text-left">
+                    {currentPrompt.hints.slice(0, revealedHints).map((hint, idx) => (
+                      <p key={hint} className="font-mono text-xs text-cyan-100">
+                        <strong className="text-amber-300">HINT {idx + 1}:</strong> {hint}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Non-spoiler Typo / Canonical Match Assist Pill */}
+              {suggestions.length > 0 && (
+                <div className="flex flex-wrap items-center justify-center gap-2 rounded-lg border border-emerald-400/40 bg-[#041425]/90 px-3 py-1.5 backdrop-blur-sm">
+                  <span className="font-mono text-[11px] font-bold text-emerald-300">
+                    Match &rarr;
                   </span>
-                  <h3 className="mt-2.5 text-3xl font-black text-white">
-                    Final Score:{" "}
-                    <span className={theme.accentTextClass}>{totalScore}</span> / 700
-                  </h3>
-                  <p className="mt-1 text-sm text-slate-300">
-                    Rank Reached: <strong className="text-white">{progressStatus.metric}</strong>{" "}
-                    {bestScore > 0 && `· Personal Best: ${Math.max(bestScore, totalScore)}`}
-                  </p>
-
-                  {friendChallenge && typeof friendChallenge.score === "number" && (
-                    <div
-                      className={`mt-2.5 inline-flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-extrabold ${
-                        totalScore > friendChallenge.score
-                          ? "border-emerald-400/50 bg-emerald-500/20 text-emerald-200"
-                          : totalScore === friendChallenge.score
-                            ? "border-amber-400/50 bg-amber-500/20 text-amber-200"
-                            : "border-rose-400/50 bg-rose-500/20 text-rose-200"
-                      }`}
+                  {suggestions.map((name) => (
+                    <button
+                      key={name}
+                      type="button"
+                      onClick={() => submitCandidate(name)}
+                      className="rounded border border-emerald-400/50 bg-emerald-500/20 px-2.5 py-0.5 font-mono text-xs font-bold text-emerald-100 hover:bg-emerald-500/35"
                     >
-                      <Swords className="h-4 w-4" />
+                      {name}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {feedbackError && (
+                <p
+                  className="rounded-lg border border-rose-400/50 bg-rose-950/80 px-3 py-1 font-mono text-xs font-bold text-rose-200"
+                  role="alert"
+                >
+                  {feedbackError}
+                </p>
+              )}
+
+              {/* Bottom Arcade Input Bar with Radial Countdown Ring */}
+              <form
+                onSubmit={handleFormSubmit}
+                className="flex w-full items-center gap-2.5 rounded-xl border-2 border-cyan-400/55 bg-[#03101d]/95 p-2 shadow-[0_0_30px_rgba(34,211,238,0.25)] backdrop-blur-md"
+              >
+                {/* Radial SVG Countdown Ring */}
+                <div className="relative flex h-11 w-11 shrink-0 items-center justify-center">
+                  <svg className="h-11 w-11 -rotate-90" viewBox="0 0 44 44">
+                    <circle
+                      cx="22"
+                      cy="22"
+                      r="19"
+                      fill="none"
+                      stroke="rgba(255,255,255,0.12)"
+                      strokeWidth="3.5"
+                    />
+                    <circle
+                      cx="22"
+                      cy="22"
+                      r="19"
+                      fill="none"
+                      stroke={
+                        relaxedTimer
+                          ? "#34d399"
+                          : timeLeft <= 5
+                            ? "#f43f5e"
+                            : isReverse
+                              ? "#fbbf24"
+                              : "#22d3ee"
+                      }
+                      strokeWidth="3.5"
+                      strokeLinecap="round"
+                      strokeDasharray={ringCircumference}
+                      strokeDashoffset={ringOffset}
+                      className="transition-[stroke-dashoffset] duration-1000 linear"
+                    />
+                  </svg>
+                  <span
+                    className={`absolute font-mono text-xs font-black ${
+                      relaxedTimer
+                        ? "text-emerald-300"
+                        : timeLeft <= 5
+                          ? "text-rose-400 animate-pulse"
+                          : "text-cyan-200"
+                    }`}
+                  >
+                    {relaxedTimer ? "∞" : timeLeft}
+                  </span>
+                </div>
+
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => {
+                    setInputValue(e.target.value);
+                    if (feedbackError) setFeedbackError(null);
+                  }}
+                  placeholder={
+                    isReverse
+                      ? "type the most obvious answer..."
+                      : "type one answer..."
+                  }
+                  autoComplete="off"
+                  spellCheck={false}
+                  className="min-w-0 flex-1 bg-transparent px-2 py-2 font-mono text-base font-bold text-white placeholder-slate-500 outline-none sm:text-lg"
+                />
+
+                <button
+                  type="submit"
+                  className="shrink-0 rounded-lg bg-[#ff2a6d] px-4 py-2.5 font-pixel text-xs font-bold tracking-wider text-white shadow-[0_0_18px_rgba(255,42,109,0.55)] transition hover:brightness-110 active:scale-95 sm:px-5"
+                >
+                  {isReverse ? "ASCEND" : "DIVE"}
+                </button>
+              </form>
+
+              {/* Compact Hints + Skip Row */}
+              <div className="flex w-full items-center justify-between px-1 font-mono text-[11px] text-slate-300/80">
+                <button
+                  type="button"
+                  disabled={revealedHints >= 3}
+                  onClick={handleRevealHint}
+                  className="inline-flex items-center gap-1 rounded-md border border-white/15 bg-black/40 px-2.5 py-1 font-bold hover:bg-black/60 disabled:opacity-40"
+                >
+                  <HelpCircle className="h-3 w-3 text-cyan-300" />
+                  {revealedHints >= 3
+                    ? "All 3 Hints Open"
+                    : `Hint ${revealedHints + 1}/3${relaxedTimer ? "" : " (-4s)"}`}
+                </button>
+                <span className="hidden sm:inline text-slate-400">
+                  {currentPrompt.answers.length} verified entries
+                </span>
+                <button
+                  type="button"
+                  onClick={handleSkip}
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 hover:text-white"
+                >
+                  <SkipForward className="h-3 w-3" />
+                  Skip
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* PHASE 5: FLOATING IN-WATER TIER CREATURE REVEAL */}
+          {phase === "revealed" && currentOutcome && currentPrompt && (
+            <div className="flex w-full max-w-xl flex-col items-center text-center">
+              {(() => {
+                const { title, tagline, titleColorClass } = getCreatureTitleAndTagline(
+                  currentOutcome,
+                  isReverse,
+                );
+                const sinkDistance = currentOutcome.points * 10;
+                return (
+                  <>
+                    <TierCreatureSprite
+                      points={currentOutcome.points}
+                      isMiss={!currentOutcome.matchedAnswer || currentOutcome.points <= 0}
+                      themeId={activeThemeId}
+                    />
+                    <h3 className={`mt-2 font-pixel text-2xl font-bold tracking-wider sm:text-4xl ${titleColorClass}`}>
+                      {title}
+                    </h3>
+                    {currentOutcome.matchedAnswer && (
+                      <p className="mt-1.5 font-mono text-base font-bold text-white sm:text-lg">
+                        &ldquo;{currentOutcome.matchedAnswer.name}&rdquo;
+                      </p>
+                    )}
+                    <p className="mt-1 font-mono text-sm font-bold text-amber-300">
+                      +{currentOutcome.points} PTS · {isReverse ? "climb" : "sink"}{" "}
+                      {sinkDistance.toLocaleString()}
+                      {isReverse ? "ft" : "m"}
+                    </p>
+                    <p className="mt-1 max-w-md font-mono text-xs text-slate-300">
+                      {currentOutcome.matchedAnswer
+                        ? `${tagline} — ${currentOutcome.matchedAnswer.fact}`
+                        : tagline}
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={handleNext}
+                      autoFocus
+                      className="mt-5 inline-flex items-center gap-2 rounded-lg border-2 border-cyan-300 bg-[#041527]/95 px-7 py-3 font-pixel text-xs font-bold tracking-widest text-white shadow-[0_0_24px_rgba(34,211,238,0.4)] transition hover:bg-cyan-400 hover:text-slate-950 sm:text-sm"
+                    >
+                      {qIndex + 1 >= deck.length
+                        ? "VIEW EXPEDITION SUMMARY"
+                        : isReverse
+                          ? "ASCEND ▲"
+                          : "DESCEND ▼"}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowCompareDrawer((v) => !v)}
+                      className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] font-bold text-cyan-200/85 underline decoration-cyan-500/40 underline-offset-4 hover:text-white"
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                      {showCompareDrawer
+                        ? "Hide Round Best Answers"
+                        : "Peek 100-Pt Gems & Plankton Trap"}
+                    </button>
+
+                    {showCompareDrawer && (
+                      <div className="mt-3 grid w-full gap-2.5 rounded-xl border border-cyan-400/30 bg-[#03101d]/92 p-3.5 text-left backdrop-blur-md sm:grid-cols-2">
+                        <div>
+                          <span className="font-mono text-[10px] font-bold uppercase text-emerald-300">
+                            {isReverse ? "Top Mainstream Picks" : "100-Pt Rare Gems"}
+                          </span>
+                          <ul className="mt-1 space-y-1 font-mono text-xs text-slate-200">
+                            {sortedAnswersForReveal.gems.map((g) => (
+                              <li key={g.name} className="flex justify-between gap-2">
+                                <span className="truncate">{g.name}</span>
+                                <strong className="text-emerald-300">
+                                  +{computeRoundPoints(g.rarity, mode)}
+                                </strong>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        {sortedAnswersForReveal.plankton && (
+                          <div>
+                            <span className="font-mono text-[10px] font-bold uppercase text-rose-300">
+                              {isReverse ? "Deep Cut Penalty" : "Plankton Trap"}
+                            </span>
+                            <p className="mt-1 flex justify-between font-mono text-xs text-rose-200">
+                              <span className="truncate">{sortedAnswersForReveal.plankton.name}</span>
+                              <strong>
+                                +{computeRoundPoints(sortedAnswersForReveal.plankton.rarity, mode)}
+                              </strong>
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
+          )}
+
+          {/* PHASE 6: EXPEDITION SUMMARY LOG IN THE ABYSS */}
+          {phase === "summary" && (
+            <div className="w-full max-w-2xl space-y-3 overflow-y-auto max-h-[70vh] rounded-2xl border-2 border-cyan-400/40 bg-[#041222]/92 p-4 backdrop-blur-md sm:p-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-cyan-300">
+                    {isReverse ? "FLIGHT COMPLETE" : "EXPEDITION COMPLETE"}
+                  </span>
+                  <h3 className="font-pixel text-2xl font-bold text-white sm:text-3xl">
+                    SCORE: <span className="text-amber-300">{totalScore}</span> / 700 ·{" "}
+                    <span className="text-cyan-300">{depthMetricLabel}</span>
+                  </h3>
+                  {friendChallenge && typeof friendChallenge.score === "number" && (
+                    <p className="mt-1 inline-flex items-center gap-1.5 rounded-lg bg-amber-400/20 px-2.5 py-1 font-mono text-xs font-bold text-amber-200">
+                      <Swords className="h-3.5 w-3.5" />
                       {totalScore > friendChallenge.score
-                        ? `Victory! You beat your friend's ${friendChallenge.score} pts by +${totalScore - friendChallenge.score}!`
+                        ? `VICTORY! Beat friend's ${friendChallenge.score} pts!`
                         : totalScore === friendChallenge.score
-                          ? `Deadlocked Tie at ${totalScore} pts! Play a rematch!`
-                          : `Your friend won (${friendChallenge.score} vs ${totalScore}). Send back a new deck!`}
-                    </div>
+                          ? `TIE at ${totalScore} pts!`
+                          : `Friend scored ${friendChallenge.score} pts — try another deck!`}
+                    </p>
                   )}
                 </div>
 
@@ -880,34 +1270,32 @@ export default function KrillionGameEngine({
                       mode === "daily" ? "unlimited" : mode,
                       packFilter,
                       selectedDate,
+                      true,
                     )
                   }
-                  className={`inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r px-5 py-3 text-sm font-extrabold transition hover:brightness-110 ${theme.ctaClass}`}
+                  className="rounded-lg border-2 border-cyan-300 bg-cyan-400 px-4 py-2 font-pixel text-xs font-bold text-slate-950 hover:brightness-110"
                 >
-                  <InfinityIcon className="h-4 w-4" />
-                  Play New 7-Round Run
+                  DIVE AGAIN ▼
                 </button>
               </div>
 
-              <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              {/* Round Plaques */}
+              <div className="grid gap-1.5 sm:grid-cols-2">
                 {outcomes.map((item, idx) => (
                   <div
                     key={item.prompt.id}
-                    className="flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2.5"
+                    className="flex items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 font-mono text-xs"
                   >
-                    <div className="min-w-0">
-                      <p className={`text-[11px] font-bold ${theme.accentTextClass}`}>
-                        Q{idx + 1} · {item.prompt.categoryLabel}
-                      </p>
-                      <p className="truncate text-xs font-semibold text-white">
-                        {item.matchedAnswer ? item.matchedAnswer.name : item.tier}
-                      </p>
-                    </div>
+                    <span className="truncate text-slate-200">
+                      Q{idx + 1}: {item.matchedAnswer ? item.matchedAnswer.name : item.tier}
+                    </span>
                     <span
-                      className={`shrink-0 rounded-lg border px-2 py-0.5 font-mono text-xs font-bold ${
-                        item.matchedAnswer
-                          ? getTierBadgeClasses(item.matchedAnswer.tier, isReverse)
-                          : "border-rose-500/40 bg-rose-500/15 text-rose-200"
+                      className={`shrink-0 font-bold ${
+                        item.points >= 85
+                          ? "text-amber-300"
+                          : item.points > 0
+                            ? "text-cyan-300"
+                            : "text-rose-400"
                       }`}
                     >
                       +{item.points}
@@ -915,344 +1303,51 @@ export default function KrillionGameEngine({
                   </div>
                 ))}
               </div>
-            </div>
 
-            <ShareChallengePanel
-              variant="summary"
-              accent={theme.shareAccent}
-              challengeUrl={challengeUrl}
-              shareText={summaryShareText}
-              shareTitle={`${shareHeader}: I scored ${totalScore}/700! Beat me on this exact board`}
-              fullResultCopyText={fullCopyGridText}
-            />
+              <ShareChallengePanel
+                variant="summary"
+                accent={isReverse ? "amber" : "cyan"}
+                challengeUrl={challengeUrl}
+                shareText={summaryShareText}
+                shareTitle={`${worldTitle.logoText}: ${totalScore}/700 (${depthMetricLabel})`}
+                fullResultCopyText={fullCopyGridText}
+              />
 
-            <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-300">
-              <span>Try another distinct arena:</span>
-              <div className="flex flex-wrap gap-1.5">
-                <Link
-                  href="/noillirk/"
-                  className="rounded-lg border border-amber-400/35 bg-amber-500/10 px-2.5 py-1 font-bold text-amber-200 hover:bg-amber-500/20"
-                >
-                  Noillirk (Balloon)
-                </Link>
-                <Link
-                  href="/footbillion/"
-                  className="rounded-lg border border-emerald-400/35 bg-emerald-500/10 px-2.5 py-1 font-bold text-emerald-200 hover:bg-emerald-500/20"
-                >
-                  Footbillion (Pitch)
-                </Link>
-                <Link
-                  href="/nba-krillion/"
-                  className="rounded-lg border border-orange-400/35 bg-orange-500/10 px-2.5 py-1 font-bold text-orange-200 hover:bg-orange-500/20"
-                >
-                  NBA Krillion (Court)
-                </Link>
-                <Link
-                  href="/pokekrillion/"
-                  className="rounded-lg border border-rose-400/35 bg-rose-500/10 px-2.5 py-1 font-bold text-rose-200 hover:bg-rose-500/20"
-                >
-                  Pokekrillion (Dex)
-                </Link>
-                <Link
-                  href="/poople-unlimited/"
-                  className="rounded-lg border border-cyan-400/35 bg-cyan-500/10 px-2.5 py-1 font-bold text-cyan-200 hover:bg-cyan-500/20"
-                >
-                  Poople Word Ladder
-                </Link>
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1 font-mono text-[11px] text-slate-400">
+                <span>Switch Worlds:</span>
+                <div className="flex flex-wrap gap-1.5">
+                  <Link href="/noillirk/" className="text-amber-300 hover:underline">
+                    Noillirk
+                  </Link>
+                  <Link href="/footbillion/" className="text-emerald-300 hover:underline">
+                    Footbillion
+                  </Link>
+                  <Link href="/nba-krillion/" className="text-orange-300 hover:underline">
+                    NBA Krillion
+                  </Link>
+                  <Link href="/pokekrillion/" className="text-rose-300 hover:underline">
+                    Pokekrillion
+                  </Link>
+                  <Link href="/poople-unlimited/" className="text-cyan-300 hover:underline">
+                    Poople
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-        ) : currentPrompt ? (
-          <div className="mt-4 space-y-3">
-            <div className={`relative overflow-hidden rounded-2xl border p-5 sm:p-6 ${theme.cardClass}`}>
-              {/* Countdown Drain Line at Top of Question Card */}
-              {roundPhase === "playing" && !relaxedTimer && (
-                <div className="absolute inset-x-0 top-0 h-1 bg-white/10">
-                  <div
-                    className={`h-full transition-all duration-1000 ease-linear ${
-                      timeLeft <= 5 ? "bg-rose-400" : `bg-gradient-to-r ${theme.progressBarClass}`
-                    }`}
-                    style={{ width: `${timerPercent}%` }}
-                  />
-                </div>
-              )}
+          )}
+        </div>
 
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className={`inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-bold ${theme.accentTextClass}`}>
-                  <Anchor className="h-3.5 w-3.5" />
-                  Q{qIndex + 1}/7 · {currentPrompt.categoryLabel}
-                </span>
-
-                <span className="text-xs font-semibold text-slate-300">
-                  Goal:{" "}
-                  <strong className={theme.accentTextClass}>
-                    {theme.goalInstruction}
-                  </strong>
-                </span>
-              </div>
-
-              {/* Active Prompt Question */}
-              <p className="mt-4 text-xl font-black leading-snug text-white sm:text-3xl">
-                {currentPrompt.question}
-              </p>
-
-              {/* Super-concise 3-step visual cue for first-time players on Q1 */}
-              {qIndex === 0 && roundPhase === "playing" && !inputValue && revealedHints === 0 && (
-                <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-slate-300">
-                  <span className="rounded-full bg-white/5 px-2.5 py-0.5">
-                    1. {theme.ruleSteps[0]}
-                  </span>
-                  <span className="text-slate-500">→</span>
-                  <span className="rounded-full bg-white/5 px-2.5 py-0.5">
-                    2. {theme.ruleSteps[1]}
-                  </span>
-                  <span className="text-slate-500">→</span>
-                  <span className={`rounded-full bg-white/5 px-2.5 py-0.5 ${theme.accentTextClass}`}>
-                    3. {theme.ruleSteps[2]}
-                  </span>
-                </div>
-              )}
-
-              {roundPhase === "playing" ? (
-                <div className="mt-5">
-                  <form onSubmit={handleFormSubmit} className="flex flex-col gap-3 sm:flex-row">
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={inputValue}
-                      onChange={(e) => {
-                        setInputValue(e.target.value);
-                        if (feedbackError) setFeedbackError(null);
-                      }}
-                      placeholder={
-                        isReverse
-                          ? "Type the #1 most obvious mainstream answer..."
-                          : "Type your answer here (typo-check active)..."
-                      }
-                      autoComplete="off"
-                      spellCheck={false}
-                      className={`flex-1 rounded-2xl border px-4 py-3.5 text-base font-bold text-white placeholder-slate-500 outline-none transition sm:text-lg ${theme.inputClass}`}
-                    />
-                    <button
-                      type="submit"
-                      className={`inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r px-6 py-3.5 text-sm font-black shadow-lg transition hover:brightness-110 active:scale-[0.98] ${theme.ctaClass}`}
-                    >
-                      {theme.ctaLabel}
-                      <ArrowRight className="h-4 w-4" />
-                    </button>
-                  </form>
-
-                  {/* Non-spoiler Spell Assist Pills */}
-                  {suggestions.length > 0 && (
-                    <div className="mt-3 flex flex-wrap items-center gap-2">
-                      <span className="text-xs font-semibold text-emerald-300">
-                        Quick match:
-                      </span>
-                      {suggestions.map((name) => (
-                        <button
-                          key={name}
-                          type="button"
-                          onClick={() => submitCandidate(name)}
-                          className="rounded-lg border border-emerald-400/40 bg-emerald-500/15 px-2.5 py-1 text-xs font-bold text-emerald-100 transition hover:bg-emerald-500/25"
-                        >
-                          {name}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {feedbackError && (
-                    <p className="mt-2.5 text-xs font-semibold text-rose-300" role="alert">
-                      {feedbackError}
-                    </p>
-                  )}
-
-                  {/* Hints + Skip Bar */}
-                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3.5">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <button
-                        type="button"
-                        disabled={revealedHints >= 3}
-                        onClick={handleRevealHint}
-                        className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-bold text-slate-200 transition hover:bg-white/10 disabled:opacity-40"
-                      >
-                        <HelpCircle className={`h-3.5 w-3.5 ${theme.accentTextClass}`} />
-                        {revealedHints >= 3
-                          ? "All 3 Hints Open"
-                          : `Hint ${revealedHints + 1}/3${relaxedTimer ? "" : " (-4s)"}`}
-                      </button>
-                      <span className="text-xs text-slate-400">
-                        {currentPrompt.answers.length} valid answers in DB
-                      </span>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={handleSkip}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400 transition hover:text-white"
-                    >
-                      <SkipForward className="h-3.5 w-3.5" />
-                      Skip
-                    </button>
-                  </div>
-
-                  {revealedHints > 0 && (
-                    <div className="mt-3 space-y-1.5 rounded-xl border border-cyan-500/25 bg-black/35 p-3">
-                      {currentPrompt.hints.slice(0, revealedHints).map((hint, idx) => (
-                        <p key={hint} className="text-xs leading-relaxed text-cyan-100">
-                          <strong className={theme.accentTextClass}>Hint {idx + 1}:</strong> {hint}
-                        </p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                currentOutcome && (
-                  <div className="mt-5 space-y-4">
-                    {/* Animated Rarity Meter Reveal Card */}
-                    <div
-                      className={`rounded-2xl border p-4 ${
-                        currentOutcome.matchedAnswer
-                          ? "border-emerald-400/45 bg-emerald-950/35"
-                          : "border-rose-400/45 bg-rose-950/30"
-                      }`}
-                    >
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-xl font-black text-white">
-                              {currentOutcome.matchedAnswer
-                                ? currentOutcome.matchedAnswer.name
-                                : currentOutcome.tier}
-                            </span>
-                            {currentOutcome.matchedAnswer && (
-                              <span
-                                className={`rounded-full border px-2.5 py-0.5 text-xs font-bold ${getTierBadgeClasses(
-                                  currentOutcome.tier as RarityTier,
-                                  isReverse,
-                                )}`}
-                              >
-                                {currentOutcome.tier}
-                              </span>
-                            )}
-                            {currentOutcome.typoAssisted && (
-                              <span className="rounded-full border border-cyan-400/40 bg-cyan-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-cyan-200">
-                                ✓ Typo-Matched ({currentOutcome.submittedText})
-                              </span>
-                            )}
-                          </div>
-                          <p className="mt-1.5 text-sm text-slate-200">
-                            {currentOutcome.matchedAnswer
-                              ? currentOutcome.matchedAnswer.fact
-                              : "Time ran out or prompt was skipped — inspect the best rare answers below!"}
-                          </p>
-                        </div>
-
-                        <div className="text-right">
-                          <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                            Round Score
-                          </span>
-                          <span
-                            className={`font-mono text-3xl font-black ${
-                              currentOutcome.points >= 70
-                                ? "text-emerald-300"
-                                : currentOutcome.points > 0
-                                  ? theme.accentTextClass
-                                  : "text-rose-300"
-                            }`}
-                          >
-                            +{currentOutcome.points}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Rarity Gauge Bar */}
-                      <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-black/40">
-                        <div
-                          className={`h-full rounded-full bg-gradient-to-r transition-all duration-700 ${theme.progressBarClass}`}
-                          style={{ width: `${Math.max(4, currentOutcome.points)}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Top Gems vs Plankton Trap Comparison */}
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-xl border border-emerald-400/25 bg-emerald-950/20 p-3.5">
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-300">
-                          {isReverse
-                            ? "Top Mainstream Crowd Picks (85–100 pts)"
-                            : "Best Rare Picks (One in a Krillion)"}
-                        </span>
-                        <ul className="mt-2 space-y-1.5 text-xs">
-                          {sortedAnswersForReveal.gems.map((ans) => (
-                            <li
-                              key={ans.name}
-                              className="flex items-center justify-between gap-2 text-slate-100"
-                            >
-                              <span className="font-semibold">{ans.name}</span>
-                              <span className="font-mono font-bold text-emerald-300">
-                                {computeRoundPoints(ans.rarity, mode)} pts
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      {sortedAnswersForReveal.plankton && (
-                        <div className="rounded-xl border border-rose-400/25 bg-rose-950/20 p-3.5">
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-rose-300">
-                            {isReverse
-                              ? "Overthinking Penalty Trap"
-                              : "Biggest Plankton Trap"}
-                          </span>
-                          <div className="mt-2 flex items-center justify-between text-xs text-slate-100">
-                            <span className="font-semibold">
-                              {sortedAnswersForReveal.plankton.name}
-                            </span>
-                            <span className="font-mono font-bold text-rose-300">
-                              {computeRoundPoints(sortedAnswersForReveal.plankton.rarity, mode)} pts
-                            </span>
-                          </div>
-                          <p className="mt-1.5 text-[11px] text-slate-400">
-                            {sortedAnswersForReveal.plankton.fact}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-                      <span className="inline-flex items-center gap-1 text-xs text-slate-400">
-                        <Copy className="h-3.5 w-3.5" />
-                        Source: {currentPrompt.sourceAttribution}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={handleNext}
-                        autoFocus
-                        className={`inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r px-6 py-3 text-sm font-black shadow-lg transition hover:brightness-110 ${theme.ctaClass}`}
-                      >
-                        {qIndex + 1 >= deck.length
-                          ? "View Final Results & Share"
-                          : `Next Question (${qIndex + 2}/${deck.length})`}
-                        <ArrowRight className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
-
-            {/* Compact Mid-Game Friend Challenge Strip */}
-            <ShareChallengePanel
-              variant="inline"
-              accent={theme.shareAccent}
-              challengeUrl={challengeUrl}
-              shareText={midGameShareText}
-              shareTitle={`${shareHeader} — Friend Challenge`}
-            />
-          </div>
-        ) : null}
-      </div>
+        {/* BOTTOM WORLD FOOTER STATUS */}
+        <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] font-semibold uppercase tracking-widest text-slate-300/65">
+          <span>
+            {mode === "daily" ? "DAILY BOARD" : "ENDLESS MODE"} ·{" "}
+            {packFilter === "all" ? "ALL TOPICS" : `${packFilter.toUpperCase()} PACK`}
+          </span>
+          <a href="#game-guide" className="text-cyan-300/80 hover:text-white">
+            RULES &amp; RARITY GUIDE ↓
+          </a>
+        </div>
+      </OceanDiveScene>
     </section>
   );
 }

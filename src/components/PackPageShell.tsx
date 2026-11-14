@@ -93,39 +93,11 @@ export default function PackPageShell({
 
       <Navbar />
 
-      <main className="mx-auto max-w-6xl px-4 pb-16 pt-3 sm:pt-4">
-        {/* Ultra-compact Above-the-Fold Title Bar — keeps game front-and-center */}
-        <header className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="text-lg font-black tracking-tight text-white sm:text-2xl">
-              {h1}
-            </h1>
-            <span className="hidden rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-cyan-300 md:inline-flex">
-              {badgeText}
-            </span>
-          </div>
+      <main className="mx-auto max-w-6xl pb-16 sm:px-4 sm:pt-3">
+        {/* Semantic Page Heading (kept out of human player's visual path above the game canvas) */}
+        <h1 className="sr-only">{h1}</h1>
 
-          <div className="flex flex-wrap items-center gap-2.5 text-xs font-semibold">
-            {quickLinks.slice(0, 2).map((ql) => (
-              <Link
-                key={ql.href}
-                href={ql.href}
-                className="text-cyan-300 underline decoration-cyan-500/40 underline-offset-4 hover:text-white"
-              >
-                {ql.label}
-              </Link>
-            ))}
-            <a
-              href="#game-guide"
-              className="inline-flex items-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-slate-300 transition hover:text-white"
-            >
-              <BookOpen className="h-3.5 w-3.5 text-cyan-300" />
-              Rules &amp; Guide ↓
-            </a>
-          </div>
-        </header>
-
-        {/* Primary Viewport Focus: Interactive Game Stage */}
+        {/* Full-Viewport Interactive Ocean / Arena Dive World */}
         <section aria-labelledby="engine-heading" className="mb-14">
           <h2 id="engine-heading" className="sr-only">
             {engineSectionTitle}
@@ -141,17 +113,22 @@ export default function PackPageShell({
           />
         </section>
 
-        {/* Below-the-Fold Reference Section: Rules, Rarity Scale, Guides & Crawler Context */}
+        {/* Below-the-Fold Game Guide & Reference Knowledge (for players who scroll down & search crawlers) */}
         <div
           id="game-guide"
-          className="space-y-8 border-t border-white/10 pt-10"
+          className="space-y-8 border-t border-white/10 px-4 pt-10 sm:px-0"
         >
           <div className="rounded-2xl border border-white/10 bg-[#051629]/65 p-5 sm:p-6">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-cyan-300">
-                <BookOpen className="h-4 w-4" />
-                Game Guide, Rules &amp; Dataset Methodology
-              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-cyan-300">
+                  <BookOpen className="h-4 w-4" />
+                  {h1}
+                </span>
+                <span className="rounded-full border border-cyan-400/25 bg-cyan-500/10 px-2.5 py-0.5 text-[11px] font-bold text-cyan-200">
+                  {badgeText}
+                </span>
+              </div>
               {quickLinks.length > 0 && (
                 <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-cyan-300">
                   {quickLinks.map((ql) => (

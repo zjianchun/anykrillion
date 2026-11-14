@@ -10,6 +10,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-pixel: var(--font-pixel);
 }
 
 body {
@@ -23,6 +24,21 @@ body {
 
 code, kbd, samp, pre {
   font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.font-pixel {
+  font-family: var(--font-pixel), var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* CRT Retro Scanline Overlay */
+.ak-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0px,
+    rgba(255, 255, 255, 0) 2px,
+    rgba(0, 8, 20, 0.22) 3px,
+    rgba(0, 8, 20, 0.22) 4px
+  );
 }
 
 /* Precision Ocean Scrollbar */
@@ -41,7 +57,34 @@ code, kbd, samp, pre {
   background: #0891b2;
 }
 
-/* Immersive Game Stage Animations */
+/* World & Sprite Keyframes */
+@keyframes ak-bob {
+  0%, 100% {
+    transform: translateY(0px) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(1.5deg);
+  }
+}
+
+@keyframes ak-krill-swim {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-7px) translateX(4px) rotate(3deg);
+  }
+}
+
+@keyframes ak-plaque-sink {
+  0%, 100% {
+    transform: rotate(-7deg) translateY(0px);
+  }
+  50% {
+    transform: rotate(-4deg) translateY(5px);
+  }
+}
+
 @keyframes ak-float-slow {
   0%, 100% {
     transform: translateY(0px);
@@ -51,45 +94,18 @@ code, kbd, samp, pre {
   }
 }
 
-@keyframes ak-bubble-rise {
-  0% {
-    transform: translateY(20px) scale(0.8);
-    opacity: 0;
-  }
-  25% {
-    opacity: 0.45;
-  }
-  100% {
-    transform: translateY(-140px) scale(1.15);
-    opacity: 0;
-  }
+.animate-ak-bob {
+  animation: ak-bob 3.2s ease-in-out infinite;
 }
 
-@keyframes ak-radar-sweep {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+.animate-ak-krill {
+  animation: ak-krill-swim 2.8s ease-in-out infinite;
+}
+
+.animate-ak-plaque {
+  animation: ak-plaque-sink 0.8s ease-in-out infinite;
 }
 
 .animate-ak-float {
   animation: ak-float-slow 3.6s ease-in-out infinite;
-}
-
-.animate-ak-bubble-1 {
-  animation: ak-bubble-rise 7s linear infinite;
-}
-
-.animate-ak-bubble-2 {
-  animation: ak-bubble-rise 9.5s linear 2s infinite;
-}
-
-.animate-ak-bubble-3 {
-  animation: ak-bubble-rise 8s linear 4.5s infinite;
-}
-
-.animate-ak-radar {
-  animation: ak-radar-sweep 10s linear infinite;
 }

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Silkscreen } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
@@ -10,6 +10,12 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const pixelFont = Silkscreen({
+  weight: ["400", "700"],
+  variable: "--font-pixel",
   subsets: ["latin"],
 });
 
@@ -102,7 +108,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen antialiased bg-[#03111f] text-slate-100 selection:bg-cyan-400 selection:text-slate-950`}
+        className={`${geistSans.variable} ${geistMono.variable} ${pixelFont.variable} min-h-screen antialiased bg-[#03111f] text-slate-100 selection:bg-cyan-400 selection:text-slate-950`}
       >
         {children}
       </body>

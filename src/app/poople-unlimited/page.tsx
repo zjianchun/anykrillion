@@ -119,29 +119,9 @@ export default function PoopleUnlimitedPage() {
       <Navbar />
 
       <main className="mx-auto max-w-6xl px-4 pb-16 pt-3 sm:pt-4">
-        <header className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="text-lg font-black tracking-tight text-white sm:text-2xl">
-              Poople Unlimited: Free 4-Letter Word Ladder Game, Daily Answer &amp; Solver
-            </h1>
-            <span className="hidden rounded-full border border-amber-400/30 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-amber-300 md:inline-flex">
-              Daily #{TODAY_POOPLE.dayNumber} · BFS Solver
-            </span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2.5 text-xs font-semibold">
-            <Link href="/" className="text-cyan-300 underline decoration-cyan-500/40 underline-offset-4 hover:text-white">
-              Krillion Unlimited
-            </Link>
-            <a
-              href="#poople-guide"
-              className="inline-flex items-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-slate-300 transition hover:text-white"
-            >
-              <BookOpen className="h-3.5 w-3.5 text-amber-300" />
-              Answer &amp; Guide ↓
-            </a>
-          </div>
-        </header>
+        <h1 className="sr-only">
+          Poople Unlimited: Free 4-Letter Word Ladder Game, Daily Answer &amp; Solver
+        </h1>
 
         <section aria-labelledby="poople-engine-heading" className="mb-14">
           <h2 id="poople-engine-heading" className="sr-only">
@@ -155,9 +135,12 @@ export default function PoopleUnlimitedPage() {
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-cyan-300">
               <span className="inline-flex items-center gap-1.5 font-extrabold uppercase tracking-wider text-amber-300">
                 <BookOpen className="h-4 w-4" />
-                About Poople Unlimited, Daily Hints &amp; Solver
+                Poople Unlimited: Free 4-Letter Word Ladder Game &amp; Daily #{TODAY_POOPLE.dayNumber} Solver
               </span>
               <div className="flex flex-wrap gap-3">
+                <Link href="/" className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white">
+                  Krillion Unlimited
+                </Link>
                 <Link href="/games-like-krillion/" className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white">
                   All Games Like Krillion
                 </Link>

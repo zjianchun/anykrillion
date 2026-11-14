@@ -115,3 +115,19 @@ export function playVictorySound(): void {
   playTone(783.99, 0.14, "triangle", 0.09, 0.18);
   playTone(1046.5, 0.38, "sine", 0.1, 0.27);
 }
+
+/** Underwater plunge & bubbly sonar sweep during physical plaque descent */
+export function playDiveDescentSound(durationMs: number, points: number, isReverse = false): void {
+  if (!isSoundEnabled()) return;
+  const durationSec = Math.max(0.6, durationMs / 1000);
+  // Initial plunge splash / balloon burst
+  playTone(isReverse ? 280 : 420, 0.22, "sine", 0.08, 0, isReverse ? 620 : 180);
+
+  // Rhythmic bubbles / ascent whooshes spaced along the glide
+  const steps = points >= 70 ? 6 : points >= 30 ? 4 : 2;
+  for (let i = 1; i <= steps; i++) {
+    const t = (i / (steps + 1)) * (durationSec * 0.82);
+    const freq = isReverse ? 340 + i * 75 : Math.max(150, 520 - i * 45);
+    playTone(freq, 0.09, "sine", 0.045, t, freq * (isReverse ? 1.18 : 0.82));
+  }
+}
