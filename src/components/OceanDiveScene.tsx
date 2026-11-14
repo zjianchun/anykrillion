@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, type ReactNode } from "react";
-import { PixelBoatSprite, ThemeHeroSprite } from "@/components/PixelSprites";
+import { PixelBalloonSprite, PixelBoatSprite, ThemeHeroSprite } from "@/components/PixelSprites";
 import type { ThemeVariant } from "@/lib/gameThemes";
 
 interface OceanDiveSceneProps {
@@ -393,13 +393,43 @@ export default function OceanDiveScene({
         </div>
       )}
 
-      {/* Meadow Launch Pad at bottom when Noillirk starts near 0 ft */}
+      {/* Meadow Launch Pad, Clouds, Sun & Mascot Balloon when Noillirk is near launch altitude */}
+      {isReverse && cameraDepth < 650 && (
+        <div
+          className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
+          style={{ opacity: Math.max(0, 1 - cameraDepth / 650) }}
+          aria-hidden="true"
+        >
+          {/* Warm Sky Sun */}
+          <div
+            className="absolute right-[12%] top-[12%] h-14 w-14 rounded-full bg-[#fef08a] shadow-[0_0_45px_rgba(254,240,138,0.9)] sm:h-20 sm:w-20"
+            style={{ transform: `translateY(${Math.round(cameraDepth * 0.25)}px)` }}
+          />
+          {/* Drifting Pixel Clouds scrolling downward as balloon climbs */}
+          <div
+            className="animate-ak-float absolute left-[10%] top-[18%] h-7 w-28 rounded-sm bg-white/90 shadow-[12px_-10px_0_0_rgba(255,255,255,0.9),28px_-4px_0_0_rgba(255,255,255,0.85)]"
+            style={{ transform: `translateY(${Math.round(cameraDepth * 0.55)}px)` }}
+          />
+          <div
+            className="animate-ak-float absolute right-[18%] top-[30%] h-6 w-24 rounded-sm bg-white/85 shadow-[-10px_-8px_0_0_rgba(255,255,255,0.85)]"
+            style={{ transform: `translateY(${Math.round(cameraDepth * 0.7)}px)` }}
+          />
+          <div
+            className="animate-ak-float hidden sm:block absolute left-[58%] top-[54%] h-6 w-24 rounded-sm bg-white/75 shadow-[10px_-8px_0_0_rgba(255,255,255,0.8)]"
+            style={{ transform: `translateY(${Math.round(cameraDepth * 0.85)}px)` }}
+          />
+        </div>
+      )}
+
       {isReverse && horizonTopPx < 900 && (
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-20 bg-gradient-to-t from-emerald-950/90 via-emerald-900/40 to-transparent"
-          style={{ opacity: Math.max(0, 1 - cameraDepth / 180) }}
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-10"
+          style={{ opacity: Math.max(0, 1 - cameraDepth / 220) }}
           aria-hidden="true"
-        />
+        >
+          <div className="h-6 w-full bg-gradient-to-t from-emerald-600/55 via-emerald-700/25 to-transparent" />
+          <div className="h-14 w-full border-t-2 border-emerald-400/45 bg-gradient-to-t from-emerald-950/95 via-emerald-900/80 to-emerald-800/60" />
+        </div>
       )}
 
       {/* 3. Scrolling World Depth Milestone Lines & Labels */}
@@ -412,7 +442,7 @@ export default function OceanDiveScene({
           return (
             <div
               key={`${marker.depth}-${marker.label}`}
-              className="absolute inset-x-4 flex items-center justify-between border-t border-dashed border-white/15 pt-1 text-[10px] font-mono tracking-wider sm:inset-x-10 sm:text-xs"
+              className="absolute left-4 right-16 flex items-center justify-between border-t border-dashed border-white/15 pt-1 text-[10px] font-mono tracking-wider sm:left-8 sm:right-20 sm:text-xs"
               style={{ top: `${yPx}px` }}
             >
               <span className={marker.accent ?? "text-cyan-200/70"}>{marker.label}</span>
@@ -465,7 +495,22 @@ export default function OceanDiveScene({
         </div>
       </div>
 
-      {/* 5. Protagonist Sprite (Swimming alongside during question, or Riding Weighted Plaque during dive!) */}
+      {/* 5. Protagonist Sprite (Splash preview, Swimming alongside during question, or Riding Weighted Plaque during dive!) */}
+      {phase === "splash" && (
+        <div
+          className={`pointer-events-none absolute left-5 z-20 sm:left-12 ${
+            isReverse ? "top-[16%] sm:top-[28%] animate-ak-bob" : "top-[185px] animate-ak-krill"
+          }`}
+          aria-hidden="true"
+        >
+          {isReverse ? (
+            <PixelBalloonSprite glow className="h-16 w-14 sm:h-20 sm:w-16" />
+          ) : (
+            <ThemeHeroSprite themeId={themeId} glow className="h-12 w-12 sm:h-14 sm:w-14" />
+          )}
+        </div>
+      )}
+
       {phase === "playing" && (
         <div
           className="pointer-events-none absolute left-3 z-20 sm:left-8 animate-ak-krill"

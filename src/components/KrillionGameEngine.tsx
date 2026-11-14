@@ -439,10 +439,10 @@ export default function KrillionGameEngine({
     playLockInSound();
     setPhase("countdown");
     setCountdownNum(2);
-    // Smooth glide from horizon 0m -> initial underwater view 45m
+    // Smooth glide from horizon 0m -> initial underwater view 72m
     const startT = performance.now();
     const startD = cameraDepth;
-    const targetD = 45;
+    const targetD = 72;
     const glide = (now: number) => {
       const p = Math.min(1, (now - startT) / 850);
       const eased = 1 - Math.pow(1 - p, 3);
@@ -480,7 +480,7 @@ export default function KrillionGameEngine({
       setFriendChallenge(null);
 
       if (autoEnterGame) {
-        setCameraDepth(45);
+        setCameraDepth(72);
         setPhase("countdown");
         setCountdownNum(2);
       } else {
@@ -512,8 +512,8 @@ export default function KrillionGameEngine({
       const updated = [...outcomes, outcome];
       const prevScore = outcomes.reduce((acc, r) => acc + r.points, 0);
       const nextScore = prevScore + outcome.points;
-      const prevDepth = Math.max(45, prevScore * 10);
-      const targetDepth = Math.max(45, nextScore * 10);
+      const prevDepth = Math.max(72, prevScore * 10);
+      const targetDepth = Math.max(72, nextScore * 10);
 
       setOutcomes(updated);
       setFeedbackError(null);
