@@ -23,7 +23,7 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import OceanDiveScene from "@/components/OceanDiveScene";
+import OceanDiveScene, { getZoneNarrative } from "@/components/OceanDiveScene";
 import { TierCreatureSprite } from "@/components/PixelSprites";
 import ShareChallengePanel from "@/components/ShareChallengePanel";
 import type {
@@ -272,6 +272,19 @@ export default function KrillionGameEngine({
   const [friendChallenge, setFriendChallenge] = useState<ActiveFriendChallenge | null>(null);
   const [copiedQuickInvite, setCopiedQuickInvite] = useState<boolean>(false);
   const [showCompareDrawer, setShowCompareDrawer] = useState<boolean>(false);
+  const [typingPulse, setTypingPulse] = useState<number>(0);
+  const [discoveredLogs, setDiscoveredLogs] = useState<string[]>([]);
+  const [latestDiscovery, setLatestDiscovery] = useState<string | null>(null);
+  const discoveryTimerRef = useRef<number>(0);
+
+  const handleDiscovery = useCallback((label: string) => {
+    setDiscoveredLogs((prev) => (prev.includes(label) ? prev : [...prev, label]));
+    setLatestDiscovery(label);
+    window.clearTimeout(discoveryTimerRef.current);
+    discoveryTimerRef.current = window.setTimeout(() => {
+      setLatestDiscovery(null);
+    }, 4500);
+  }, []);
 
   const promptById = useMemo(() => {
     const map = new Map<string, TriviaPrompt>();
@@ -613,7 +626,10 @@ export default function KrillionGameEngine({
   }, [currentPrompt, phase, relaxedTimer, timeLeft, triggerSinkAndReveal]);
 
   useEffect(() => {
-    return () => window.cancelAnimationFrame(animRafRef.current);
+    return () => {
+      window.cancelAnimationFrame(animRafRef.current);
+      window.clearTimeout(discoveryTimerRef.current);
+    };
   }, []);
 
   const suggestions = useMemo(() => {
@@ -711,6 +727,11 @@ export default function KrillionGameEngine({
     ? `+${cameraDepth.toLocaleString()}ft`
     : `-${cameraDepth.toLocaleString()}m`;
 
+  const zoneStory = useMemo(
+    () => getZoneNarrative(cameraDepth, isReverse),
+    [cameraDepth, isReverse],
+  );
+
   const challengeUrl = useMemo(() => {
     const token = encodeKrillionChallenge({
       p: deck.map((p) => p.id),
@@ -755,13 +776,17 @@ export default function KrillionGameEngine({
         themeId={activeThemeId}
         phase={phase}
         sinkingPlaqueText={sinkingText}
+        typingPulse={typingPulse}
+        score={displayScore}
+        urgentTimer={phase === "playing" && !relaxedTimer && timeLeft <= 5}
+        onDiscovery={handleDiscovery}
       >
         {/* TOP HUD BAR: DEPTH + ROUND PIPS + SCORE + QUICK CONTROLS */}
         <div className="flex flex-col gap-2">
           <div className="flex items-start justify-between gap-2">
             {/* Top Left: Depth / Altitude Plaque */}
-            <div className="rounded-xl border border-cyan-400/35 bg-[#041425]/85 px-3 py-1.5 backdrop-blur-sm sm:px-4 sm:py-2">
-              <span className="block font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <div className="pointer-events-auto rounded-xl border border-cyan-400/30 bg-[#041425]/45 px-3 py-1.5 backdrop-blur-[2px] sm:px-4 sm:py-2">
+              <span className="block font-mono text-[10px] font-bold uppercase tracking-widest text-slate-300/80">
                 {isReverse ? "ALTITUDE" : "DEPTH"}
               </span>
               <span
@@ -775,11 +800,11 @@ export default function KrillionGameEngine({
 
             {/* Center: 7 Pixel Progress Blocks + Mode Switch */}
             <div className="flex flex-col items-center gap-1.5">
-              <div className="flex items-center gap-1 rounded-xl border border-white/15 bg-[#041425]/80 px-2.5 py-1.5 backdrop-blur-sm">
+              <div className="pointer-events-auto flex items-center gap-1 rounded-xl border border-white/15 bg-[#041425]/45 px-2.5 py-1.5 backdrop-blur-[2px]">
                 {deck.map((item, idx) => {
                   const out = outcomes[idx];
                   const isCurrent = idx === qIndex && phase !== "splash" && phase !== "summary";
-                  let cls = "bg-slate-800 border-white/15";
+                  let cls = "bg-slate-800/80 border-white/15";
                   if (out) {
                     cls =
                       out.points >= 85
@@ -798,7 +823,7 @@ export default function KrillionGameEngine({
                   );
                 })}
               </div>
-              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-200/80 drop-shadow">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-100/85 drop-shadow">
                 {phase === "splash"
                   ? "READY TO DIVE"
                   : phase === "summary"
@@ -809,8 +834,8 @@ export default function KrillionGameEngine({
 
             {/* Top Right: Score + Mini Utility Controls */}
             <div className="flex items-start gap-1.5">
-              <div className="rounded-xl border border-rose-400/35 bg-[#041425]/85 px-3 py-1.5 text-right backdrop-blur-sm sm:px-4 sm:py-2">
-                <span className="block font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              <div className="pointer-events-auto rounded-xl border border-rose-400/30 bg-[#041425]/45 px-3 py-1.5 text-right backdrop-blur-[2px] sm:px-4 sm:py-2">
+                <span className="block font-mono text-[10px] font-bold uppercase tracking-widest text-slate-300/80">
                   SCORE
                 </span>
                 <span className="font-pixel text-base font-bold text-rose-400 sm:text-xl">
@@ -823,7 +848,7 @@ export default function KrillionGameEngine({
           {/* Floating Mode & Audio Strip */}
           <div className="flex flex-wrap items-center justify-between gap-1.5">
             {allowModeSwitch ? (
-              <div className="flex flex-wrap items-center gap-1 rounded-xl border border-white/10 bg-[#041425]/75 p-1 backdrop-blur-sm">
+              <div className="pointer-events-auto flex flex-wrap items-center gap-1 rounded-xl border border-white/10 bg-[#041425]/45 p-1 backdrop-blur-[2px]">
                 {(
                   [
                     { id: "unlimited", label: "Unlimited ∞" },
@@ -840,7 +865,7 @@ export default function KrillionGameEngine({
                         ? m.id === "noillirk"
                           ? "bg-amber-400 text-slate-950"
                           : "bg-cyan-400 text-slate-950"
-                        : "text-slate-300 hover:bg-white/10 hover:text-white"
+                        : "text-slate-200 hover:bg-white/10 hover:text-white"
                     }`}
                   >
                     {m.label}
@@ -865,12 +890,12 @@ export default function KrillionGameEngine({
                 )}
               </div>
             ) : (
-              <span className="rounded-lg border border-white/15 bg-[#041425]/75 px-2.5 py-1 font-mono text-[11px] font-bold text-cyan-200 backdrop-blur-sm">
+              <span className="pointer-events-auto rounded-lg border border-white/15 bg-[#041425]/45 px-2.5 py-1 font-mono text-[11px] font-bold text-cyan-200 backdrop-blur-[2px]">
                 {theme.vehicleLabel} Mode
               </span>
             )}
 
-            <div className="flex items-center gap-1 rounded-xl border border-white/10 bg-[#041425]/75 p-1 backdrop-blur-sm">
+            <div className="pointer-events-auto flex items-center gap-1 rounded-xl border border-white/10 bg-[#041425]/45 p-1 backdrop-blur-[2px]">
               <button
                 type="button"
                 onClick={() => setRelaxedTimer((v) => !v)}
@@ -955,7 +980,7 @@ export default function KrillionGameEngine({
                 type="button"
                 onClick={beginRunFromSplash}
                 autoFocus
-                className="mt-8 inline-flex items-center gap-3 rounded-lg border-2 border-cyan-300 bg-[#041527]/95 px-8 py-4 font-pixel text-sm font-bold tracking-widest text-white shadow-[0_0_32px_rgba(34,211,238,0.45)] transition hover:scale-[1.03] hover:bg-cyan-400 hover:text-slate-950 sm:text-base"
+                className="pointer-events-auto mt-8 inline-flex items-center gap-3 rounded-lg border-2 border-cyan-300 bg-[#041527]/55 px-8 py-4 font-pixel text-sm font-bold tracking-widest text-white backdrop-blur-sm shadow-[0_0_32px_rgba(34,211,238,0.45)] transition hover:scale-[1.03] hover:bg-cyan-400 hover:text-slate-950 sm:text-base"
               >
                 {isReverse ? "▲ BEGIN ASCENT ▲" : "▼ BEGIN DESCENT ▼"}
               </button>
@@ -970,37 +995,43 @@ export default function KrillionGameEngine({
 
           {/* PHASE 2: BRISK COUNTDOWN TRANSITION */}
           {phase === "countdown" && (
-            <div className="rounded-xl border border-cyan-400/40 bg-[#041425]/85 px-6 py-3 text-center backdrop-blur-sm">
-              <p className="font-mono text-sm font-bold tracking-wider text-cyan-200">
+            <div className="rounded-xl border border-cyan-400/40 bg-[#041425]/45 px-6 py-3 text-center backdrop-blur-[2px]">
+              <p className="font-mono text-sm font-bold tracking-wider text-cyan-200 drop-shadow">
                 {isReverse ? "ascending" : "descending"} · the clock starts in{" "}
                 <span className="font-pixel text-lg text-amber-300">{countdownNum}</span>
               </p>
             </div>
           )}
 
-          {/* PHASE 3: ACTIVE PROMPT QUESTION + FLOATING CONTROL BOX */}
+          {/* PHASE 3: ACTIVE PROMPT QUESTION + SHEER FLOATING COCKPIT HUD */}
           {phase === "playing" && currentPrompt && (
-            <div className="flex w-full max-w-2xl flex-col items-center gap-4">
-              {/* Centered Retro Framed Prompt Card */}
-              <div className="w-full rounded-xl border-2 border-cyan-400/50 bg-[#041322]/90 p-5 text-center shadow-[0_18px_50px_rgba(0,0,0,0.6)] backdrop-blur-sm sm:p-7">
-                <div className="flex items-center justify-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest text-rose-400">
-                  <span>PROMPT {qIndex + 1} OF {deck.length}</span>
-                  <span className="text-slate-500">·</span>
-                  <span className="text-cyan-300">{currentPrompt.categoryLabel}</span>
+            <div className="flex w-full max-w-2xl flex-col items-center gap-3.5">
+              {/* Ultra-sheer Cockpit HUD Prompt Card (background creatures & beams shine right through!) */}
+              <div className="relative w-full rounded-2xl border border-cyan-300/35 bg-[#03101f]/20 px-5 py-4 text-center shadow-[0_6px_28px_rgba(0,0,0,0.16)] backdrop-blur-[2px] sm:px-7 sm:py-5">
+                {/* HUD Corner Reticle Brackets */}
+                <span className="pointer-events-none absolute -left-[1px] -top-[1px] h-3 w-3 rounded-tl-xl border-l-2 border-t-2 border-cyan-300/85" aria-hidden="true" />
+                <span className="pointer-events-none absolute -right-[1px] -top-[1px] h-3 w-3 rounded-tr-xl border-r-2 border-t-2 border-cyan-300/85" aria-hidden="true" />
+                <span className="pointer-events-none absolute -bottom-[1px] -left-[1px] h-3 w-3 rounded-bl-xl border-b-2 border-l-2 border-cyan-300/85" aria-hidden="true" />
+                <span className="pointer-events-none absolute -bottom-[1px] -right-[1px] h-3 w-3 rounded-br-xl border-b-2 border-r-2 border-cyan-300/85" aria-hidden="true" />
+
+                <div className="flex items-center justify-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)]">
+                  <span className="text-rose-300">PROMPT {qIndex + 1} OF {deck.length}</span>
+                  <span className="text-slate-300/70">·</span>
+                  <span className="text-cyan-200">{currentPrompt.categoryLabel}</span>
                 </div>
 
-                <p className="mt-3 text-xl font-black leading-snug text-white sm:text-3xl">
+                <p className="mt-2.5 text-xl font-black leading-snug text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] [text-shadow:0_1px_3px_rgba(0,0,0,0.95)] sm:text-3xl">
                   {currentPrompt.question}
                 </p>
 
-                <p className="mt-2 font-mono text-[11px] tracking-wider text-slate-400">
+                <p className="mt-2 font-mono text-[11px] tracking-wider text-cyan-100/85 drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)]">
                   {isReverse
                     ? "▲ obvious answers fly higher ▲"
                     : "▼ rarer answers sink deeper ▼"}
                 </p>
 
                 {revealedHints > 0 && (
-                  <div className="mt-3 space-y-1 rounded-lg border border-cyan-500/30 bg-black/45 px-3 py-2 text-left">
+                  <div className="mt-3 space-y-1 rounded-lg border border-cyan-500/35 bg-[#020c18]/55 px-3 py-2 text-left backdrop-blur-sm">
                     {currentPrompt.hints.slice(0, revealedHints).map((hint, idx) => (
                       <p key={hint} className="font-mono text-xs text-cyan-100">
                         <strong className="text-amber-300">HINT {idx + 1}:</strong> {hint}
@@ -1012,7 +1043,7 @@ export default function KrillionGameEngine({
 
               {/* Non-spoiler Typo / Canonical Match Assist Pill */}
               {suggestions.length > 0 && (
-                <div className="flex flex-wrap items-center justify-center gap-2 rounded-lg border border-emerald-400/40 bg-[#041425]/90 px-3 py-1.5 backdrop-blur-sm">
+                <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-2 rounded-lg border border-emerald-400/45 bg-[#041425]/55 px-3 py-1.5 backdrop-blur-sm">
                   <span className="font-mono text-[11px] font-bold text-emerald-300">
                     Match &rarr;
                   </span>
@@ -1021,7 +1052,7 @@ export default function KrillionGameEngine({
                       key={name}
                       type="button"
                       onClick={() => submitCandidate(name)}
-                      className="rounded border border-emerald-400/50 bg-emerald-500/20 px-2.5 py-0.5 font-mono text-xs font-bold text-emerald-100 hover:bg-emerald-500/35"
+                      className="rounded border border-emerald-400/50 bg-emerald-500/25 px-2.5 py-0.5 font-mono text-xs font-bold text-emerald-100 hover:bg-emerald-500/40"
                     >
                       {name}
                     </button>
@@ -1031,17 +1062,17 @@ export default function KrillionGameEngine({
 
               {feedbackError && (
                 <p
-                  className="rounded-lg border border-rose-400/50 bg-rose-950/80 px-3 py-1 font-mono text-xs font-bold text-rose-200"
+                  className="pointer-events-auto rounded-lg border border-rose-400/50 bg-rose-950/65 px-3 py-1 font-mono text-xs font-bold text-rose-100 backdrop-blur-sm"
                   role="alert"
                 >
                   {feedbackError}
                 </p>
               )}
 
-              {/* Bottom Arcade Input Bar with Radial Countdown Ring */}
+              {/* Bottom Arcade Input Bar with Sheer Glass & Keystroke Sonar Pulse */}
               <form
                 onSubmit={handleFormSubmit}
-                className="flex w-full items-center gap-2.5 rounded-xl border-2 border-cyan-400/55 bg-[#03101d]/95 p-2 shadow-[0_0_30px_rgba(34,211,238,0.25)] backdrop-blur-md"
+                className="pointer-events-auto flex w-full items-center gap-2.5 rounded-xl border border-cyan-300/50 bg-[#03101d]/35 p-2 shadow-[0_0_24px_rgba(34,211,238,0.18)] backdrop-blur-[3px]"
               >
                 {/* Radial SVG Countdown Ring */}
                 <div className="relative flex h-11 w-11 shrink-0 items-center justify-center">
@@ -1094,6 +1125,7 @@ export default function KrillionGameEngine({
                   value={inputValue}
                   onChange={(e) => {
                     setInputValue(e.target.value);
+                    setTypingPulse((n) => n + 1);
                     if (feedbackError) setFeedbackError(null);
                   }}
                   placeholder={
@@ -1103,7 +1135,7 @@ export default function KrillionGameEngine({
                   }
                   autoComplete="off"
                   spellCheck={false}
-                  className="min-w-0 flex-1 bg-transparent px-2 py-2 font-mono text-base font-bold text-white placeholder-slate-500 outline-none sm:text-lg"
+                  className="min-w-0 flex-1 bg-transparent px-2 py-2 font-mono text-base font-bold text-white placeholder-slate-300/65 outline-none sm:text-lg"
                 />
 
                 <button
@@ -1115,25 +1147,25 @@ export default function KrillionGameEngine({
               </form>
 
               {/* Compact Hints + Skip Row */}
-              <div className="flex w-full items-center justify-between px-1 font-mono text-[11px] text-slate-300/80">
+              <div className="flex w-full items-center justify-between px-1 font-mono text-[11px] text-slate-200/85 drop-shadow">
                 <button
                   type="button"
                   disabled={revealedHints >= 3}
                   onClick={handleRevealHint}
-                  className="inline-flex items-center gap-1 rounded-md border border-white/15 bg-black/40 px-2.5 py-1 font-bold hover:bg-black/60 disabled:opacity-40"
+                  className="pointer-events-auto inline-flex items-center gap-1 rounded-md border border-white/20 bg-black/30 px-2.5 py-1 font-bold backdrop-blur-sm hover:bg-black/50 disabled:opacity-40"
                 >
                   <HelpCircle className="h-3 w-3 text-cyan-300" />
                   {revealedHints >= 3
                     ? "All 3 Hints Open"
                     : `Hint ${revealedHints + 1}/3${relaxedTimer ? "" : " (-4s)"}`}
                 </button>
-                <span className="hidden sm:inline text-slate-400">
+                <span className="hidden sm:inline text-slate-200/75">
                   {currentPrompt.answers.length} verified entries
                 </span>
                 <button
                   type="button"
                   onClick={handleSkip}
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 hover:text-white"
+                  className="pointer-events-auto inline-flex items-center gap-1 rounded-md px-2 py-1 hover:text-white"
                 >
                   <SkipForward className="h-3 w-3" />
                   Skip
@@ -1181,7 +1213,7 @@ export default function KrillionGameEngine({
                       type="button"
                       onClick={handleNext}
                       autoFocus
-                      className="mt-5 inline-flex items-center gap-2 rounded-lg border-2 border-cyan-300 bg-[#041527]/95 px-7 py-3 font-pixel text-xs font-bold tracking-widest text-white shadow-[0_0_24px_rgba(34,211,238,0.4)] transition hover:bg-cyan-400 hover:text-slate-950 sm:text-sm"
+                      className="pointer-events-auto mt-5 inline-flex items-center gap-2 rounded-lg border-2 border-cyan-300 bg-[#041527]/65 px-7 py-3 font-pixel text-xs font-bold tracking-widest text-white backdrop-blur-sm shadow-[0_0_24px_rgba(34,211,238,0.4)] transition hover:bg-cyan-400 hover:text-slate-950 sm:text-sm"
                     >
                       {qIndex + 1 >= deck.length
                         ? "VIEW EXPEDITION SUMMARY"
@@ -1193,7 +1225,7 @@ export default function KrillionGameEngine({
                     <button
                       type="button"
                       onClick={() => setShowCompareDrawer((v) => !v)}
-                      className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] font-bold text-cyan-200/85 underline decoration-cyan-500/40 underline-offset-4 hover:text-white"
+                      className="pointer-events-auto mt-3 inline-flex items-center gap-1 font-mono text-[11px] font-bold text-cyan-200/85 underline decoration-cyan-500/40 underline-offset-4 hover:text-white"
                     >
                       <Eye className="h-3.5 w-3.5" />
                       {showCompareDrawer
@@ -1202,7 +1234,7 @@ export default function KrillionGameEngine({
                     </button>
 
                     {showCompareDrawer && (
-                      <div className="mt-3 grid w-full gap-2.5 rounded-xl border border-cyan-400/30 bg-[#03101d]/92 p-3.5 text-left backdrop-blur-md sm:grid-cols-2">
+                      <div className="pointer-events-auto mt-3 grid w-full gap-2.5 rounded-xl border border-cyan-400/30 bg-[#03101d]/65 p-3.5 text-left backdrop-blur-md sm:grid-cols-2">
                         <div>
                           <span className="font-mono text-[10px] font-bold uppercase text-emerald-300">
                             {isReverse ? "Top Mainstream Picks" : "100-Pt Rare Gems"}
@@ -1241,7 +1273,7 @@ export default function KrillionGameEngine({
 
           {/* PHASE 6: EXPEDITION SUMMARY LOG IN THE ABYSS */}
           {phase === "summary" && (
-            <div className="w-full max-w-2xl space-y-3 overflow-y-auto max-h-[70vh] rounded-2xl border-2 border-cyan-400/40 bg-[#041222]/92 p-4 backdrop-blur-md sm:p-6">
+            <div className="pointer-events-auto w-full max-w-2xl space-y-3 overflow-y-auto max-h-[70vh] rounded-2xl border-2 border-cyan-400/40 bg-[#041222]/80 p-4 backdrop-blur-md sm:p-6">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-cyan-300">
@@ -1337,13 +1369,28 @@ export default function KrillionGameEngine({
           )}
         </div>
 
-        {/* BOTTOM WORLD FOOTER STATUS */}
-        <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] font-semibold uppercase tracking-widest text-slate-300/65">
-          <span>
-            {mode === "daily" ? "DAILY BOARD" : "ENDLESS MODE"} ·{" "}
-            {packFilter === "all" ? "ALL TOPICS" : `${packFilter.toUpperCase()} PACK`}
-          </span>
-          <a href="#game-guide" className="text-cyan-300/80 hover:text-white">
+        {/* BOTTOM WORLD FOOTER: SONAR NARRATIVE TICKER + DISCOVERY LOG */}
+        <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] font-semibold tracking-wider text-slate-200/80 drop-shadow">
+          {latestDiscovery ? (
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-amber-300/45 bg-amber-500/15 px-2 py-0.5 text-amber-200 backdrop-blur-sm">
+              <span>✦</span>
+              <span>{latestDiscovery}</span>
+            </span>
+          ) : (
+            <span className="truncate">
+              <strong className="text-cyan-300">{zoneStory.zone.toUpperCase()}</strong>
+              <span className="hidden sm:inline text-slate-300/75">
+                {" "}
+                · {zoneStory.hint} · {isReverse ? "Click sky to scan" : "Click water to ping sonar"}
+              </span>
+              {discoveredLogs.length > 0 && (
+                <span className="ml-1.5 text-amber-300">
+                  · {discoveredLogs.length} scanned
+                </span>
+              )}
+            </span>
+          )}
+          <a href="#game-guide" className="pointer-events-auto shrink-0 text-cyan-300/90 hover:text-white">
             RULES &amp; RARITY GUIDE ↓
           </a>
         </div>

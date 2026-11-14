@@ -131,3 +131,13 @@ export function playDiveDescentSound(durationMs: number, points: number, isRever
     playTone(freq, 0.09, "sine", 0.045, t, freq * (isReverse ? 1.18 : 0.82));
   }
 }
+
+/** Submarine sonar ping when scanning ocean/sky depths or clicking background specimens */
+export function playSonarPingSound(discovered = false): void {
+  if (!isSoundEnabled()) return;
+  playTone(1320, 0.16, "sine", 0.06, 0, 990);
+  playTone(1320, 0.14, "sine", 0.025, 0.15, 980);
+  if (discovered) {
+    playTone(1568, 0.22, "triangle", 0.075, 0.06, 1760);
+  }
+}
