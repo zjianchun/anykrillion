@@ -1,0 +1,24 @@
+# AnyKrillion — Krillion Unlimited & Rarity Trivia Hub
+
+> AnyKrillion (https://anykrillion.com/) is a free, instant-play online rarity trivia hub featuring Krillion Unlimited (endless rounds), Today's 7-Prompt Daily Dive, Noillirk reverse mode, and dedicated topic packs for Sports, Geography, Pokémon, Football, NBA, and Movies. Powered by verified open datasets with smart typo tolerance.
+
+## Core Pages & Game Modes
+- [Krillion Unlimited (Home)](https://anykrillion.com/): Play Krillion Unlimited free online with endless 7-question dives, Today's Daily Dive switcher, fuzzy typo tolerance, and 6-tier deep-sea rarity scoring.
+- [Krillion Answers Today](https://anykrillion.com/krillion-answers-today/): Daily spoiler-free progressive hints, common Plankton traps to avoid, and top One in a Krillion answers (85–100 pts) for Today's 7 prompts.
+- [Noillirk Unlimited](https://anykrillion.com/noillirk/): Reverse Krillion mode in a hot-air balloon ascent theme where the most obvious crowd-favorite answers score up to 100 points.
+- [Krillion Sports](https://anykrillion.com/krillion-sports/): Endless sports rarity trivia spanning Olympic hosts, tennis majors, F1, NFL, MLB, NHL, and global championships.
+- [Krillion Geography](https://anykrillion.com/krillion-geography/): World countries, capitals, borders, islands, and landmarks backed by Wikidata and ISO-3166 population rarity metrics.
+- [Krillion Archive](https://anykrillion.com/krillion-archive/): Replay past daily Krillion boards and inspect historical One in a Krillion answer sheets.
+
+## Specialized Vertical Packs
+- [Pokekrillion](https://anykrillion.com/pokekrillion/): Generation 1–9 Pokémon rarity trivia covering types, abilities, starters, legendaries, and pokedex tiers.
+- [Footbillion](https://anykrillion.com/footbillion/): 40-second football rarity trivia covering World Cup squads, Premier League clubs, Ballon d'Or winners, and European competitions.
+- [NBA Krillion](https://anykrillion.com/nba-krillion/): NBA champions, MVPs, No. 1 draft picks, scoring leaders, and franchise legends.
+- [Krillion Movies](https://anykrillion.com/krillion-movies/): Academy Award Best Picture winners, iconic directors, animated features, and cinema franchises.
+
+## Strategy Guides & Data Sources
+- [Strategy Guides](https://anykrillion.com/guides/): Rarity scoring math, avoiding Plankton traps, Noillirk inversion tactics, and geography/sports heuristics.
+- [Data Sources & Methodology](https://anykrillion.com/sources/): Full attribution and inverse-popularity quantile scoring formula across Wikidata, Fjelstul World Cup DB, PokéAPI, and cinema archives.
+
+## Disclaimer
+AnyKrillion.com is an independent fan-made trivia platform built on original curated and open-source datasets and is not affiliated with krillion.io.

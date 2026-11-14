@@ -1,0 +1,422 @@
+[
+  {
+    "dayNumber": 30,
+    "date": "2026-11-14",
+    "themeLabel": "Daily Dive #30 — Atlas, Champions & Deep Cinema",
+    "promptIds": [
+      "geo-landlocked-world",
+      "mov-james-bond",
+      "spt-masters-golf",
+      "fb-squad-argentina",
+      "nba-finals-mvps",
+      "poke-ghost-type",
+      "gen-official-languages"
+    ]
+  },
+  {
+    "dayNumber": 29,
+    "date": "2026-11-13",
+    "themeLabel": "Rookie to One in a Krillion",
+    "promptIds": [
+      "gen-world-currencies",
+      "geo-asia-countries",
+      "mov-auteur-four",
+      "spt-tennis-men",
+      "fb-squad-brazil",
+      "nba-season-mvps",
+      "poke-dragon-type"
+    ]
+  },
+  {
+    "dayNumber": 28,
+    "date": "2026-11-12",
+    "themeLabel": "Pokédex to Premier League",
+    "promptIds": [
+      "poke-kanto-fire-water",
+      "gen-marine-life",
+      "geo-europe-countries",
+      "mov-billion-dollar",
+      "spt-f1-drivers",
+      "fb-wc-goalkeepers",
+      "nba-champion-franchises"
+    ]
+  },
+  {
+    "dayNumber": 27,
+    "date": "2026-11-11",
+    "themeLabel": "Champions, Capitals & Cinema",
+    "promptIds": [
+      "nba-10x-allstars",
+      "poke-high-bst",
+      "gen-spices-herbs",
+      "geo-natural-wonders",
+      "mov-mcu",
+      "spt-world-series-teams",
+      "fb-wc-final-semifinal-scorers"
+    ]
+  },
+  {
+    "dayNumber": 26,
+    "date": "2026-11-10",
+    "themeLabel": "Midnight Zone Deep Cuts",
+    "promptIds": [
+      "fb-wc-hosts-winners",
+      "nba-lakers-icons",
+      "poke-dual-water",
+      "gen-nobel-laureates",
+      "geo-us-state-capitals",
+      "mov-pixar",
+      "spt-super-bowl-teams"
+    ]
+  },
+  {
+    "dayNumber": 25,
+    "date": "2026-11-09",
+    "themeLabel": "Coral Reef Trivia Challenge",
+    "promptIds": [
+      "spt-summer-olympics",
+      "fb-wc-nations",
+      "nba-finals-franchises",
+      "poke-gen9-paldea",
+      "gen-game-consoles",
+      "geo-us-nonlargest-capitals",
+      "mov-best-picture"
+    ]
+  },
+  {
+    "dayNumber": 24,
+    "date": "2026-11-08",
+    "themeLabel": "Box Office to World Cup",
+    "promptIds": [
+      "mov-horror-canon",
+      "spt-f1-host-nations",
+      "fb-ucl-managers",
+      "nba-colleges",
+      "poke-gen4-sinnoh",
+      "gen-gemstones",
+      "geo-us-ocean-states"
+    ]
+  },
+  {
+    "dayNumber": 23,
+    "date": "2026-11-07",
+    "themeLabel": "Global Atlas & Hardwood",
+    "promptIds": [
+      "geo-capitals-africa",
+      "mov-scifi-canon",
+      "spt-tour-de-france",
+      "fb-epl-golden-boot",
+      "nba-allstar-mvps",
+      "poke-hoenn-water-fighting",
+      "gen-high-peaks"
+    ]
+  },
+  {
+    "dayNumber": 22,
+    "date": "2026-11-06",
+    "themeLabel": "All-Star Rarity Gauntlet",
+    "promptIds": [
+      "gen-human-bones",
+      "geo-capitals-europe",
+      "mov-stephen-king",
+      "spt-heavyweight-boxers",
+      "fb-epl-champions",
+      "nba-25k-scorers",
+      "poke-baby"
+    ]
+  },
+  {
+    "dayNumber": 21,
+    "date": "2026-11-05",
+    "themeLabel": "Oceanic Trivia Sprint",
+    "promptIds": [
+      "poke-legendary-mythical",
+      "gen-nato-phonetic",
+      "geo-starts-with-s",
+      "mov-dreamworks",
+      "spt-paris-2024-sports",
+      "fb-ucl-winners",
+      "nba-champ-coaches"
+    ]
+  },
+  {
+    "dayNumber": 20,
+    "date": "2026-11-04",
+    "themeLabel": "Abyssal Trivia Marathon",
+    "promptIds": [
+      "nba-sixth-man",
+      "poke-ice-type",
+      "gen-orchestra-instruments",
+      "geo-southern-hemisphere",
+      "mov-animated-oscar",
+      "spt-olympic-4golds",
+      "fb-squad-germany"
+    ]
+  },
+  {
+    "dayNumber": 19,
+    "date": "2026-11-03",
+    "themeLabel": "Pelagic Classics: Pop & Pitch",
+    "promptIds": [
+      "fb-squad-england",
+      "nba-roy-winners",
+      "poke-psychic-type",
+      "gen-prog-languages",
+      "geo-small-countries",
+      "mov-best-actress",
+      "spt-f1-constructors"
+    ]
+  },
+  {
+    "dayNumber": 18,
+    "date": "2026-11-02",
+    "themeLabel": "Continental Drift & Stadiums",
+    "promptIds": [
+      "spt-masters-golf",
+      "fb-squad-argentina",
+      "nba-international-allstars",
+      "poke-fairy-type",
+      "gen-solar-moons",
+      "geo-island-nations",
+      "mov-james-bond"
+    ]
+  },
+  {
+    "dayNumber": 17,
+    "date": "2026-11-01",
+    "themeLabel": "Trench Explorer: World & Screen",
+    "promptIds": [
+      "mov-auteur-four",
+      "spt-tennis-men",
+      "fb-squad-brazil",
+      "nba-finals-mvps",
+      "poke-steel-type",
+      "gen-us-presidents",
+      "geo-landlocked-world"
+    ]
+  },
+  {
+    "dayNumber": 16,
+    "date": "2026-10-31",
+    "themeLabel": "Deep Sea Horizon: Mixed Vault",
+    "promptIds": [
+      "geo-americas-countries",
+      "mov-billion-dollar",
+      "spt-f1-drivers",
+      "fb-wc-goalkeepers",
+      "nba-number-one-picks",
+      "poke-dragon-type",
+      "gen-elements-special"
+    ]
+  },
+  {
+    "dayNumber": 15,
+    "date": "2026-10-30",
+    "themeLabel": "Deep Current Knowledge Test",
+    "promptIds": [
+      "gen-official-languages",
+      "geo-europe-countries",
+      "mov-mcu",
+      "spt-world-series-teams",
+      "fb-wc-final-semifinal-scorers",
+      "nba-champion-franchises",
+      "poke-kanto-grass-poison"
+    ]
+  },
+  {
+    "dayNumber": 14,
+    "date": "2026-10-29",
+    "themeLabel": "Rookie to One in a Krillion",
+    "promptIds": [
+      "poke-high-bst",
+      "gen-world-landmarks",
+      "geo-africa-countries",
+      "mov-pixar",
+      "spt-super-bowl-teams",
+      "fb-wc-hosts-winners",
+      "nba-all-franchises"
+    ]
+  },
+  {
+    "dayNumber": 13,
+    "date": "2026-10-28",
+    "themeLabel": "Pokédex to Premier League",
+    "promptIds": [
+      "nba-lakers-icons",
+      "poke-levitate-intimidate",
+      "gen-marine-life",
+      "geo-us-state-capitals",
+      "mov-best-picture",
+      "spt-summer-olympics",
+      "fb-wc-nations"
+    ]
+  },
+  {
+    "dayNumber": 12,
+    "date": "2026-10-27",
+    "themeLabel": "Champions, Capitals & Cinema",
+    "promptIds": [
+      "fb-ucl-managers",
+      "nba-celtics-icons",
+      "poke-gen9-paldea",
+      "gen-culinary-fruits",
+      "geo-us-landlocked-states",
+      "mov-horror-canon",
+      "spt-f1-host-nations"
+    ]
+  },
+  {
+    "dayNumber": 11,
+    "date": "2026-10-26",
+    "themeLabel": "Midnight Zone Deep Cuts",
+    "promptIds": [
+      "spt-tour-de-france",
+      "fb-epl-golden-boot",
+      "nba-colleges",
+      "poke-gen5-unova",
+      "gen-nobel-laureates",
+      "geo-us-ocean-states",
+      "mov-scifi-canon"
+    ]
+  },
+  {
+    "dayNumber": 10,
+    "date": "2026-10-25",
+    "themeLabel": "Coral Reef Trivia Challenge",
+    "promptIds": [
+      "mov-stephen-king",
+      "spt-heavyweight-boxers",
+      "fb-epl-champions",
+      "nba-high-school-pros",
+      "poke-hoenn-water-fighting",
+      "gen-board-games",
+      "geo-capitals-asia"
+    ]
+  },
+  {
+    "dayNumber": 9,
+    "date": "2026-10-24",
+    "themeLabel": "Box Office to World Cup",
+    "promptIds": [
+      "geo-capitals-europe",
+      "mov-dreamworks",
+      "spt-paris-2024-sports",
+      "fb-ucl-winners",
+      "nba-25k-scorers",
+      "poke-johto-bug-dark-fly",
+      "gen-gemstones"
+    ]
+  },
+  {
+    "dayNumber": 8,
+    "date": "2026-10-23",
+    "themeLabel": "Global Atlas & Hardwood",
+    "promptIds": [
+      "gen-dog-breeds",
+      "geo-starts-with-m-or-b",
+      "mov-animated-oscar",
+      "spt-olympic-4golds",
+      "fb-squad-germany",
+      "nba-host-cities",
+      "poke-legendary-mythical"
+    ]
+  },
+  {
+    "dayNumber": 7,
+    "date": "2026-10-22",
+    "themeLabel": "All-Star Rarity Gauntlet",
+    "promptIds": [
+      "poke-rock-ground-early",
+      "gen-human-bones",
+      "geo-southern-hemisphere",
+      "mov-best-actress",
+      "spt-f1-constructors",
+      "fb-squad-england",
+      "nba-sixth-man"
+    ]
+  },
+  {
+    "dayNumber": 6,
+    "date": "2026-10-21",
+    "themeLabel": "Oceanic Trivia Sprint",
+    "promptIds": [
+      "nba-scoring-champs",
+      "poke-psychic-type",
+      "gen-greek-roman-myth",
+      "geo-six-plus-borders",
+      "mov-james-bond",
+      "spt-masters-golf",
+      "fb-squad-argentina"
+    ]
+  },
+  {
+    "dayNumber": 5,
+    "date": "2026-10-20",
+    "themeLabel": "Abyssal Trivia Marathon",
+    "promptIds": [
+      "fb-squad-brazil",
+      "nba-international-allstars",
+      "poke-electric-type",
+      "gen-orchestra-instruments",
+      "geo-island-nations",
+      "mov-auteur-four",
+      "spt-tennis-men"
+    ]
+  },
+  {
+    "dayNumber": 4,
+    "date": "2026-10-19",
+    "themeLabel": "Pelagic Classics: Pop & Pitch",
+    "promptIds": [
+      "spt-f1-drivers",
+      "fb-wc-goalkeepers",
+      "nba-dpoy-winners",
+      "poke-steel-type",
+      "gen-shakespeare-plays",
+      "geo-landlocked-africa",
+      "mov-billion-dollar"
+    ]
+  },
+  {
+    "dayNumber": 3,
+    "date": "2026-10-18",
+    "themeLabel": "Continental Drift & Stadiums",
+    "promptIds": [
+      "mov-mcu",
+      "spt-world-series-teams",
+      "fb-wc-final-semifinal-scorers",
+      "nba-number-one-picks",
+      "poke-ghost-type",
+      "gen-solar-moons",
+      "geo-americas-countries"
+    ]
+  },
+  {
+    "dayNumber": 2,
+    "date": "2026-10-17",
+    "themeLabel": "Trench Explorer: World & Screen",
+    "promptIds": [
+      "geo-asia-countries",
+      "mov-pixar",
+      "spt-super-bowl-teams",
+      "fb-wc-hosts-winners",
+      "nba-season-mvps",
+      "poke-kanto-grass-poison",
+      "gen-elements-places-people"
+    ]
+  },
+  {
+    "dayNumber": 1,
+    "date": "2026-10-16",
+    "themeLabel": "Deep Sea Horizon: Mixed Vault",
+    "promptIds": [
+      "gen-elements-special",
+      "geo-africa-countries",
+      "mov-best-picture",
+      "spt-summer-olympics",
+      "fb-wc-nations",
+      "nba-all-franchises",
+      "poke-kanto-fire-water"
+    ]
+  }
+]
