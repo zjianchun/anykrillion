@@ -709,9 +709,9 @@ export default function KrillionGameEngine({
             </span>
           </div>
 
-          <h2 className="mt-4 text-xl font-extrabold leading-snug text-white sm:text-2xl">
+          <p className="mt-4 text-xl font-extrabold leading-snug text-white sm:text-2xl">
             {currentPrompt.question}
-          </h2>
+          </p>
 
           {roundPhase === "playing" ? (
             <div className="mt-5">

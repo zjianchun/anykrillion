@@ -45,6 +45,11 @@ export default function Footer() {
                   Krillion Archive (Past Days)
                 </Link>
               </li>
+              <li>
+                <Link href="/poople-unlimited/" className="hover:text-cyan-200">
+                  Poople Unlimited &amp; Solver
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -91,6 +96,11 @@ export default function Footer() {
               Guides &amp; Transparency
             </h3>
             <ul className="mt-3 space-y-2 text-sm">
+              <li>
+                <Link href="/games-like-krillion/" className="hover:text-cyan-200">
+                  Games Like Krillion (All 9 Modes)
+                </Link>
+              </li>
               <li>
                 <Link href="/guides/" className="hover:text-cyan-200">
                   Strategy Guides &amp; Scoring Math

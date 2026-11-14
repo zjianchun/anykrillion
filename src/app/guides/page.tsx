@@ -41,6 +41,79 @@ const FAQS = [
   },
 ];
 
+const PLAYBOOK_MODULES = [
+  {
+    num: "01",
+    title: "General Knowledge & Science Vault",
+    route: "/",
+    summary:
+      "When tackling chemical elements, US states, or world languages, skip marquee anchors like Oxygen, California, or Spanish. Pre-load middle-band noble gases (Krypton, Xenon), compact states (Delaware, Vermont), and constitutional languages (Luxembourgish, Maltese) that consistently clear 75–92 points while remaining easy to spell inside 25 seconds.",
+  },
+  {
+    num: "02",
+    title: "Geography & Sovereign Island Anchors",
+    route: "/krillion-geography/",
+    summary:
+      "Africa, Asia, and UN coastline questions punish lazy crowd picks like Egypt, Japan, and France (all 10–16 Plankton). Instead build a mental compass around tiny Pacific republics (Tuvalu, Kiribati, Nauru, Palau), Lesser Antilles islands (Dominica, Grenada), and Central Asian capitals (Bishkek, Dushanbe, Ashgabat).",
+  },
+  {
+    num: "03",
+    title: "Today's Daily Dive Anti-Plankton Routine",
+    route: "/krillion-answers-today/",
+    summary:
+      "Open-ended daily prompts trigger instant System-1 availability bias: whatever 90% of players type in the first 2 seconds gets penalized under 20 points. Force a 1.5-second pause on Q1–Q7 to move one category tier away from the headliner—for example, picking the second-largest country or an unexpected era.",
+  },
+  {
+    num: "04",
+    title: "Noillirk Reverse Consensus Psychology",
+    route: "/noillirk/",
+    summary:
+      "Noillirk flips everything upside down (110 - rarity). Never flex trivia depth here. Ask yourself: if 100 random commuters had 3 seconds to shout an example, what word wins 60% of the room? Pikachu, Pele, United States, Titanic, and Lion top almost every reverse ballot.",
+  },
+  {
+    num: "05",
+    title: "Pokekrillion Generation & Mid-Evo Traps",
+    route: "/pokekrillion/",
+    summary:
+      "Charizard, Pikachu, Gengar, and Lucario tank your score into single-digit Plankton territory. Sweep Gen 5 (Unova), Gen 6 (Kalos), and Gen 7 (Alola) mid-stage evolutions (Servine, Dewott, Floette, Charjabug, Steenee) or dual-type fossils to hit 85–100 One in a Krillion gems.",
+  },
+  {
+    num: "06",
+    title: "Footbillion & Goalillion 40-Second Pacing",
+    route: "/footbillion/",
+    summary:
+      "Because Footbillion expands your clock to 40 seconds, spend the first 10 seconds bypassing Ballon d'Or winners and striker superstars. World Cup host nations from single-tournament squads, defensive fullbacks, and backup cup winners consistently unlock 85+ rarity brackets.",
+  },
+  {
+    num: "07",
+    title: "NBA Krillion Era & Draft Class Separation",
+    route: "/nba-krillion/",
+    summary:
+      "Modern box-score kings like LeBron, Steph Curry, and Michael Jordan lock around 10–15 points. Dig into pre-2000 NBA #1 draft picks (Joe Smith, Glenn Robinson, Danny Manning), ABA merger teams, and 1970s Finals MVPs (Wes Unseld, Dennis Johnson, Jo Jo White) for guaranteed Hadal Trench depth.",
+  },
+  {
+    num: "08",
+    title: "Krillion Movies & Pre-1985 Academy Gems",
+    route: "/krillion-movies/",
+    summary:
+      "Modern Best Picture winners (Oppenheimer, Parasite, Everything Everywhere) drown under heavy crowd vote density. Reach back into 1930s–1970s Academy classics (All About Eve, In the Heat of the Night, Kramer vs. Kramer, Patton) or early Pixar shorts to claim 90+ scores.",
+  },
+  {
+    num: "09",
+    title: "Krillion Sports Multi-League Crossovers",
+    route: "/krillion-sports/",
+    summary:
+      "Across Olympic host cities, tennis Grand Slam winners, and Formula 1 champions, separate single-title heroes (Jenson Button, Dominic Thiem, Antwerp 1920) from multi-decade dynasties (Hamilton, Federer, London, Paris). One-time winners deliver reliable 80–95 point lifts.",
+  },
+  {
+    num: "10",
+    title: "Poople Unlimited 4-Letter Gateway Bridges",
+    route: "/poople-unlimited/",
+    summary:
+      "When morphing any 4-letter English word toward POOP, steer vowels toward double-O bridges (LOOP, COOP, HOOP, POOL, POOR) as early as move #2. Solving via common -OOP or POO- gateways shaves two full moves off blind trial-and-error guessing.",
+  },
+];
+
 export default function GuidesPage() {
   const stats = getCorpusStats();
 
@@ -226,6 +299,85 @@ export default function GuidesPage() {
               applies bounded Levenshtein typo tolerance automatically—keeping your hands fast while
               preserving fair trivia integrity.
             </p>
+          </section>
+
+          <section className="rounded-2xl border border-cyan-500/20 bg-[#05182b]/75 p-6 sm:p-8">
+            <div className="flex items-center gap-2 text-cyan-300">
+              <BookOpen className="h-5 w-5" />
+              <span className="text-xs font-bold uppercase tracking-wider">
+                Complete Directory • 10 Playbooks
+              </span>
+            </div>
+            <h2 className="mt-2 text-xl font-extrabold text-white sm:text-2xl">
+              10-Part Rarity Playbook Directory Across All AnyKrillion Modes
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300 sm:text-base">
+              Jump directly into the specialized playbook matching whichever trivia pack or word
+              ladder you are drilling today—backed by our{" "}
+              <Link href="/sources/" className="text-cyan-300 hover:underline">
+                verified open data methodology
+              </Link>{" "}
+              and{" "}
+              <Link href="/games-like-krillion/" className="text-cyan-300 hover:underline">
+                9 playable -illion game modes
+              </Link>
+              :
+            </p>
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              {PLAYBOOK_MODULES.map((mod) => (
+                <article
+                  key={mod.num}
+                  className="rounded-xl border border-cyan-500/15 bg-[#03111f] p-4"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-mono text-xs font-bold uppercase text-cyan-300">
+                      Module {mod.num}
+                    </span>
+                    <Link
+                      href={mod.route}
+                      className="text-xs font-bold text-emerald-300 hover:underline"
+                    >
+                      Play {mod.route} →
+                    </Link>
+                  </div>
+                  <h3 className="mt-1.5 text-base font-extrabold text-white">{mod.title}</h3>
+                  <p className="mt-1.5 text-xs leading-relaxed text-slate-300 sm:text-sm">
+                    {mod.summary}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="rounded-2xl border border-cyan-500/20 bg-[#05182b]/75 p-6 sm:p-8">
+            <h2 className="text-xl font-extrabold text-white sm:text-2xl">
+              600-Point Daily Dive Routine: 5-Second Triage Under Pressure
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-slate-300 sm:text-base">
+              Breaking the Hadal Trench threshold (560+ out of 700 total points) requires managing
+              your 25-second mental budget across all seven prompts rather than stalling for a
+              mythical 100-point answer until zero. Follow this disciplined three-step cadence on
+              every round:
+            </p>
+            <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-slate-300 sm:text-base">
+              <li>
+                <strong className="text-white">Seconds 25 → 20 (Reject the Plankton Reflex):</strong>{" "}
+                Identify the single most obvious crowd answer in your head and deliberately discard it.
+                If the prompt asks for a European capital or G1 Pokémon, skip Paris, London, Pikachu,
+                and Charizard immediately.
+              </li>
+              <li>
+                <strong className="text-white">Seconds 20 → 10 (Pivot to a Secondary Anchor):</strong>{" "}
+                Scan by geography subregion, earlier tournament decade, or middle-stage evolution to
+                retrieve a candidate sitting comfortably in the Deep Sea (70–84) or One in a Krillion
+                (85–100) quantile bands.
+              </li>
+              <li>
+                <strong className="text-white">Seconds 10 → 0 (Type Early &amp; Use Hint Safety):</strong>{" "}
+                Submit your typed candidate by second 6 so any typo-assist chip still leaves time to
+                confirm, or lock any safe 35+ point answer rather than absorbing a 0-point timeout.
+              </li>
+            </ol>
           </section>
 
           <section aria-labelledby="guides-faq-heading">

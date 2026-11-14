@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Compass, Film, Flame, Sparkles, Trophy, Wind } from "lucide-react";
+import { ArrowRight, Compass, Film, Flame, Layers, Sparkles, Trophy, Wind } from "lucide-react";
 
 const CARDS = [
   {
@@ -57,6 +57,20 @@ const CARDS = [
     desc: "Best Picture Oscars, acclaimed directors, Pixar classics & cinema franchises.",
     tag: "Cinema DB",
     icon: Film,
+  },
+  {
+    href: "/poople-unlimited/",
+    title: "Poople Unlimited",
+    desc: "4-letter word ladder puzzle turning words into POOP + Daily Answer & BFS solver.",
+    tag: "Word Ladder",
+    icon: Sparkles,
+  },
+  {
+    href: "/games-like-krillion/",
+    title: "Games Like Krillion",
+    desc: "Side-by-side matrix comparing all 9 rarity trivia modes and Daily Dles variants.",
+    tag: "All 9 Modes",
+    icon: Layers,
   },
 ];
 

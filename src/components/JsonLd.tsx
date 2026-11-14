@@ -14,6 +14,11 @@ interface JsonLdProps {
   pageDescription: string;
   pageType?: "WebPage" | "CollectionPage";
   isRoot?: boolean;
+  webAppSchema?: {
+    name: string;
+    description: string;
+    applicationCategory?: string;
+  };
   gameSchema?: {
     name: string;
     description: string;
@@ -30,6 +35,7 @@ export default function JsonLd({
   pageDescription,
   pageType = "WebPage",
   isRoot = false,
+  webAppSchema,
   gameSchema,
   faqs = [],
   breadcrumbs,
@@ -62,6 +68,21 @@ export default function JsonLd({
       name: "Krillion Unlimited — AnyKrillion",
       url: "https://anykrillion.com/",
       applicationCategory: "GameApplication",
+      operatingSystem: "Any modern web browser",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+      },
+    });
+  } else if (webAppSchema) {
+    nodes.push({
+      "@type": "WebApplication",
+      "@id": `${canonicalUrl}#webapp`,
+      name: webAppSchema.name,
+      url: canonicalUrl,
+      description: webAppSchema.description,
+      applicationCategory: webAppSchema.applicationCategory || "GameApplication",
       operatingSystem: "Any modern web browser",
       offers: {
         "@type": "Offer",

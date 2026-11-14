@@ -1,6 +1,6 @@
 # AnyKrillion — Krillion Unlimited & Rarity Trivia Hub
 
-> AnyKrillion (https://anykrillion.com/) is a free, instant-play online rarity trivia hub featuring Krillion Unlimited (endless rounds), Today's 7-Prompt Daily Dive, Noillirk reverse mode, and dedicated topic packs for Sports, Geography, Pokémon, Football, NBA, and Movies. Powered by verified open datasets with smart typo tolerance.
+> AnyKrillion (https://anykrillion.com/) is a free, instant-play online rarity trivia hub (16 canonical routes) featuring Krillion Unlimited (endless rounds), Today's 7-Prompt Daily Dive, Noillirk reverse mode, Poople Unlimited word ladder & BFS solver, Games Like Krillion hub, and dedicated topic packs for Sports, Geography, Pokémon, Football, NBA, and Movies. Powered by verified open datasets with smart typo tolerance.
 
 ## Core Pages & Game Modes
 - [Krillion Unlimited (Home)](https://anykrillion.com/): Play Krillion Unlimited free online with endless 7-question dives, Today's Daily Dive switcher, fuzzy typo tolerance, and 6-tier deep-sea rarity scoring.
@@ -15,6 +15,8 @@
 - [Footbillion](https://anykrillion.com/footbillion/): 40-second football rarity trivia covering World Cup squads, Premier League clubs, Ballon d'Or winners, and European competitions.
 - [NBA Krillion](https://anykrillion.com/nba-krillion/): NBA champions, MVPs, No. 1 draft picks, scoring leaders, and franchise legends.
 - [Krillion Movies](https://anykrillion.com/krillion-movies/): Academy Award Best Picture winners, iconic directors, animated features, and cinema franchises.
+- [Poople Unlimited](https://anykrillion.com/poople-unlimited/): 4-letter English word ladder transforming starter words into POOP with Today's Daily Answer and BFS shortest-path solver.
+- [Games Like Krillion](https://anykrillion.com/games-like-krillion/): Side-by-side interactive comparison hub covering all 9 rarity trivia & Daily Dles alternatives on AnyKrillion.
 
 ## Strategy Guides & Data Sources
 - [Strategy Guides](https://anykrillion.com/guides/): Rarity scoring math, avoiding Plankton traps, Noillirk inversion tactics, and geography/sports heuristics.

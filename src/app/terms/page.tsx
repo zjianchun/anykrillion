@@ -5,11 +5,17 @@ import JsonLd from "@/components/JsonLd";
 import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
-  title: "Terms of Use | AnyKrillion",
+  title: "Terms of Use & Open Dataset Disclaimer | AnyKrillion",
   description:
-    "Terms of Use and independent dataset non-affiliation notice for AnyKrillion.com.",
+    "Review the Terms of Use, fair play guidelines, and independent open-dataset non-affiliation notice for AnyKrillion.com and all rarity trivia game modes.",
   alternates: {
     canonical: "/terms/",
+  },
+  openGraph: {
+    title: "Terms of Use & Open Dataset Disclaimer | AnyKrillion",
+    description:
+      "Review the Terms of Use, fair play guidelines, and independent open-dataset non-affiliation notice for AnyKrillion.com and all rarity trivia game modes.",
+    url: "https://anykrillion.com/terms/",
   },
 };
 
@@ -18,8 +24,8 @@ export default function TermsPage() {
     <>
       <JsonLd
         canonicalUrl="https://anykrillion.com/terms/"
-        pageTitle="Terms of Use | AnyKrillion"
-        pageDescription="Terms of Use and non-affiliation disclaimer for AnyKrillion.com."
+        pageTitle="Terms of Use & Open Dataset Disclaimer | AnyKrillion"
+        pageDescription="Review the Terms of Use, fair play guidelines, and independent open-dataset non-affiliation notice for AnyKrillion.com and all rarity trivia game modes."
         pageType="WebPage"
         breadcrumbs={[
           { name: "Krillion Unlimited", url: "https://anykrillion.com/" },

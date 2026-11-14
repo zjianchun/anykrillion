@@ -5,11 +5,17 @@ import JsonLd from "@/components/JsonLd";
 import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | AnyKrillion",
+  title: "Privacy Policy & Local Storage Notice | AnyKrillion",
   description:
-    "AnyKrillion privacy policy: browser-only gameplay storage via localStorage, zero mandatory accounts, and transparent site policies.",
+    "Read the AnyKrillion.com privacy policy covering local browser score storage via localStorage, zero mandatory accounts, and transparent cookie practices.",
   alternates: {
     canonical: "/privacy-policy/",
+  },
+  openGraph: {
+    title: "Privacy Policy & Local Storage Notice | AnyKrillion",
+    description:
+      "Read the AnyKrillion.com privacy policy covering local browser score storage via localStorage, zero mandatory accounts, and transparent cookie practices.",
+    url: "https://anykrillion.com/privacy-policy/",
   },
 };
 
@@ -18,8 +24,8 @@ export default function PrivacyPolicyPage() {
     <>
       <JsonLd
         canonicalUrl="https://anykrillion.com/privacy-policy/"
-        pageTitle="Privacy Policy | AnyKrillion"
-        pageDescription="AnyKrillion privacy policy explaining browser-only gameplay storage and user privacy."
+        pageTitle="Privacy Policy & Local Storage Notice | AnyKrillion"
+        pageDescription="Read the AnyKrillion.com privacy policy covering local browser score storage via localStorage, zero mandatory accounts, and transparent cookie practices."
         pageType="WebPage"
         breadcrumbs={[
           { name: "Krillion Unlimited", url: "https://anykrillion.com/" },

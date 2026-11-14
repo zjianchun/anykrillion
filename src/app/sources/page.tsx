@@ -10,7 +10,7 @@ import { PACK_METAS } from "@/types/game";
 export const metadata: Metadata = {
   title: "Open Data Sources & Rarity Methodology | AnyKrillion",
   description:
-    "Explore how AnyKrillion precomputes verified trivia rarity scores using mledoze/countries, Fjelstul World Cup CSVs, PokéAPI v2 tables, and curated open archives.",
+    "Explore how AnyKrillion precomputes verified trivia rarity scores using Wikidata geography, Fjelstul World Cup CSVs, PokéAPI v2 tables, and open archives.",
   alternates: {
     canonical: "/sources/",
   },
@@ -27,10 +27,10 @@ export default function SourcesPage() {
 
   return (
     <>
-      <JsonLd
+          <JsonLd
         canonicalUrl="https://anykrillion.com/sources/"
         pageTitle="Open Data Sources & Rarity Methodology | AnyKrillion"
-        pageDescription="Explore how AnyKrillion precomputes verified trivia rarity scores using mledoze/countries, Fjelstul World Cup CSVs, PokéAPI v2 tables, and curated open archives."
+        pageDescription="Explore how AnyKrillion precomputes verified trivia rarity scores using Wikidata geography, Fjelstul World Cup CSVs, PokéAPI v2 tables, and open archives."
         pageType="WebPage"
         breadcrumbs={[
           { name: "Krillion Unlimited", url: "https://anykrillion.com/" },
@@ -176,6 +176,61 @@ export default function SourcesPage() {
               We are not affiliated with, endorsed by, or sponsored by krillion.io, The Pokémon
               Company, FIFA, NBA, or the Academy of Motion Picture Arts and Sciences.
             </p>
+          </section>
+
+          <section className="rounded-2xl border border-cyan-500/20 bg-[#05182b]/75 p-6 sm:p-8">
+            <h2 className="text-xl font-extrabold text-white sm:text-2xl">
+              Reproducible Quantile Formula &amp; Alias Normalization Pipeline
+            </h2>
+            <div className="mt-3 space-y-3 text-sm leading-relaxed text-slate-300 sm:text-base">
+              <p>
+                Every trivia pack exported to our static client bundle passes through a repeatable
+                Python build pipeline before deployment. First, raw entities are deduplicated by
+                canonical key and enriched with alternate accepted spellings—such as{" "}
+                <em>United States</em> / <em>USA</em> / <em>United States of America</em>,
+                unaccented Latin forms (<em>Pelé</em> → <code>pele</code>, <em>Flabébé</em> →{" "}
+                <code>flabebe</code>), and widely recognized nicknames or club shortnames.
+              </p>
+              <p>
+                Second, entities inside each prompt are sorted descending by measurable prominence
+                signals: sovereign population and multilingual Wikipedia footprint in{" "}
+                <Link href="/krillion-geography/" className="text-cyan-300 hover:underline">
+                  Krillion Geography
+                </Link>
+                , FIFA tournament caps and squad selections in{" "}
+                <Link href="/footbillion/" className="text-cyan-300 hover:underline">
+                  Footbillion
+                </Link>
+                , starter/evolution fame vs. regional dex obscurity in{" "}
+                <Link href="/pokekrillion/" className="text-cyan-300 hover:underline">
+                  Pokekrillion
+                </Link>
+                , All-Star/MVP accolades in{" "}
+                <Link href="/nba-krillion/" className="text-cyan-300 hover:underline">
+                  NBA Krillion
+                </Link>
+                , and audience vote volume in{" "}
+                <Link href="/krillion-movies/" className="text-cyan-300 hover:underline">
+                  Krillion Movies
+                </Link>
+                . Rank index <code>r</code> in a pool of size <code>N</code> maps linearly into{" "}
+                <code>[10, 100]</code> so both 16-answer micro-lists and 200-answer global prompts
+                produce balanced difficulty across unlimited runs.
+              </p>
+              <p>
+                Finally, every prompt guarantees at least 16 verified entries, deterministic daily
+                board hashes across 30 rolling calendar days in{" "}
+                <Link href="/krillion-archive/" className="text-cyan-300 hover:underline">
+                  Krillion Archive
+                </Link>
+                , and connected 4-letter English word-ladder parity on{" "}
+                <Link href="/poople-unlimited/" className="text-amber-300 hover:underline">
+                  Poople Unlimited
+                </Link>
+                . At runtime, bounded Damerau–Levenshtein distance checks protect fast typists
+                against single-character typos without accepting invalid guesses.
+              </p>
+            </div>
           </section>
         </div>
       </main>
