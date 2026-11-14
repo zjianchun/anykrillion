@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Waves } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 
 export default function Footer() {
   return (
@@ -7,11 +7,8 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <Link href="/" className="inline-flex items-center gap-2 text-white">
-              <Waves className="h-5 w-5 text-cyan-300" />
-              <span className="text-lg font-extrabold tracking-tight">
-                Any<span className="text-cyan-300">Krillion</span>
-              </span>
+            <Link href="/" className="inline-flex items-center text-white transition hover:opacity-90">
+              <BrandLogo size="md" subtitle="" />
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-slate-400">
               Play Krillion Unlimited, Today&apos;s Daily Dive, reverse Noillirk,

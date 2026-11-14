@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Compass, Eye, Flame, Layers, Sparkles } from "lucide-react";
+import { BookOpen, Compass, Eye, Flame, Layers } from "lucide-react";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
@@ -118,53 +118,60 @@ export default function PoopleUnlimitedPage() {
 
       <Navbar />
 
-      <main className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:pt-8">
-        <header className="mb-5">
-          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-            <span className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-300">
-              <Sparkles className="h-3.5 w-3.5" />
-              Unlimited Word Ladder • Daily #{TODAY_POOPLE.dayNumber} • Instant BFS Solver
+      <main className="mx-auto max-w-6xl px-4 pb-16 pt-3 sm:pt-4">
+        <header className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="text-lg font-black tracking-tight text-white sm:text-2xl">
+              Poople Unlimited: Free 4-Letter Word Ladder Game, Daily Answer &amp; Solver
+            </h1>
+            <span className="hidden rounded-full border border-amber-400/30 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-amber-300 md:inline-flex">
+              Daily #{TODAY_POOPLE.dayNumber} · BFS Solver
             </span>
-            <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-cyan-300">
-              <Link href="/" className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white">
-                Krillion Unlimited
-              </Link>
-              <Link
-                href="/games-like-krillion/"
-                className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white"
-              >
-                All Games Like Krillion
-              </Link>
-              <Link
-                href="/krillion-answers-today/"
-                className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white"
-              >
-                Krillion Answers Today
-              </Link>
-            </div>
           </div>
 
-          <h1 className="text-2xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Poople Unlimited: Free 4-Letter Word Ladder Game, Daily Answer &amp; Solver
-          </h1>
-          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-300 sm:text-base">
-            Play unlimited rounds of the viral Daily Dles word-ladder puzzle, verify{" "}
-            <strong>Poople answer today</strong> without accidental spoilers, or solve any 4-letter
-            starting word into <strong>POOP</strong> in the fewest guaranteed moves.
-          </p>
+          <div className="flex flex-wrap items-center gap-2.5 text-xs font-semibold">
+            <Link href="/" className="text-cyan-300 underline decoration-cyan-500/40 underline-offset-4 hover:text-white">
+              Krillion Unlimited
+            </Link>
+            <a
+              href="#poople-guide"
+              className="inline-flex items-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-slate-300 transition hover:text-white"
+            >
+              <BookOpen className="h-3.5 w-3.5 text-amber-300" />
+              Answer &amp; Guide ↓
+            </a>
+          </div>
         </header>
 
-        <section aria-labelledby="poople-engine-heading" className="mb-12">
-          <h2
-            id="poople-engine-heading"
-            className="mb-3 text-xs font-bold uppercase tracking-wider text-amber-300"
-          >
+        <section aria-labelledby="poople-engine-heading" className="mb-14">
+          <h2 id="poople-engine-heading" className="sr-only">
             Play Poople Unlimited &amp; Daily Word Ladder
           </h2>
           <PoopleGameEngine />
         </section>
 
-        <div className="space-y-10">
+        <div id="poople-guide" className="space-y-8 border-t border-white/10 pt-10">
+          <div className="rounded-2xl border border-white/10 bg-[#051629]/65 p-5 sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-cyan-300">
+              <span className="inline-flex items-center gap-1.5 font-extrabold uppercase tracking-wider text-amber-300">
+                <BookOpen className="h-4 w-4" />
+                About Poople Unlimited, Daily Hints &amp; Solver
+              </span>
+              <div className="flex flex-wrap gap-3">
+                <Link href="/games-like-krillion/" className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white">
+                  All Games Like Krillion
+                </Link>
+                <Link href="/krillion-answers-today/" className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white">
+                  Krillion Answers Today
+                </Link>
+              </div>
+            </div>
+            <p className="mt-2.5 max-w-4xl text-sm leading-relaxed text-slate-300 sm:text-base">
+              Play unlimited rounds of the viral Daily Dles word-ladder puzzle, verify{" "}
+              <strong>Poople answer today</strong> without accidental spoilers, or solve any 4-letter
+              starting word into <strong>POOP</strong> in the fewest guaranteed moves.
+            </p>
+          </div>
           <section
             aria-labelledby="poople-today-heading"
             className="rounded-2xl border border-emerald-400/25 bg-[#05182b]/80 p-6 sm:p-8"

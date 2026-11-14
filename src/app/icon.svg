@@ -1,9 +1,46 @@
 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="64" height="64" rx="16" fill="#041527"/>
-  <circle cx="32" cy="32" r="24" stroke="#22D3EE" stroke-opacity="0.28" stroke-width="2"/>
-  <circle cx="32" cy="32" r="16" stroke="#22D3EE" stroke-opacity="0.48" stroke-width="2"/>
-  <path d="M21 35C21 27.5 27.5 21 36 21C40.5 21 44 23 46 25.5C43 26.5 40 28 38 30.5C41.5 31.5 44 34 45 37.5C41 39 36.5 40 31.5 40C25 40 21 38 21 35Z" fill="#22D3EE"/>
-  <circle cx="37.5" cy="25.5" r="2" fill="#041527"/>
-  <path d="M18 35L23 32.5V37.5L18 35Z" fill="#34D399"/>
-  <path d="M25 41L23.5 45M30 41L29 45.5M35 41L34.5 45" stroke="#67E8F9" stroke-width="2" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="ak-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#07223e"/>
+      <stop offset="100%" stop-color="#020b16"/>
+    </linearGradient>
+    <linearGradient id="ak-border" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="ak-body" x1="14" y1="20" x2="48" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#67e8f9"/>
+      <stop offset="55%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="ak-star" x1="42" y1="12" x2="54" y2="24" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#ak-bg)" stroke="url(#ak-border)" stroke-width="2.5"/>
+
+  <!-- Concentric Sonar Pulse Rings -->
+  <circle cx="31" cy="33" r="22" stroke="#22d3ee" stroke-opacity="0.22" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <circle cx="31" cy="33" r="14" stroke="#34d399" stroke-opacity="0.32" stroke-width="1.5"/>
+
+  <!-- Stylized Diving Krill / Submarine Emblem -->
+  <path
+    d="M15 37C15 27.5 23 20 34 20C39.5 20 43.5 22.5 46 26C42 27 38.5 29 36.5 31.8C40.5 32.8 43.8 35.8 45 40C40 42.2 34.5 43.2 28.5 43C20.5 42.8 15 40.2 15 37Z"
+    fill="url(#ak-body)"
+  />
+  <!-- Tail Fin -->
+  <path d="M11 36.5L17.5 33V40L11 36.5Z" fill="#34d399"/>
+  <!-- Porthole Eye -->
+  <circle cx="35.5" cy="25.5" r="2.4" fill="#03111f"/>
+  <circle cx="35.5" cy="25.5" r="1" fill="#fde68a"/>
+  <!-- Bioluminescent Legs / Depth Trails -->
+  <path d="M23 44.5L21 50M29 44.8L27.8 50.5M35 44.3L34.5 49.5" stroke="#67e8f9" stroke-width="2.2" stroke-linecap="round"/>
+
+  <!-- 4-Point "One in a Krillion" Golden Diamond Star -->
+  <path
+    d="M49 10L51 15.5L56.5 17.5L51 19.5L49 25L47 19.5L41.5 17.5L47 15.5L49 10Z"
+    fill="url(#ak-star)"
+  />
 </svg>

@@ -13,6 +13,7 @@ import {
   Wind,
   X,
 } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 
 const PRIMARY_LINKS = [
   { href: "/", label: "Unlimited", icon: Waves },
@@ -44,22 +45,12 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-cyan-500/20 bg-[#03111f]/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2.5">
         <Link
           href="/"
-          className="group flex items-center gap-2.5 text-white transition hover:opacity-90"
+          className="group flex items-center text-white transition hover:opacity-90"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-400/40 bg-gradient-to-br from-cyan-500/25 to-emerald-500/20 shadow-[0_0_20px_rgba(34,211,238,0.2)]">
-            <Waves className="h-5 w-5 text-cyan-300" />
-          </span>
-          <div className="leading-tight">
-            <span className="block text-base font-extrabold tracking-tight text-white">
-              Any<span className="text-cyan-300">Krillion</span>
-            </span>
-            <span className="block text-[10px] font-medium uppercase tracking-widest text-cyan-300/75">
-              Unlimited &amp; Topic Packs
-            </span>
-          </div>
+          <BrandLogo size="md" subtitle="Endless & Daily Packs" />
         </Link>
 
         {/* Desktop Nav */}

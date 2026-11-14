@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { BookOpen } from "lucide-react";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
 import JsonLd, { type BreadcrumbItem, type FaqItem } from "@/components/JsonLd";
@@ -7,6 +8,7 @@ import KrillionGameEngine from "@/components/KrillionGameEngine";
 import Navbar from "@/components/Navbar";
 import RarityScaleTable from "@/components/RarityScaleTable";
 import TopicPacksGrid from "@/components/TopicPacksGrid";
+import type { ThemeVariant } from "@/lib/gameThemes";
 import type { DailyBoard, GameMode, PackId, TriviaPrompt } from "@/types/game";
 
 export interface EditorialSection {
@@ -46,6 +48,7 @@ interface PackPageShellProps {
   faqHeading: string;
   faqs: FaqItem[];
   quickLinks?: Array<{ href: string; label: string }>;
+  themeVariant?: ThemeVariant;
 }
 
 export default function PackPageShell({
@@ -73,6 +76,7 @@ export default function PackPageShell({
   faqHeading,
   faqs,
   quickLinks = [],
+  themeVariant,
 }: PackPageShellProps) {
   return (
     <>
@@ -89,39 +93,41 @@ export default function PackPageShell({
 
       <Navbar />
 
-      <main className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:pt-8">
-        <header className="mb-5">
-          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-            <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-cyan-300">
+      <main className="mx-auto max-w-6xl px-4 pb-16 pt-3 sm:pt-4">
+        {/* Ultra-compact Above-the-Fold Title Bar — keeps game front-and-center */}
+        <header className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="text-lg font-black tracking-tight text-white sm:text-2xl">
+              {h1}
+            </h1>
+            <span className="hidden rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-cyan-300 md:inline-flex">
               {badgeText}
             </span>
-            {quickLinks.length > 0 && (
-              <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-cyan-300">
-                {quickLinks.map((ql) => (
-                  <Link
-                    key={ql.href}
-                    href={ql.href}
-                    className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white"
-                  >
-                    {ql.label}
-                  </Link>
-                ))}
-              </div>
-            )}
           </div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-white sm:text-4xl">
-            {h1}
-          </h1>
-          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-300 sm:text-base">
-            {heroSubtitle}
-          </p>
+
+          <div className="flex flex-wrap items-center gap-2.5 text-xs font-semibold">
+            {quickLinks.slice(0, 2).map((ql) => (
+              <Link
+                key={ql.href}
+                href={ql.href}
+                className="text-cyan-300 underline decoration-cyan-500/40 underline-offset-4 hover:text-white"
+              >
+                {ql.label}
+              </Link>
+            ))}
+            <a
+              href="#game-guide"
+              className="inline-flex items-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-slate-300 transition hover:text-white"
+            >
+              <BookOpen className="h-3.5 w-3.5 text-cyan-300" />
+              Rules &amp; Guide ↓
+            </a>
+          </div>
         </header>
 
-        <section aria-labelledby="engine-heading" className="mb-12">
-          <h2
-            id="engine-heading"
-            className="mb-3 text-xs font-bold uppercase tracking-wider text-cyan-300"
-          >
+        {/* Primary Viewport Focus: Interactive Game Stage */}
+        <section aria-labelledby="engine-heading" className="mb-14">
+          <h2 id="engine-heading" className="sr-only">
             {engineSectionTitle}
           </h2>
           <KrillionGameEngine
@@ -131,15 +137,45 @@ export default function PackPageShell({
             defaultPack={defaultPack}
             allowModeSwitch={allowModeSwitch}
             allowPackFilter={allowPackFilter}
+            themeVariant={themeVariant}
           />
         </section>
 
-        <div className="space-y-10">
+        {/* Below-the-Fold Reference Section: Rules, Rarity Scale, Guides & Crawler Context */}
+        <div
+          id="game-guide"
+          className="space-y-8 border-t border-white/10 pt-10"
+        >
+          <div className="rounded-2xl border border-white/10 bg-[#051629]/65 p-5 sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-cyan-300">
+                <BookOpen className="h-4 w-4" />
+                Game Guide, Rules &amp; Dataset Methodology
+              </span>
+              {quickLinks.length > 0 && (
+                <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-cyan-300">
+                  {quickLinks.map((ql) => (
+                    <Link
+                      key={ql.href}
+                      href={ql.href}
+                      className="underline decoration-cyan-500/40 underline-offset-4 hover:text-white"
+                    >
+                      {ql.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+            <p className="mt-2.5 max-w-4xl text-sm leading-relaxed text-slate-300 sm:text-base">
+              {heroSubtitle}
+            </p>
+          </div>
+
           {sections.map((section) => (
             <section
               key={section.id}
               aria-labelledby={section.id}
-              className="rounded-2xl border border-cyan-500/20 bg-[#05182b]/75 p-6 sm:p-8"
+              className="rounded-2xl border border-cyan-500/15 bg-[#05182b]/65 p-6 sm:p-8"
             >
               <h2
                 id={section.id}

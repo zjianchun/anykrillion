@@ -60,30 +60,31 @@ export default function KrillionArchivePage() {
 
       <Navbar />
 
-      <main className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:pt-8">
-        <header className="mb-8">
-          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-            <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-cyan-300">
-              30 Archived Daily Boards • Full Replay + Answer Keys
+      <main className="mx-auto max-w-6xl px-4 pb-16 pt-3 sm:pt-4">
+        <header className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="text-lg font-black tracking-tight text-white sm:text-2xl">
+              Krillion Archive: Replay Past Daily Krillion Games
+            </h1>
+            <span className="hidden rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-cyan-300 md:inline-flex">
+              30 Archived Boards
             </span>
-            <Link
-              href="/krillion-answers-today/"
-              className="text-xs font-semibold text-cyan-300 underline decoration-cyan-500/40 underline-offset-4 hover:text-white"
-            >
-              Today&apos;s Answers &amp; Hints →
-            </Link>
           </div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Krillion Archive: Replay Past Daily Krillion Games
-          </h1>
-          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-300 sm:text-base">
-            Missed yesterday&apos;s dive or want to binge past daily sets? Pick any archived board
-            below to replay all 7 rounds under official timer rules or test yourself in reverse
-            Noillirk mode.
-          </p>
+          <Link
+            href="/krillion-answers-today/"
+            className="text-xs font-semibold text-cyan-300 underline decoration-cyan-500/40 underline-offset-4 hover:text-white"
+          >
+            Today&apos;s Answers &amp; Hints →
+          </Link>
         </header>
 
         <ArchiveExplorer dailyBoards={DAILY_BOARDS} prompts={dailyPrompts} />
+
+        <p className="mt-8 rounded-2xl border border-white/10 bg-[#051629]/60 p-5 text-sm leading-relaxed text-slate-300">
+          Missed yesterday&apos;s dive or want to binge past daily sets? Pick any archived board
+          above to replay all 7 rounds under official timer rules or test yourself in reverse
+          Noillirk mode.
+        </p>
 
         <section aria-labelledby="archive-packs" className="mt-14">
           <h2 id="archive-packs" className="mb-4 text-xl font-extrabold text-white sm:text-2xl">

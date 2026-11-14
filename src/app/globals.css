@@ -40,3 +40,56 @@ code, kbd, samp, pre {
 ::-webkit-scrollbar-thumb:hover {
   background: #0891b2;
 }
+
+/* Immersive Game Stage Animations */
+@keyframes ak-float-slow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes ak-bubble-rise {
+  0% {
+    transform: translateY(20px) scale(0.8);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translateY(-140px) scale(1.15);
+    opacity: 0;
+  }
+}
+
+@keyframes ak-radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-ak-float {
+  animation: ak-float-slow 3.6s ease-in-out infinite;
+}
+
+.animate-ak-bubble-1 {
+  animation: ak-bubble-rise 7s linear infinite;
+}
+
+.animate-ak-bubble-2 {
+  animation: ak-bubble-rise 9.5s linear 2s infinite;
+}
+
+.animate-ak-bubble-3 {
+  animation: ak-bubble-rise 8s linear 4.5s infinite;
+}
+
+.animate-ak-radar {
+  animation: ak-radar-sweep 10s linear infinite;
+}

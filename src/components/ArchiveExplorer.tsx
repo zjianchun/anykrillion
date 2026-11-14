@@ -57,7 +57,95 @@ export default function ArchiveExplorer({
   }, [dailyBoards, promptById]);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
+      {selectedBoard && (
+        <section aria-labelledby="replay-heading" className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2
+                id="replay-heading"
+                className="text-lg font-extrabold tracking-tight text-white sm:text-xl"
+              >
+                Replay Past Days &amp; Compare Rarity Scores
+              </h2>
+              <p className="mt-0.5 text-xs text-slate-300 sm:text-sm">
+                Active board:{" "}
+                <strong className="text-cyan-300">
+                  Dive #{selectedBoard.dayNumber} ({selectedBoard.date})
+                </strong>{" "}
+                — {selectedBoard.themeLabel}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowKey((prev) => !prev)}
+              className="inline-flex items-center gap-2 rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-3.5 py-2 text-xs font-bold text-emerald-200 hover:bg-emerald-500/20"
+            >
+              <Eye className="h-4 w-4" />
+              {showKey ? "Hide Board Answer Key" : "Reveal Board Top Rarity Answers"}
+            </button>
+          </div>
+
+          <KrillionGameEngine
+            key={selectedBoard.date}
+            prompts={prompts}
+            dailyBoards={dailyBoards}
+            defaultMode="daily"
+            defaultPack="general"
+            initialDailyDate={selectedBoard.date}
+            allowModeSwitch={true}
+            allowPackFilter={false}
+          />
+
+          {showKey && (
+            <div className="rounded-2xl border border-emerald-500/25 bg-[#041425] p-5 sm:p-6">
+              <h3 className="text-base font-extrabold text-emerald-300">
+                Dive #{selectedBoard.dayNumber} ({selectedBoard.date}) — Verified Answer Key
+              </h3>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                {selectedBoardPrompts.map((prompt, idx) => {
+                  const sortedDesc = [...prompt.answers].sort((a, b) => b.rarity - a.rarity);
+                  const best = sortedDesc.slice(0, 3);
+                  const common = [...prompt.answers]
+                    .sort((a, b) => a.rarity - b.rarity)
+                    .slice(0, 2);
+                  return (
+                    <div
+                      key={prompt.id}
+                      className="rounded-xl border border-cyan-500/20 bg-[#06192d]/70 p-4"
+                    >
+                      <p className="font-mono text-xs text-cyan-300">
+                        Round {idx + 1}/7 • {prompt.categoryLabel}
+                      </p>
+                      <p className="mt-1 text-sm font-bold text-white">{prompt.question}</p>
+                      <div className="mt-2.5 flex flex-wrap gap-1.5 text-xs">
+                        {best.map((b) => (
+                          <span
+                            key={b.name}
+                            className="rounded bg-emerald-500/15 px-2 py-0.5 font-semibold text-emerald-200"
+                          >
+                            {b.name} ({b.rarity})
+                          </span>
+                        ))}
+                        {common.map((c) => (
+                          <span
+                            key={c.name}
+                            className="rounded bg-rose-500/15 px-2 py-0.5 text-rose-200"
+                          >
+                            Plankton: {c.name} ({c.rarity})
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
       <section aria-labelledby="archive-filter-heading">
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-cyan-500/20 bg-[#05182b]/80 p-4 sm:p-5">
           <div className="flex items-center gap-2">
@@ -156,94 +244,6 @@ export default function ArchiveExplorer({
           })}
         </div>
       </section>
-
-      {selectedBoard && (
-        <section aria-labelledby="replay-heading" className="space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2
-                id="replay-heading"
-                className="text-xl font-extrabold tracking-tight text-white sm:text-2xl"
-              >
-                Replay Past Days &amp; Compare Rarity Scores
-              </h2>
-              <p className="mt-1 text-sm text-slate-300">
-                Active archive board:{" "}
-                <strong className="text-cyan-300">
-                  Dive #{selectedBoard.dayNumber} ({selectedBoard.date})
-                </strong>{" "}
-                — {selectedBoard.themeLabel}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setShowKey((prev) => !prev)}
-              className="inline-flex items-center gap-2 rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-4 py-2 text-xs font-bold text-emerald-200 hover:bg-emerald-500/20"
-            >
-              <Eye className="h-4 w-4" />
-              {showKey ? "Hide Board Answer Key" : "Reveal Board Top Rarity Answers"}
-            </button>
-          </div>
-
-          <KrillionGameEngine
-            key={selectedBoard.date}
-            prompts={prompts}
-            dailyBoards={dailyBoards}
-            defaultMode="daily"
-            defaultPack="general"
-            initialDailyDate={selectedBoard.date}
-            allowModeSwitch={true}
-            allowPackFilter={false}
-          />
-
-          {showKey && (
-            <div className="rounded-2xl border border-emerald-500/25 bg-[#041425] p-5 sm:p-6">
-              <h3 className="text-base font-extrabold text-emerald-300">
-                Dive #{selectedBoard.dayNumber} ({selectedBoard.date}) — Verified Answer Key
-              </h3>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
-                {selectedBoardPrompts.map((prompt, idx) => {
-                  const sortedDesc = [...prompt.answers].sort((a, b) => b.rarity - a.rarity);
-                  const best = sortedDesc.slice(0, 3);
-                  const common = [...prompt.answers]
-                    .sort((a, b) => a.rarity - b.rarity)
-                    .slice(0, 2);
-                  return (
-                    <div
-                      key={prompt.id}
-                      className="rounded-xl border border-cyan-500/20 bg-[#06192d]/70 p-4"
-                    >
-                      <p className="font-mono text-xs text-cyan-300">
-                        Round {idx + 1}/7 • {prompt.categoryLabel}
-                      </p>
-                      <p className="mt-1 text-sm font-bold text-white">{prompt.question}</p>
-                      <div className="mt-2.5 flex flex-wrap gap-1.5 text-xs">
-                        {best.map((b) => (
-                          <span
-                            key={b.name}
-                            className="rounded bg-emerald-500/15 px-2 py-0.5 font-semibold text-emerald-200"
-                          >
-                            {b.name} ({b.rarity})
-                          </span>
-                        ))}
-                        {common.map((c) => (
-                          <span
-                            key={c.name}
-                            className="rounded bg-rose-500/15 px-2 py-0.5 text-rose-200"
-                          >
-                            Plankton: {c.name} ({c.rarity})
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </section>
-      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import {
   Check,
   Compass,
@@ -11,11 +11,25 @@ import {
   Lightbulb,
   RotateCcw,
   Search,
-  Share2,
   Sparkles,
+  Swords,
   Undo2,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
+import ShareChallengePanel from "@/components/ShareChallengePanel";
 import poopleDataRaw from "@/data/poople_words.json";
+import {
+  decodePoopleChallenge,
+  encodePoopleChallenge,
+} from "@/lib/challengeCodec";
+import {
+  isSoundEnabled,
+  playInvalidOrTimeoutSound,
+  playLockInSound,
+  playVictorySound,
+  setSoundEnabled,
+} from "@/lib/soundEffects";
 
 interface PoopleDailyBoard {
   dayNumber: number;
@@ -60,6 +74,23 @@ function getClientPoopleStreak(): number {
 
 function getServerPoopleStreak(): number {
   return 0;
+}
+
+function subscribeSound(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener("anykrillion-sound-change", callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener("anykrillion-sound-change", callback);
+  };
+}
+
+function getClientSound(): boolean {
+  return isSoundEnabled();
+}
+
+function getTrueServer(): boolean {
+  return true;
 }
 
 const PRESET_STARTERS = [
@@ -167,7 +198,8 @@ export default function PoopleGameEngine() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [hintMode, setHintMode] = useState<"none" | "letter" | "word">("none");
   const [revealedDailyAnswer, setRevealedDailyAnswer] = useState<boolean>(false);
-  const [copiedShare, setCopiedShare] = useState<boolean>(false);
+  const [copiedQuickInvite, setCopiedQuickInvite] = useState<boolean>(false);
+  const [friendChallengeSteps, setFriendChallengeSteps] = useState<number | null>(null);
 
   // Solver state
   const [solverStart, setSolverStart] = useState<string>("PLAN");
@@ -180,6 +212,28 @@ export default function PoopleGameEngine() {
     getClientPoopleStreak,
     getServerPoopleStreak,
   );
+  const soundOn = useSyncExternalStore(
+    subscribeSound,
+    getClientSound,
+    getTrueServer,
+  );
+
+  // Decode ?challenge= friend word ladder challenge on mount
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const decoded = decodePoopleChallenge(params.get("challenge"));
+    if (!decoded || !WORD_SET.has(decoded.w)) return;
+    queueMicrotask(() => {
+      setTab("unlimited");
+      setStartWord(decoded.w);
+      setChain([decoded.w]);
+      setInputWord("");
+      setErrorMsg(null);
+      setHintMode("none");
+      setFriendChallengeSteps(typeof decoded.s === "number" ? decoded.s : null);
+    });
+  }, []);
 
   const activeDailyBoard = useMemo(
     () =>
@@ -231,7 +285,7 @@ export default function PoopleGameEngine() {
     setInputWord("");
     setErrorMsg(null);
     setHintMode("none");
-    setCopiedShare(false);
+    setFriendChallengeSteps(null);
     inputRef.current?.focus();
   };
 
@@ -245,7 +299,7 @@ export default function PoopleGameEngine() {
     setTab(nextTab);
     setErrorMsg(null);
     setHintMode("none");
-    setCopiedShare(false);
+    setFriendChallengeSteps(null);
     if (nextTab === "daily") {
       setStartWord(activeDailyBoard.startWord);
       setChain([activeDailyBoard.startWord]);
@@ -267,7 +321,7 @@ export default function PoopleGameEngine() {
     setErrorMsg(null);
     setHintMode("none");
     setRevealedDailyAnswer(false);
-    setCopiedShare(false);
+    setFriendChallengeSteps(null);
   };
 
   const handleSubmitStep = (e: React.FormEvent) => {
@@ -275,23 +329,28 @@ export default function PoopleGameEngine() {
     if (solved) return;
     const cand = inputWord.trim().toUpperCase();
     if (cand.length !== 4) {
+      playInvalidOrTimeoutSound();
       setErrorMsg("Enter a 4-letter English word.");
       return;
     }
     if (cand === currentWord) {
+      playInvalidOrTimeoutSound();
       setErrorMsg("Change exactly 1 letter from the current word.");
       return;
     }
     if (chain.includes(cand)) {
+      playInvalidOrTimeoutSound();
       setErrorMsg(`"${cand}" is already in your current ladder.`);
       return;
     }
     const diffs = diffPositions(currentWord, cand);
     if (diffs.length !== 1) {
+      playInvalidOrTimeoutSound();
       setErrorMsg(`Must change strictly 1 letter from ${currentWord} (you changed ${diffs.length}).`);
       return;
     }
     if (!WORD_SET.has(cand)) {
+      playInvalidOrTimeoutSound();
       setErrorMsg(`"${cand}" was not found in our 1,596-word Poople dictionary.`);
       return;
     }
@@ -303,6 +362,7 @@ export default function PoopleGameEngine() {
     setHintMode("none");
 
     if (cand === "POOP") {
+      playVictorySound();
       try {
         const nextStreak = streak + 1;
         window.localStorage.setItem(POOPLE_STREAK_STORAGE_KEY, String(nextStreak));
@@ -319,6 +379,8 @@ export default function PoopleGameEngine() {
           });
         })
         .catch(() => {});
+    } else {
+      playLockInSound();
     }
   };
 
@@ -329,27 +391,45 @@ export default function PoopleGameEngine() {
     setHintMode("none");
   };
 
-  const handleCopyShare = async () => {
-    const modeLabel =
-      tab === "daily" ? `Daily Poople #${activeDailyBoard.dayNumber}` : `Poople Unlimited`;
-    const emojiSteps = chain
-      .slice(1)
-      .map((word, idx) => {
-        const prev = chain[idx];
-        return Array.from({ length: 4 }, (_, pos) => {
-          if (word[pos] === "POOP"[pos]) return "🟩";
-          if (word[pos] !== prev[pos]) return "🟨";
-          return "⬛";
-        }).join("");
-      })
-      .join("\n");
-    const text = `${modeLabel} (${startWord} → POOP) • ${stepsTaken} steps (Par ${parSteps})\n${emojiSteps}\nPlay at https://anykrillion.com/poople-unlimited/`;
+  const poopleChallengeUrl = useMemo(() => {
+    const token = encodePoopleChallenge({
+      w: startWord,
+      t: "POOP",
+      s: solved ? stepsTaken : undefined,
+    });
+    const baseUrl =
+      typeof window !== "undefined"
+        ? `${window.location.origin}${window.location.pathname}`
+        : "https://anykrillion.com/poople-unlimited/";
+    return `${baseUrl}?challenge=${token}`;
+  }, [solved, startWord, stepsTaken]);
+
+  const emojiSteps = chain
+    .slice(1)
+    .map((word, idx) => {
+      const prev = chain[idx];
+      return Array.from({ length: 4 }, (_, pos) => {
+        if (word[pos] === "POOP"[pos]) return "🟩";
+        if (word[pos] !== prev[pos]) return "🟨";
+        return "⬛";
+      }).join("");
+    })
+    .join("\n");
+
+  const modeLabel =
+    tab === "daily" ? `Daily Poople #${activeDailyBoard.dayNumber}` : `Poople Unlimited`;
+  const poopleShareText = solved
+    ? `I solved ${modeLabel} (${startWord} → POOP) in ${stepsTaken} steps (Par ${parSteps})! Can you beat me?`
+    : `Play this 4-letter Word Ladder with me on AnyKrillion: turn ${startWord} into POOP!`;
+  const poopleFullCopyText = `${modeLabel} (${startWord} → POOP) • ${stepsTaken} steps (Par ${parSteps})\n${emojiSteps}\nChallenge link: ${poopleChallengeUrl}`;
+
+  const handleQuickInvite = async () => {
     try {
-      await navigator.clipboard.writeText(text);
-      setCopiedShare(true);
-      window.setTimeout(() => setCopiedShare(false), 2200);
+      await navigator.clipboard.writeText(poopleChallengeUrl);
+      setCopiedQuickInvite(true);
+      window.setTimeout(() => setCopiedQuickInvite(false), 2000);
     } catch {
-      // ignore clipboard errors
+      // ignore
     }
   };
 
@@ -401,16 +481,51 @@ export default function PoopleGameEngine() {
           </button>
         </div>
 
-        <div className="flex items-center gap-2 text-xs">
-          <span className="inline-flex items-center gap-1 rounded-lg border border-amber-400/25 bg-amber-500/10 px-2.5 py-1 font-bold text-amber-200">
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="inline-flex items-center gap-1 rounded-lg border border-amber-400/25 bg-amber-500/10 px-2.5 py-1.5 font-bold text-amber-200">
             <Flame className="h-3.5 w-3.5" />
             Streak: {streak}
           </span>
-          <span className="rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 font-mono text-slate-300">
-            1,596 words
-          </span>
+          <button
+            type="button"
+            onClick={() => setSoundEnabled(!soundOn)}
+            aria-label={soundOn ? "Mute sound" : "Enable sound"}
+            className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 font-semibold transition ${
+              soundOn
+                ? "border-cyan-400/35 bg-cyan-500/15 text-cyan-200"
+                : "border-white/15 bg-white/5 text-slate-400"
+            }`}
+          >
+            {soundOn ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
+          </button>
+          <button
+            type="button"
+            onClick={handleQuickInvite}
+            className="inline-flex items-center gap-1 rounded-lg border border-amber-400/40 bg-amber-500/15 px-2.5 py-1.5 font-bold text-amber-200 transition hover:bg-amber-500/25"
+            title="Copy Challenge Link for this starting word"
+          >
+            {copiedQuickInvite ? <Check className="h-3.5 w-3.5" /> : <Swords className="h-3.5 w-3.5" />}
+            {copiedQuickInvite ? "Copied!" : "PK Friend"}
+          </button>
         </div>
       </div>
+
+      {friendChallengeSteps !== null && tab !== "solver" && (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-amber-400/50 bg-amber-500/15 px-4 py-2.5 text-xs sm:text-sm">
+          <div className="flex items-center gap-2 font-bold text-amber-100">
+            <Swords className="h-4 w-4 text-amber-300" />
+            <span>
+              Friend Challenge Active: Morph{" "}
+              <strong className="font-mono text-white">{startWord}</strong> →{" "}
+              <strong className="font-mono text-amber-300">POOP</strong> in{" "}
+              <strong>{friendChallengeSteps} steps or fewer!</strong>
+            </span>
+          </div>
+          <span className="font-mono text-xs font-extrabold text-amber-300">
+            Your Steps: {stepsTaken}
+          </span>
+        </div>
+      )}
 
       {/* Mode 3: Shortest-Path BFS Solver */}
       {tab === "solver" ? (
@@ -689,28 +804,29 @@ export default function PoopleGameEngine() {
             </div>
 
             {solved ? (
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-emerald-400/40 bg-emerald-950/30 p-4">
-                <div>
-                  <p className="text-base font-extrabold text-emerald-200">
-                    Reached POOP in {stepsTaken} {stepsTaken === 1 ? "step" : "steps"}!
-                  </p>
-                  <p className="mt-0.5 text-xs text-slate-300">
-                    Optimal par from {startWord}: {parSteps} steps (
-                    <span className="font-mono text-emerald-200">
-                      {optimalFromStart.join(" → ")}
-                    </span>
-                    )
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={handleCopyShare}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-400/40 bg-cyan-500/15 px-3.5 py-2 text-xs font-bold text-cyan-100 hover:bg-cyan-500/25"
-                  >
-                    {copiedShare ? <Check className="h-3.5 w-3.5" /> : <Share2 className="h-3.5 w-3.5" />}
-                    {copiedShare ? "Copied Grid!" : "Share Ladder"}
-                  </button>
+              <div className="mt-6 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-emerald-400/40 bg-emerald-950/30 p-4">
+                  <div>
+                    <p className="text-base font-extrabold text-emerald-200">
+                      Reached POOP in {stepsTaken} {stepsTaken === 1 ? "step" : "steps"}!
+                      {friendChallengeSteps !== null && (
+                        <span className="ml-2 rounded-full bg-amber-400/20 px-2.5 py-0.5 text-xs text-amber-200">
+                          {stepsTaken < friendChallengeSteps
+                            ? `Beat friend's ${friendChallengeSteps} steps!`
+                            : stepsTaken === friendChallengeSteps
+                              ? `Tied friend (${friendChallengeSteps} steps)!`
+                              : `Friend's score: ${friendChallengeSteps} steps`}
+                        </span>
+                      )}
+                    </p>
+                    <p className="mt-0.5 text-xs text-slate-300">
+                      Optimal par from {startWord}: {parSteps} steps (
+                      <span className="font-mono text-emerald-200">
+                        {optimalFromStart.join(" → ")}
+                      </span>
+                      )
+                    </p>
+                  </div>
                   <button
                     type="button"
                     onClick={pickRandomStarter}
@@ -720,6 +836,15 @@ export default function PoopleGameEngine() {
                     Next Random Word
                   </button>
                 </div>
+
+                <ShareChallengePanel
+                  variant="summary"
+                  accent="amber"
+                  challengeUrl={poopleChallengeUrl}
+                  shareText={poopleShareText}
+                  shareTitle={`${modeLabel}: ${startWord} → POOP in ${stepsTaken} steps`}
+                  fullResultCopyText={poopleFullCopyText}
+                />
               </div>
             ) : (
               <div className="mt-5">
@@ -820,7 +945,7 @@ export default function PoopleGameEngine() {
 
           {/* Preset Quick-Start Chips */}
           <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="font-semibold text-slate-400">Popular 4-Letter Ladders:</span>
+            <span className="font-semibold text-slate-400">Quick Starters:</span>
             {["STAR", "COLD", "WARM", "GOAL", "PLAY", "FISH", "BOOK", "WORK"].map((word) => (
               <button
                 key={word}
@@ -836,6 +961,14 @@ export default function PoopleGameEngine() {
               </button>
             ))}
           </div>
+
+          <ShareChallengePanel
+            variant="inline"
+            accent="amber"
+            challengeUrl={poopleChallengeUrl}
+            shareText={poopleShareText}
+            shareTitle={`${modeLabel}: ${startWord} → POOP Challenge`}
+          />
         </div>
       )}
     </div>
