@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import ShareChallengePanel from "@/components/ShareChallengePanel";
 import PooplePipeScene from "@/components/PooplePipeScene";
+import { trackGameEvent } from "@/lib/analytics";
 import poopleDataRaw from "@/data/poople_words.json";
 import {
   decodePoopleChallenge,
@@ -372,6 +373,15 @@ export default function PoopleGameEngine() {
     }
 
     const nextChain = [...chain, cand];
+    if (chain.length === 1) {
+      trackGameEvent("game_start", { game: "poople-unlimited", mode: tab });
+    }
+    trackGameEvent("answer_submit", {
+      game: "poople-unlimited",
+      mode: tab,
+      step: nextChain.length - 1,
+      word: cand,
+    });
     setChain(nextChain);
     setInputWord("");
     setErrorMsg(null);
@@ -379,6 +389,12 @@ export default function PoopleGameEngine() {
 
     if (cand === "POOP") {
       playVictorySound();
+      trackGameEvent("game_complete", {
+        game: "poople-unlimited",
+        mode: tab,
+        steps: nextChain.length - 1,
+        par: parSteps,
+      });
       try {
         const nextStreak = streak + 1;
         window.localStorage.setItem(POOPLE_STREAK_STORAGE_KEY, String(nextStreak));
@@ -440,6 +456,7 @@ export default function PoopleGameEngine() {
   const poopleFullCopyText = `${modeLabel} (${startWord} → POOP) • ${stepsTaken} steps (Par ${parSteps})\n${emojiSteps}\nChallenge link: ${poopleChallengeUrl}`;
 
   const handleQuickInvite = async () => {
+    trackGameEvent("share_click", { channel: "quick_invite", game: "poople-unlimited" });
     try {
       await navigator.clipboard.writeText(poopleChallengeUrl);
       setCopiedQuickInvite(true);

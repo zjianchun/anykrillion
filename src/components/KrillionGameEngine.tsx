@@ -24,6 +24,7 @@ import {
   VolumeX,
 } from "lucide-react";
 import OceanDiveScene from "@/components/OceanDiveScene";
+import { trackGameEvent } from "@/lib/analytics";
 import { getWorldThemeMeta, getZoneNarrative } from "@/lib/worldThemesData";
 import { TierCreatureSprite } from "@/components/PixelSprites";
 import ShareChallengePanel from "@/components/ShareChallengePanel";
@@ -646,9 +647,20 @@ export default function KrillionGameEngine({
     const trimmed = rawText.trim();
     if (!trimmed) return;
 
+    if (outcomes.length === 0 && qIndex === 0) {
+      trackGameEvent("game_start", { game: activeThemeId, mode });
+    }
+
     const result = matchAnswer(trimmed, currentPrompt.answers);
     if (result.status === "miss") {
       playInvalidOrTimeoutSound();
+      trackGameEvent("answer_submit", {
+        game: activeThemeId,
+        mode,
+        round: qIndex + 1,
+        status: "miss",
+        points: 0,
+      });
       setFeedbackError("Not recognized in dataset — try another or check spelling.");
       return;
     }
@@ -656,6 +668,13 @@ export default function KrillionGameEngine({
     playLockInSound();
     const pts = computeRoundPoints(result.answer.rarity, mode);
     const tier = getDisplayTier(pts, mode);
+    trackGameEvent("answer_submit", {
+      game: activeThemeId,
+      mode,
+      round: qIndex + 1,
+      status: "hit",
+      points: pts,
+    });
     triggerSinkAndReveal({
       prompt: currentPrompt,
       matchedAnswer: result.answer,
@@ -673,6 +692,16 @@ export default function KrillionGameEngine({
 
   const handleSkip = () => {
     if (!currentPrompt || phase !== "playing") return;
+    if (outcomes.length === 0 && qIndex === 0) {
+      trackGameEvent("game_start", { game: activeThemeId, mode });
+    }
+    trackGameEvent("answer_submit", {
+      game: activeThemeId,
+      mode,
+      round: qIndex + 1,
+      status: "skip",
+      points: 0,
+    });
     triggerSinkAndReveal({
       prompt: currentPrompt,
       matchedAnswer: null,
@@ -686,6 +715,12 @@ export default function KrillionGameEngine({
   const handleNext = () => {
     if (qIndex + 1 >= deck.length) {
       playVictorySound();
+      trackGameEvent("game_complete", {
+        game: activeThemeId,
+        mode,
+        score: totalScore,
+        rounds: deck.length,
+      });
       setPhase("summary");
       return;
     }
@@ -703,6 +738,10 @@ export default function KrillionGameEngine({
   const handleRevealHint = () => {
     if (!currentPrompt || revealedHints >= 3 || phase !== "playing") return;
     playLockInSound();
+    trackGameEvent("hint_used", {
+      game: activeThemeId,
+      hint_level: revealedHints + 1,
+    });
     setRevealedHints((prev) => prev + 1);
     if (!relaxedTimer) {
       setTimeLeft((prev) => Math.max(3, prev - 4));
@@ -729,10 +768,7 @@ export default function KrillionGameEngine({
 
   const depthMetricLabel = `${worldMeta.unitPrefix}${cameraDepth.toLocaleString()}${worldMeta.unitSuffix}`;
 
-  const zoneStory = useMemo(
-    () => getZoneNarrative(cameraDepth, isReverse, activeThemeId),
-    [cameraDepth, isReverse, activeThemeId],
-  );
+  const zoneStory = getZoneNarrative(cameraDepth, isReverse, activeThemeId);
 
   const challengeUrl = useMemo(() => {
     const token = encodeKrillionChallenge({
@@ -753,6 +789,7 @@ export default function KrillionGameEngine({
   const fullCopyGridText = `${worldTitle.logoText} · ${totalScore}/700 (${depthMetricLabel})\n${emojiGrid}\nPlay my exact board:\n${challengeUrl}`;
 
   const handleQuickInviteCopy = async () => {
+    trackGameEvent("share_click", { channel: "quick_invite", game: activeThemeId });
     try {
       await navigator.clipboard.writeText(challengeUrl);
       setCopiedQuickInvite(true);

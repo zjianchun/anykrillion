@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Check, Copy, Link2, MessageCircle, Share2, Swords } from "lucide-react";
 import { buildSocialShareLinks } from "@/lib/challengeCodec";
+import { trackGameEvent } from "@/lib/analytics";
 
 interface ShareChallengePanelProps {
   /** Direct URL that loads the exact same questions/word for a friend */
@@ -37,6 +38,7 @@ export default function ShareChallengePanel({
   });
 
   const handleCopyLink = async () => {
+    trackGameEvent("share_click", { channel: "copy_link", title: shareTitle });
     try {
       await navigator.clipboard.writeText(challengeUrl);
       setCopiedChallenge(true);
@@ -47,6 +49,7 @@ export default function ShareChallengePanel({
   };
 
   const handleCopyGrid = async () => {
+    trackGameEvent("share_click", { channel: "copy_grid", title: shareTitle });
     const payload = fullResultCopyText ?? `${shareText}\n${challengeUrl}`;
     try {
       await navigator.clipboard.writeText(payload);
@@ -58,6 +61,7 @@ export default function ShareChallengePanel({
   };
 
   const handleNativeShare = async () => {
+    trackGameEvent("share_click", { channel: "native_share", title: shareTitle });
     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       try {
         await navigator.share({
