@@ -90,6 +90,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
+        <script
+          defer
+          src="https://www.pvuv.ai/f.js"
+          data-site="CLjAnNi8"
+          data-api="https://in.pvuv.ai"
+        />
         <Script
           strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=G-MHSMNS5658"
