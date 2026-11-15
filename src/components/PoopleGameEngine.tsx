@@ -466,74 +466,79 @@ export default function PoopleGameEngine() {
       >
       <div className="flex flex-col gap-2">
       {/* Top Bar: Mode Switcher + Stats */}
-      <div className="pointer-events-auto flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="pointer-events-auto flex flex-col gap-2 border-b border-white/10 pb-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3 sm:pb-4">
+        <div className="grid grid-cols-3 gap-1.5 sm:flex sm:flex-wrap sm:items-center sm:gap-2">
           <button
             type="button"
             onClick={() => switchToTab("unlimited")}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-extrabold transition sm:text-sm ${
+            className={`inline-flex items-center justify-center gap-1 rounded-xl px-2 py-1.5 text-[11px] font-extrabold transition sm:px-3.5 sm:py-2 sm:text-sm ${
               tab === "unlimited"
                 ? "bg-amber-400 text-slate-950 shadow-[0_0_20px_rgba(251,191,36,0.3)]"
                 : "border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10"
             }`}
           >
-            <InfinityIcon className="h-4 w-4" />
-            Poople Unlimited
+            <InfinityIcon className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+            <span className="truncate sm:hidden">Unlimited</span>
+            <span className="hidden sm:inline">Poople Unlimited</span>
           </button>
 
           <button
             type="button"
             onClick={() => switchToTab("daily")}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-extrabold transition sm:text-sm ${
+            className={`inline-flex items-center justify-center gap-1 rounded-xl px-2 py-1.5 text-[11px] font-extrabold transition sm:px-3.5 sm:py-2 sm:text-sm ${
               tab === "daily"
                 ? "bg-emerald-400 text-slate-950 shadow-[0_0_20px_rgba(52,211,153,0.3)]"
                 : "border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10"
             }`}
           >
-            <Sparkles className="h-4 w-4" />
-            Today&apos;s Poople (#{latestDaily.dayNumber})
+            <Sparkles className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+            <span className="truncate sm:hidden">Daily #{latestDaily.dayNumber}</span>
+            <span className="hidden sm:inline">Today&apos;s Poople (#{latestDaily.dayNumber})</span>
           </button>
 
           <button
             type="button"
             onClick={() => switchToTab("solver")}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-extrabold transition sm:text-sm ${
+            className={`inline-flex items-center justify-center gap-1 rounded-xl px-2 py-1.5 text-[11px] font-extrabold transition sm:px-3.5 sm:py-2 sm:text-sm ${
               tab === "solver"
                 ? "bg-cyan-400 text-slate-950 shadow-[0_0_20px_rgba(34,211,238,0.3)]"
                 : "border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10"
             }`}
           >
-            <Search className="h-4 w-4" />
-            Word Ladder Solver
+            <Search className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+            <span className="truncate sm:hidden">Solver</span>
+            <span className="hidden sm:inline">Word Ladder Solver</span>
           </button>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="inline-flex items-center gap-1 rounded-lg border border-amber-400/25 bg-amber-500/10 px-2.5 py-1.5 font-bold text-amber-200">
+        <div className="flex items-center justify-between gap-2 text-[11px] sm:justify-end sm:text-xs">
+          <span className="inline-flex items-center gap-1 rounded-lg border border-amber-400/25 bg-amber-500/10 px-2 py-1 font-bold text-amber-200 sm:px-2.5 sm:py-1.5">
             <Flame className="h-3.5 w-3.5" />
             Streak: {streak}
           </span>
-          <button
-            type="button"
-            onClick={() => setSoundEnabled(!soundOn)}
-            aria-label={soundOn ? "Mute sound" : "Enable sound"}
-            className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 font-semibold transition ${
-              soundOn
-                ? "border-cyan-400/35 bg-cyan-500/15 text-cyan-200"
-                : "border-white/15 bg-white/5 text-slate-400"
-            }`}
-          >
-            {soundOn ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
-          </button>
-          <button
-            type="button"
-            onClick={handleQuickInvite}
-            className="inline-flex items-center gap-1 rounded-lg border border-amber-400/40 bg-amber-500/15 px-2.5 py-1.5 font-bold text-amber-200 transition hover:bg-amber-500/25"
-            title="Copy Challenge Link for this starting word"
-          >
-            {copiedQuickInvite ? <Check className="h-3.5 w-3.5" /> : <Swords className="h-3.5 w-3.5" />}
-            {copiedQuickInvite ? "Copied!" : "PK Friend"}
-          </button>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <button
+              type="button"
+              onClick={() => setSoundEnabled(!soundOn)}
+              aria-label={soundOn ? "Mute sound" : "Enable sound"}
+              className={`inline-flex items-center gap-1 rounded-lg border px-2 py-1 font-semibold transition sm:px-2.5 sm:py-1.5 ${
+                soundOn
+                  ? "border-cyan-400/35 bg-cyan-500/15 text-cyan-200"
+                  : "border-white/15 bg-white/5 text-slate-400"
+              }`}
+            >
+              {soundOn ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
+            </button>
+            <button
+              type="button"
+              onClick={handleQuickInvite}
+              className="inline-flex items-center gap-1 rounded-lg border border-amber-400/40 bg-amber-500/15 px-2 py-1 font-bold text-amber-200 transition hover:bg-amber-500/25 sm:px-2.5 sm:py-1.5"
+              title="Copy Challenge Link for this starting word"
+            >
+              {copiedQuickInvite ? <Check className="h-3.5 w-3.5" /> : <Swords className="h-3.5 w-3.5" />}
+              {copiedQuickInvite ? "Copied!" : "PK Friend"}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -557,7 +562,7 @@ export default function PoopleGameEngine() {
       {/* Mode 3: Shortest-Path BFS Solver */}
       </div>
 
-      <div className="my-auto flex max-h-[calc(100%-108px)] w-full max-w-4xl flex-col gap-3 self-center overflow-y-auto pr-1">
+      <div className="my-auto flex max-h-[calc(100%-84px)] w-full max-w-4xl flex-col gap-2 self-center overflow-y-auto pr-0.5 sm:max-h-[calc(100%-108px)] sm:gap-3 sm:pr-1">
       {tab === "solver" ? (
         <div className="mt-6 space-y-5">
           <div data-hud-interactive className="pointer-events-auto rounded-2xl border border-emerald-400/30 bg-[#03191a]/45 p-4 backdrop-blur-[2px] sm:p-5">
@@ -730,42 +735,42 @@ export default function PoopleGameEngine() {
             </div>
           )}
 
-          {/* HUD Strip */}
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-emerald-300/20 bg-[#03191a]/40 px-3 py-2 backdrop-blur-[2px]">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Current Rung → Goal
+          {/* HUD Strip (2-col + slim controls on mobile, 3-col on desktop) */}
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
+            <div className="rounded-xl border border-emerald-300/20 bg-[#03191a]/40 px-2.5 py-1.5 backdrop-blur-[2px] sm:rounded-2xl sm:px-3 sm:py-2">
+              <span className="block truncate text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-[11px]">
+                Current → Goal
               </span>
-              <div className="mt-1 flex items-center justify-between font-mono text-2xl font-black">
+              <div className="mt-0.5 flex items-center justify-between font-mono text-lg font-black sm:mt-1 sm:text-2xl">
                 <span className="text-white">{currentWord}</span>
-                <span className="text-sm text-slate-500">→</span>
+                <span className="text-xs text-slate-500 sm:text-sm">→</span>
                 <span className="text-amber-300">POOP</span>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-emerald-300/20 bg-[#03191a]/40 px-3 py-2 backdrop-blur-[2px]">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Steps Taken vs. Par
+            <div className="rounded-xl border border-emerald-300/20 bg-[#03191a]/40 px-2.5 py-1.5 backdrop-blur-[2px] sm:rounded-2xl sm:px-3 sm:py-2">
+              <span className="block truncate text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-[11px]">
+                Steps vs. Par
               </span>
-              <div className="mt-1 flex items-baseline justify-between">
-                <span className="font-mono text-2xl font-black text-cyan-200">
-                  {stepsTaken} {stepsTaken === 1 ? "step" : "steps"}
+              <div className="mt-0.5 flex items-baseline justify-between sm:mt-1">
+                <span className="font-mono text-lg font-black text-cyan-200 sm:text-2xl">
+                  {stepsTaken} <span className="text-xs font-bold sm:text-base">{stepsTaken === 1 ? "step" : "steps"}</span>
                 </span>
-                <span className="text-xs font-semibold text-emerald-300">
-                  Optimal Par: {parSteps}
+                <span className="text-[10px] font-semibold text-emerald-300 sm:text-xs">
+                  Par: {parSteps}
                 </span>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-emerald-300/20 bg-[#03191a]/40 px-3 py-2 backdrop-blur-[2px]">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            <div className="col-span-2 flex items-center justify-between gap-2 rounded-xl border border-emerald-300/20 bg-[#03191a]/40 px-2.5 py-1.5 backdrop-blur-[2px] sm:col-span-1 sm:block sm:rounded-2xl sm:px-3 sm:py-2">
+              <span className="hidden text-[11px] font-bold uppercase tracking-wider text-slate-400 sm:block">
                 Starter Controls
               </span>
-              <div className="mt-1.5 flex items-center gap-2">
+              <div className="flex flex-1 items-center gap-2 sm:mt-1.5">
                 <button
                   type="button"
                   onClick={pickRandomStarter}
-                  className="inline-flex flex-1 items-center justify-center gap-1 rounded-lg border border-amber-400/35 bg-amber-500/15 px-2.5 py-1.5 text-xs font-bold text-amber-200 hover:bg-amber-500/25"
+                  className="inline-flex flex-1 items-center justify-center gap-1 rounded-lg border border-amber-400/35 bg-amber-500/15 px-2.5 py-1 text-xs font-bold text-amber-200 hover:bg-amber-500/25 sm:py-1.5"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
                   New Word
@@ -773,7 +778,7 @@ export default function PoopleGameEngine() {
                 <button
                   type="button"
                   onClick={() => startRound(startWord, tab === "daily" ? "daily" : "unlimited")}
-                  className="inline-flex items-center justify-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-slate-200 hover:bg-white/10"
+                  className="inline-flex items-center justify-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-xs font-semibold text-slate-200 hover:bg-white/10 sm:py-1.5"
                 >
                   Reset
                 </button>
@@ -782,12 +787,12 @@ export default function PoopleGameEngine() {
           </div>
 
           {/* Ladder Chain Visual */}
-          <div data-hud-interactive className="pointer-events-auto rounded-2xl border border-emerald-300/25 bg-[#03191a]/45 p-4 backdrop-blur-[2px] sm:p-5">
-            <div className="flex flex-wrap items-center gap-2">
+          <div data-hud-interactive className="pointer-events-auto rounded-2xl border border-emerald-300/25 bg-[#03191a]/45 p-3 backdrop-blur-[2px] sm:p-5">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
               {chain.map((word, idx) => (
-                <div key={`${word}-${idx}`} className="flex items-center gap-2">
+                <div key={`${word}-${idx}`} className="flex items-center gap-1.5 sm:gap-2">
                   <div
-                    className={`flex gap-1 rounded-xl border px-2.5 py-2 ${
+                    className={`flex gap-1 rounded-xl border px-2 py-1.5 sm:px-2.5 sm:py-2 ${
                       word === "POOP"
                         ? "border-emerald-400/60 bg-emerald-500/15"
                         : idx === chain.length - 1
@@ -800,7 +805,7 @@ export default function PoopleGameEngine() {
                       return (
                         <span
                           key={pos}
-                          className={`flex h-9 w-8 items-center justify-center rounded-md font-mono text-lg font-black ${
+                          className={`flex h-7 w-6 items-center justify-center rounded-md font-mono text-sm font-black sm:h-9 sm:w-8 sm:text-lg ${
                             matchesTarget
                               ? "bg-emerald-500/30 text-emerald-200 ring-1 ring-emerald-400/50"
                               : "bg-white/5 text-white"
@@ -812,18 +817,18 @@ export default function PoopleGameEngine() {
                     })}
                   </div>
                   {idx < chain.length - 1 && (
-                    <span className="font-mono text-sm font-bold text-slate-500">→</span>
+                    <span className="font-mono text-xs font-bold text-slate-500 sm:text-sm">→</span>
                   )}
                 </div>
               ))}
               {!solved && (
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-sm font-bold text-slate-500">→</span>
-                  <div className="flex gap-1 rounded-xl border border-dashed border-amber-400/40 bg-amber-500/5 px-2.5 py-2">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="font-mono text-xs font-bold text-slate-500 sm:text-sm">→</span>
+                  <div className="flex gap-1 rounded-xl border border-dashed border-amber-400/40 bg-amber-500/5 px-2 py-1.5 sm:px-2.5 sm:py-2">
                     {["?", "?", "?", "?"].map((q, pos) => (
                       <span
                         key={pos}
-                        className="flex h-9 w-8 items-center justify-center rounded-md font-mono text-lg font-bold text-amber-300/60"
+                        className="flex h-7 w-6 items-center justify-center rounded-md font-mono text-sm font-bold text-amber-300/60 sm:h-9 sm:w-8 sm:text-lg"
                       >
                         {q}
                       </span>
@@ -877,8 +882,8 @@ export default function PoopleGameEngine() {
                 /></div>
               </div>
             ) : (
-              <div className="mt-5">
-                <form onSubmit={handleSubmitStep} className="flex flex-col gap-3 sm:flex-row">
+              <div className="mt-3 sm:mt-5">
+                <form onSubmit={handleSubmitStep} className="flex flex-col gap-2 sm:flex-row sm:gap-3">
                   <input
                     ref={inputRef}
                     type="text"
@@ -886,27 +891,30 @@ export default function PoopleGameEngine() {
                     value={inputWord}
                     onChange={(e) => {
                       setInputWord(e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase());
+                      setTypingPulse((n) => n + 1);
                       if (errorMsg) setErrorMsg(null);
                     }}
                     placeholder={`Change 1 letter in ${currentWord}...`}
                     aria-label="Enter next 4-letter ladder word"
-                    className="flex-1 rounded-xl border border-amber-400/45 bg-[#021215]/75 px-4 py-2.5 font-mono text-lg font-black uppercase tracking-widest text-white placeholder:text-sm placeholder:font-normal placeholder:normal-case placeholder:tracking-normal placeholder:text-slate-500 focus:border-amber-300 focus:outline-none"
+                    className="flex-1 rounded-xl border border-amber-400/45 bg-[#021215]/75 px-3.5 py-2 font-mono text-base font-black uppercase tracking-widest text-white placeholder:text-xs placeholder:font-normal placeholder:normal-case placeholder:tracking-normal placeholder:text-slate-500 focus:border-amber-300 focus:outline-none sm:px-4 sm:py-2.5 sm:text-lg sm:placeholder:text-sm"
                   />
-                  <button
-                    type="submit"
-                    className="rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 px-6 py-3 text-sm font-extrabold text-slate-950 transition hover:brightness-110"
-                  >
-                    Step Ladder
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleUndo}
-                    disabled={chain.length <= 1}
-                    className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10 disabled:opacity-40"
-                  >
-                    <Undo2 className="h-4 w-4" />
-                    Undo
-                  </button>
+                  <div className="grid grid-cols-[1fr_auto] gap-2 sm:flex sm:gap-3">
+                    <button
+                      type="submit"
+                      className="rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 px-5 py-2.5 text-sm font-extrabold text-slate-950 transition hover:brightness-110 sm:px-6 sm:py-3"
+                    >
+                      Step Ladder
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleUndo}
+                      disabled={chain.length <= 1}
+                      className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/10 disabled:opacity-40 sm:py-3"
+                    >
+                      <Undo2 className="h-4 w-4" />
+                      Undo
+                    </button>
+                  </div>
                 </form>
 
                 {errorMsg && (
