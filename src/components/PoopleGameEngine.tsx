@@ -752,59 +752,45 @@ export default function PoopleGameEngine() {
             </div>
           )}
 
-          {/* HUD Strip (2-col + slim controls on mobile, 3-col on desktop) */}
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
-            <div className="rounded-xl border border-emerald-300/20 bg-[#03191a]/40 px-2.5 py-1.5 backdrop-blur-[2px] sm:rounded-2xl sm:px-3 sm:py-2">
-              <span className="block truncate text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-[11px]">
-                Current → Goal
-              </span>
-              <div className="mt-0.5 flex items-center justify-between font-mono text-lg font-black sm:mt-1 sm:text-2xl">
-                <span className="text-white">{currentWord}</span>
-                <span className="text-xs text-slate-500 sm:text-sm">→</span>
-                <span className="text-amber-300">POOP</span>
-              </div>
+          {/* Single Unified HUD Bar (flattened for visual clarity) */}
+          <div className="pointer-events-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl bg-[#03191a]/40 px-3 py-2 backdrop-blur-[2px] sm:px-4 sm:py-2.5">
+            <div className="flex items-center gap-2 font-mono text-base font-black sm:text-xl">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Goal</span>
+              <span className="text-white">{currentWord}</span>
+              <span className="text-xs text-slate-500">→</span>
+              <span className="text-amber-300">POOP</span>
             </div>
 
-            <div className="rounded-xl border border-emerald-300/20 bg-[#03191a]/40 px-2.5 py-1.5 backdrop-blur-[2px] sm:rounded-2xl sm:px-3 sm:py-2">
-              <span className="block truncate text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-[11px]">
-                Steps vs. Par
+            <div className="flex items-baseline gap-2 font-mono">
+              <span className="text-base font-black text-cyan-200 sm:text-xl">
+                {stepsTaken} <span className="text-xs font-bold">{stepsTaken === 1 ? "step" : "steps"}</span>
               </span>
-              <div className="mt-0.5 flex items-baseline justify-between sm:mt-1">
-                <span className="font-mono text-lg font-black text-cyan-200 sm:text-2xl">
-                  {stepsTaken} <span className="text-xs font-bold sm:text-base">{stepsTaken === 1 ? "step" : "steps"}</span>
-                </span>
-                <span className="text-[10px] font-semibold text-emerald-300 sm:text-xs">
-                  Par: {parSteps}
-                </span>
-              </div>
+              <span className="text-[11px] font-semibold text-emerald-300">
+                Par: {parSteps}
+              </span>
             </div>
 
-            <div className="col-span-2 flex items-center justify-between gap-2 rounded-xl border border-emerald-300/20 bg-[#03191a]/40 px-2.5 py-1.5 backdrop-blur-[2px] sm:col-span-1 sm:block sm:rounded-2xl sm:px-3 sm:py-2">
-              <span className="hidden text-[11px] font-bold uppercase tracking-wider text-slate-400 sm:block">
-                Starter Controls
-              </span>
-              <div className="flex flex-1 items-center gap-2 sm:mt-1.5">
-                <button
-                  type="button"
-                  onClick={pickRandomStarter}
-                  className="inline-flex flex-1 items-center justify-center gap-1 rounded-lg border border-amber-400/35 bg-amber-500/15 px-2.5 py-1 text-xs font-bold text-amber-200 hover:bg-amber-500/25 sm:py-1.5"
-                >
-                  <RotateCcw className="h-3.5 w-3.5" />
-                  New Word
-                </button>
-                <button
-                  type="button"
-                  onClick={() => startRound(startWord, tab === "daily" ? "daily" : "unlimited")}
-                  className="inline-flex items-center justify-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-xs font-semibold text-slate-200 hover:bg-white/10 sm:py-1.5"
-                >
-                  Reset
-                </button>
-              </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={pickRandomStarter}
+                className="inline-flex items-center gap-1 rounded-lg bg-amber-500/20 px-2.5 py-1 text-xs font-bold text-amber-200 hover:bg-amber-500/30"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                New Word
+              </button>
+              <button
+                type="button"
+                onClick={() => startRound(startWord, tab === "daily" ? "daily" : "unlimited")}
+                className="inline-flex items-center gap-1 rounded-lg bg-white/10 px-2.5 py-1 text-xs font-semibold text-slate-200 hover:bg-white/15"
+              >
+                Reset
+              </button>
             </div>
           </div>
 
-          {/* Ladder Chain Visual */}
-          <div data-hud-interactive className="pointer-events-auto rounded-2xl border border-emerald-300/25 bg-[#03191a]/45 p-3 backdrop-blur-[2px] sm:p-5">
+          {/* Ladder Chain Visual (no heavy nested outer border) */}
+          <div data-hud-interactive className="pointer-events-auto rounded-2xl bg-[#03191a]/40 p-3 backdrop-blur-[2px] sm:p-5">
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
               {chain.map((word, idx) => (
                 <div key={`${word}-${idx}`} className="flex items-center gap-1.5 sm:gap-2">

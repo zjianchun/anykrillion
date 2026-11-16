@@ -13,15 +13,18 @@ import {
   Check,
   Clock,
   Eye,
+  Flame,
   HelpCircle,
   Maximize2,
   Minimize2,
   RotateCcw,
+  Settings,
   SkipForward,
   Swords,
   TimerOff,
   Volume2,
   VolumeX,
+  X,
 } from "lucide-react";
 import OceanDiveScene from "@/components/OceanDiveScene";
 import { trackGameEvent } from "@/lib/analytics";
@@ -276,6 +279,11 @@ export default function KrillionGameEngine({
   const [friendChallenge, setFriendChallenge] = useState<ActiveFriendChallenge | null>(null);
   const [copiedQuickInvite, setCopiedQuickInvite] = useState<boolean>(false);
   const [showCompareDrawer, setShowCompareDrawer] = useState<boolean>(false);
+  const [showControlsMenu, setShowControlsMenu] = useState<boolean>(false);
+  const [timerActive, setTimerActive] = useState<boolean>(false);
+  const [exitDailyNudge, setExitDailyNudge] = useState<boolean>(false);
+  const [dailyNudgeDismissed, setDailyNudgeDismissed] = useState<boolean>(false);
+  const [dailyCountdown, setDailyCountdown] = useState<string>("");
   const [typingPulse, setTypingPulse] = useState<number>(0);
   const [discoveredLogs, setDiscoveredLogs] = useState<string[]>([]);
   const [latestDiscovery, setLatestDiscovery] = useState<string | null>(null);
@@ -351,11 +359,11 @@ export default function KrillionGameEngine({
   const [feedbackError, setFeedbackError] = useState<string | null>(null);
   const [revealedHints, setRevealedHints] = useState<number>(0);
 
-  // Core game phase & physical camera coordinates
-  const [phase, setPhase] = useState<EnginePhase>("splash");
+  // Core game phase & physical camera coordinates (start directly on Q1, timer starts on first keystroke)
+  const [phase, setPhase] = useState<EnginePhase>("playing");
   const [countdownNum, setCountdownNum] = useState<number>(2);
   const [timeLeft, setTimeLeft] = useState<number>(initialDeck[0]?.timerSeconds ?? 25);
-  const [cameraDepth, setCameraDepth] = useState<number>(0);
+  const [cameraDepth, setCameraDepth] = useState<number>(72);
   const [displayScore, setDisplayScore] = useState<number>(0);
   const [sinkingText, setSinkingText] = useState<string>("");
 
@@ -392,8 +400,9 @@ export default function KrillionGameEngine({
             setDeck(resolved);
             setQIndex(0);
             setOutcomes([]);
-            setPhase("splash");
-            setCameraDepth(0);
+            setPhase("playing");
+            setTimerActive(false);
+            setCameraDepth(72);
             setDisplayScore(0);
             setTimeLeft(resolved[0]?.timerSeconds ?? 25);
             setFriendChallenge({ score: decoded.s, metric: decoded.d });
@@ -493,17 +502,19 @@ export default function KrillionGameEngine({
       setFeedbackError(null);
       setRevealedHints(0);
       setShowCompareDrawer(false);
+      setShowControlsMenu(false);
       setDisplayScore(0);
       setTimeLeft(nextDeck[0]?.timerSeconds ?? 25);
       setFriendChallenge(null);
+      setCameraDepth(72);
 
       if (autoEnterGame) {
-        setCameraDepth(72);
+        setTimerActive(true);
         setPhase("countdown");
         setCountdownNum(2);
       } else {
-        setCameraDepth(0);
-        setPhase("splash");
+        setTimerActive(false);
+        setPhase("playing");
       }
     },
     [buildDeck, deck, mode, packFilter, selectedDate],
@@ -601,9 +612,30 @@ export default function KrillionGameEngine({
     [bestScore, deck.length, mode, outcomes],
   );
 
-  // Active round countdown timer
+  // Live countdown to next Daily Dive (UTC midnight) on summary screen
   useEffect(() => {
-    if (phase !== "playing" || relaxedTimer || !currentPrompt || timeLeft <= 0) {
+    if (phase !== "summary") return;
+    const updateCountdown = () => {
+      const now = new Date();
+      const nextUtc = Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate() + 1,
+      );
+      const diffSec = Math.max(0, Math.floor((nextUtc - now.getTime()) / 1000));
+      const h = String(Math.floor(diffSec / 3600)).padStart(2, "0");
+      const m = String(Math.floor((diffSec % 3600) / 60)).padStart(2, "0");
+      const s = String(diffSec % 60).padStart(2, "0");
+      setDailyCountdown(`${h}:${m}:${s}`);
+    };
+    updateCountdown();
+    const id = window.setInterval(updateCountdown, 1000);
+    return () => window.clearInterval(id);
+  }, [phase]);
+
+  // Active round countdown timer (waits for first keystroke on Q1)
+  useEffect(() => {
+    if (phase !== "playing" || !timerActive || relaxedTimer || !currentPrompt || timeLeft <= 0) {
       return;
     }
 
@@ -628,7 +660,7 @@ export default function KrillionGameEngine({
     }, 1000);
 
     return () => window.clearTimeout(timeout);
-  }, [currentPrompt, phase, relaxedTimer, timeLeft, triggerSinkAndReveal]);
+  }, [currentPrompt, phase, relaxedTimer, timeLeft, timerActive, triggerSinkAndReveal]);
 
   useEffect(() => {
     return () => {
@@ -692,6 +724,7 @@ export default function KrillionGameEngine({
 
   const handleSkip = () => {
     if (!currentPrompt || phase !== "playing") return;
+    if (!timerActive) setTimerActive(true);
     if (outcomes.length === 0 && qIndex === 0) {
       trackGameEvent("game_start", { game: activeThemeId, mode });
     }
@@ -731,12 +764,14 @@ export default function KrillionGameEngine({
     setRevealedHints(0);
     setShowCompareDrawer(false);
     setCountdownNum(2);
+    setTimerActive(true);
     setPhase("countdown");
     setTimeLeft(deck[nextIdx]?.timerSeconds ?? 25);
   };
 
   const handleRevealHint = () => {
     if (!currentPrompt || revealedHints >= 3 || phase !== "playing") return;
+    if (!timerActive) setTimerActive(true);
     playLockInSound();
     trackGameEvent("hint_used", {
       game: activeThemeId,
@@ -803,10 +838,15 @@ export default function KrillionGameEngine({
     <section
       ref={stageRef}
       aria-label="Interactive Krillion Ocean Dive Canvas"
+      onMouseLeave={() => {
+        if (mode !== "daily" && !dailyNudgeDismissed && outcomes.length === 0) {
+          setExitDailyNudge(true);
+        }
+      }}
       className={`relative overflow-hidden border-y border-cyan-400/25 sm:rounded-3xl sm:border ${
         isFullscreen
           ? "fixed inset-0 z-50 h-screen w-screen rounded-none border-0"
-          : "h-[calc(100vh-80px)] min-h-[560px] max-h-[820px] w-full"
+          : "h-[calc(100vh-64px)] min-h-[560px] max-h-[820px] w-full sm:h-[calc(100vh-80px)]"
       }`}
     >
       <OceanDiveScene
@@ -884,8 +924,8 @@ export default function KrillionGameEngine({
             </div>
           </div>
 
-          {/* Floating Mode & Audio Strip */}
-          <div className="flex flex-wrap items-center justify-between gap-1.5">
+          {/* Floating Mode & Compact Settings Strip */}
+          <div className="relative flex flex-wrap items-center justify-between gap-1.5">
             {allowModeSwitch ? (
               <div className="pointer-events-auto flex flex-wrap items-center gap-1 rounded-xl border border-white/10 bg-[#041425]/45 p-1 backdrop-blur-[2px]">
                 {(
@@ -910,23 +950,6 @@ export default function KrillionGameEngine({
                     {m.label}
                   </button>
                 ))}
-                {allowPackFilter && mode !== "daily" && (
-                  <select
-                    aria-label="Filter topic pack"
-                    value={packFilter}
-                    onChange={(e) =>
-                      startFreshDive(mode, e.target.value as PackId | "all", selectedDate, false)
-                    }
-                    className="rounded-lg bg-black/40 px-2 py-1 text-[11px] font-semibold text-cyan-200 outline-none"
-                  >
-                    <option value="all">All Packs</option>
-                    {PACK_METAS.map((pm) => (
-                      <option key={pm.id} value={pm.id}>
-                        {pm.shortName}
-                      </option>
-                    ))}
-                  </select>
-                )}
               </div>
             ) : (
               <span className="pointer-events-auto rounded-lg border border-white/15 bg-[#041425]/45 px-2.5 py-1 font-mono text-[11px] font-bold text-cyan-200 backdrop-blur-[2px]">
@@ -934,31 +957,7 @@ export default function KrillionGameEngine({
               </span>
             )}
 
-            <div className="pointer-events-auto flex items-center gap-1 rounded-xl border border-white/10 bg-[#041425]/45 p-1 backdrop-blur-[2px]">
-              <button
-                type="button"
-                onClick={() => setRelaxedTimer((v) => !v)}
-                className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold transition ${
-                  relaxedTimer
-                    ? "bg-emerald-500/25 text-emerald-200"
-                    : "text-slate-300 hover:bg-white/10"
-                }`}
-                title="Toggle Timed vs Relaxed"
-              >
-                {relaxedTimer ? <TimerOff className="h-3.5 w-3.5" /> : <Clock className="h-3.5 w-3.5" />}
-                <span className="hidden sm:inline">{relaxedTimer ? "Relaxed" : "Timed"}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSoundEnabled(!soundOn)}
-                aria-label={soundOn ? "Mute audio" : "Enable audio"}
-                className="rounded-lg p-1.5 text-slate-200 hover:bg-white/10"
-                title={soundOn ? "Sound On" : "Muted"}
-              >
-                {soundOn ? <Volume2 className="h-3.5 w-3.5 text-cyan-300" /> : <VolumeX className="h-3.5 w-3.5 text-slate-500" />}
-              </button>
-
+            <div className="pointer-events-auto relative flex items-center gap-1 rounded-xl border border-white/10 bg-[#041425]/45 p-1 backdrop-blur-[2px]">
               <button
                 type="button"
                 onClick={handleQuickInviteCopy}
@@ -971,33 +970,96 @@ export default function KrillionGameEngine({
 
               <button
                 type="button"
-                onClick={() => startFreshDive(mode, packFilter, selectedDate, false)}
-                className="rounded-lg p-1.5 text-slate-300 hover:bg-white/10"
-                title="Reset to surface"
+                onClick={() => setShowControlsMenu((v) => !v)}
+                aria-expanded={showControlsMenu}
+                aria-label="Game settings"
+                className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold transition ${
+                  showControlsMenu
+                    ? "bg-cyan-400 text-slate-950"
+                    : "text-slate-200 hover:bg-white/10"
+                }`}
+                title="Packs, Timer, Sound & Reset"
               >
-                <RotateCcw className="h-3.5 w-3.5" />
+                <Settings className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Options</span>
               </button>
 
-              <button
-                type="button"
-                onClick={toggleFullscreen}
-                aria-label="Toggle fullscreen game view"
-                className="rounded-lg p-1.5 text-slate-300 hover:bg-white/10"
-                title="Fullscreen"
-              >
-                {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
-              </button>
+              {showControlsMenu && (
+                <div className="absolute right-0 top-full z-40 mt-1.5 flex w-60 flex-col gap-2 rounded-xl border border-cyan-400/35 bg-[#041425]/95 p-3 shadow-2xl backdrop-blur-md">
+                  {allowPackFilter && mode !== "daily" && (
+                    <label className="flex flex-col gap-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      Topic Pack
+                      <select
+                        aria-label="Filter topic pack"
+                        value={packFilter}
+                        onChange={(e) =>
+                          startFreshDive(mode, e.target.value as PackId | "all", selectedDate, false)
+                        }
+                        className="rounded-lg border border-white/15 bg-black/50 px-2 py-1.5 text-xs font-semibold text-cyan-200 outline-none"
+                      >
+                        <option value="all">All Packs</option>
+                        {PACK_METAS.map((pm) => (
+                          <option key={pm.id} value={pm.id}>
+                            {pm.shortName}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-1.5 text-[11px]">
+                    <button
+                      type="button"
+                      onClick={() => setRelaxedTimer((v) => !v)}
+                      className={`inline-flex items-center justify-center gap-1 rounded-lg border px-2 py-1.5 font-bold transition ${
+                        relaxedTimer
+                          ? "border-emerald-400/40 bg-emerald-500/20 text-emerald-200"
+                          : "border-white/15 bg-white/5 text-slate-200 hover:bg-white/10"
+                      }`}
+                    >
+                      {relaxedTimer ? <TimerOff className="h-3.5 w-3.5" /> : <Clock className="h-3.5 w-3.5" />}
+                      {relaxedTimer ? "Relaxed" : "Timed"}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setSoundEnabled(!soundOn)}
+                      className="inline-flex items-center justify-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2 py-1.5 font-bold text-slate-200 hover:bg-white/10"
+                    >
+                      {soundOn ? <Volume2 className="h-3.5 w-3.5 text-cyan-300" /> : <VolumeX className="h-3.5 w-3.5 text-slate-500" />}
+                      {soundOn ? "Sound On" : "Muted"}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => startFreshDive(mode, packFilter, selectedDate, false)}
+                      className="inline-flex items-center justify-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2 py-1.5 font-bold text-slate-200 hover:bg-white/10"
+                    >
+                      <RotateCcw className="h-3.5 w-3.5" />
+                      New Deck
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={toggleFullscreen}
+                      className="inline-flex items-center justify-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2 py-1.5 font-bold text-slate-200 hover:bg-white/10"
+                    >
+                      {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+                      {isFullscreen ? "Exit Full" : "Fullscreen"}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
           {friendChallenge && phase !== "summary" && (
-            <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-amber-400/60 bg-amber-500/20 px-3.5 py-1 text-xs font-bold text-amber-100 backdrop-blur-sm">
+            <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-amber-400/75 bg-amber-500/25 px-4 py-1.5 text-xs font-extrabold text-amber-50 shadow-[0_0_20px_rgba(251,191,36,0.25)] backdrop-blur-sm">
               <Swords className="h-3.5 w-3.5 text-amber-300" />
               <span>
-                Friend PK Challenge — Exact same 7 questions
                 {typeof friendChallenge.score === "number"
-                  ? ` · Beat ${friendChallenge.score} pts (${friendChallenge.metric ?? ""})`
-                  : ""}
+                  ? `Opponent Score: ${friendChallenge.score} pts${friendChallenge.metric ? ` (${friendChallenge.metric})` : ""} — Beat them on the exact same 7 prompts!`
+                  : "Friend PK Challenge — Exact same 7 prompts"}
               </span>
             </div>
           )}
@@ -1163,14 +1225,19 @@ export default function KrillionGameEngine({
                   type="text"
                   value={inputValue}
                   onChange={(e) => {
+                    if (!timerActive) setTimerActive(true);
                     setInputValue(e.target.value);
                     setTypingPulse((n) => n + 1);
                     if (feedbackError) setFeedbackError(null);
                   }}
                   placeholder={
-                    isReverse
-                      ? "type the most obvious answer..."
-                      : "type one answer..."
+                    !timerActive && qIndex === 0 && outcomes.length === 0
+                      ? isReverse
+                        ? "start typing most obvious answer (clock waits)..."
+                        : "start typing an obscure answer (clock waits)..."
+                      : isReverse
+                        ? "type the most obvious answer..."
+                        : "type one answer..."
                   }
                   autoComplete="off"
                   spellCheck={false}
@@ -1308,44 +1375,63 @@ export default function KrillionGameEngine({
             </div>
           )}
 
-          {/* PHASE 6: EXPEDITION SUMMARY LOG IN THE ABYSS */}
+          {/* PHASE 6: SCREENSHOT-READY EXPEDITION SCORE CARD */}
           {phase === "summary" && (
-            <div className="pointer-events-auto w-full max-w-2xl space-y-3 overflow-y-auto max-h-[70vh] rounded-2xl border-2 border-cyan-400/40 bg-[#041222]/80 p-4 backdrop-blur-md sm:p-6">
-              <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="pointer-events-auto w-full max-w-2xl space-y-3 overflow-y-auto max-h-[74vh] rounded-2xl border-2 border-cyan-400/50 bg-gradient-to-b from-[#04182d]/90 to-[#020c18]/90 p-4 shadow-[0_0_40px_rgba(34,211,238,0.2)] backdrop-blur-md sm:p-6">
+              <div className="flex flex-wrap items-start justify-between gap-3 border-b border-white/10 pb-3">
                 <div>
-                  <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-cyan-300">
-                    {isReverse ? "FLIGHT COMPLETE" : "EXPEDITION COMPLETE"}
-                  </span>
-                  <h3 className="font-pixel text-2xl font-bold text-white sm:text-3xl">
-                    SCORE: <span className="text-amber-300">{totalScore}</span> / 700 ·{" "}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-cyan-300">
+                      {worldTitle.logoText} · {isReverse ? "FLIGHT COMPLETE" : "DIVE COMPLETE"}
+                    </span>
+                    {bestScore > 0 && (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/40 bg-amber-500/15 px-2 py-0.5 font-mono text-[10px] font-bold text-amber-200">
+                        <Flame className="h-3 w-3 text-amber-300" />
+                        {totalScore >= bestScore ? "NEW BEST!" : `Best: ${bestScore}`}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="mt-1 font-pixel text-2xl font-bold text-white sm:text-3xl">
+                    <span className="text-amber-300">{totalScore}</span> / 700 ·{" "}
                     <span className="text-cyan-300">{depthMetricLabel}</span>
                   </h3>
+                  <p className="mt-0.5 font-mono text-[11px] text-slate-300">
+                    Zone Reached: <strong className="text-cyan-200">{zoneStory.zone}</strong> ·{" "}
+                    <span className="tracking-widest">{emojiGrid}</span>
+                  </p>
                   {friendChallenge && typeof friendChallenge.score === "number" && (
-                    <p className="mt-1 inline-flex items-center gap-1.5 rounded-lg bg-amber-400/20 px-2.5 py-1 font-mono text-xs font-bold text-amber-200">
+                    <p className="mt-1.5 inline-flex items-center gap-1.5 rounded-lg bg-amber-400/20 px-2.5 py-1 font-mono text-xs font-bold text-amber-200">
                       <Swords className="h-3.5 w-3.5" />
                       {totalScore > friendChallenge.score
                         ? `VICTORY! Beat friend's ${friendChallenge.score} pts!`
                         : totalScore === friendChallenge.score
                           ? `TIE at ${totalScore} pts!`
-                          : `Friend scored ${friendChallenge.score} pts — try another deck!`}
+                          : `Friend scored ${friendChallenge.score} pts — run it back!`}
                     </p>
                   )}
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    startFreshDive(
-                      mode === "daily" ? "unlimited" : mode,
-                      packFilter,
-                      selectedDate,
-                      true,
-                    )
-                  }
-                  className="rounded-lg border-2 border-cyan-300 bg-cyan-400 px-4 py-2 font-pixel text-xs font-bold text-slate-950 hover:brightness-110"
-                >
-                  DIVE AGAIN ▼
-                </button>
+                <div className="flex flex-col items-end gap-1">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      startFreshDive(
+                        mode === "daily" ? "unlimited" : mode,
+                        packFilter,
+                        selectedDate,
+                        true,
+                      )
+                    }
+                    className="rounded-lg border-2 border-cyan-300 bg-cyan-400 px-4 py-2 font-pixel text-xs font-bold text-slate-950 shadow-[0_0_20px_rgba(34,211,238,0.35)] hover:brightness-110"
+                  >
+                    NEXT DIVE →
+                  </button>
+                  {dailyCountdown && (
+                    <span className="font-mono text-[10px] text-slate-400">
+                      Next Daily in <strong className="text-cyan-200">{dailyCountdown}</strong>
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Round Plaques */}
@@ -1380,6 +1466,7 @@ export default function KrillionGameEngine({
                 shareText={summaryShareText}
                 shareTitle={`${worldTitle.logoText}: ${totalScore}/700 (${depthMetricLabel})`}
                 fullResultCopyText={fullCopyGridText}
+                ctaLabel={`Can you beat ${depthMetricLabel}? Challenge Friends`}
               />
 
               <div className="flex flex-wrap items-center justify-between gap-2 pt-1 font-mono text-[11px] text-slate-400">
@@ -1405,6 +1492,35 @@ export default function KrillionGameEngine({
             </div>
           )}
         </div>
+
+        {/* NON-INTRUSIVE EXIT-INTENT DAILY NUDGE */}
+        {exitDailyNudge && !dailyNudgeDismissed && mode !== "daily" && (
+          <div className="pointer-events-auto mx-auto mb-1 flex items-center gap-3 rounded-full border border-emerald-400/45 bg-[#041a2b]/90 px-3.5 py-1.5 font-mono text-[11px] text-emerald-100 shadow-lg backdrop-blur-md">
+            <span>Today&apos;s 7-question Daily Dive is ready</span>
+            <button
+              type="button"
+              onClick={() => {
+                setDailyNudgeDismissed(true);
+                setExitDailyNudge(false);
+                startFreshDive("daily", packFilter, selectedDate, false);
+              }}
+              className="rounded-full bg-emerald-400 px-2.5 py-0.5 font-bold text-slate-950 hover:brightness-110"
+            >
+              Play Daily →
+            </button>
+            <button
+              type="button"
+              aria-label="Dismiss daily nudge"
+              onClick={() => {
+                setDailyNudgeDismissed(true);
+                setExitDailyNudge(false);
+              }}
+              className="text-slate-400 hover:text-white"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
 
         {/* BOTTOM WORLD FOOTER: SONAR NARRATIVE TICKER + DISCOVERY LOG */}
         <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] font-semibold tracking-wider text-slate-200/80 drop-shadow">

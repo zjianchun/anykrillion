@@ -1,13 +1,29 @@
 import Link from "next/link";
-import { ArrowRight, Compass, Film, Flame, Layers, Sparkles, Trophy, Wind } from "lucide-react";
+import {
+  ArrowRight,
+  Award,
+  Compass,
+  Film,
+  Flame,
+  Grid3x3,
+  Layers,
+  Sparkles,
+  Trophy,
+  Wind,
+  Zap,
+} from "lucide-react";
 
 const CARDS = [
   {
     href: "/krillion-answers-today/",
     title: "Krillion Answers Today",
     desc: "Progressive spoiler-free hints, Plankton warnings & One in a Krillion picks.",
-    tag: "Updated Daily",
+    tag: "Daily Hints",
     icon: Sparkles,
+    cardCls: "border-cyan-500/25 hover:border-cyan-400/60",
+    iconCls: "bg-cyan-500/15 text-cyan-300",
+    tagCls: "border-cyan-400/25 bg-cyan-500/10 text-cyan-200",
+    ctaCls: "text-cyan-300",
   },
   {
     href: "/noillirk/",
@@ -15,55 +31,87 @@ const CARDS = [
     desc: "Flip the rules! Ascend in a hot-air balloon by naming the most obvious crowd answers.",
     tag: "Reverse Mode",
     icon: Wind,
+    cardCls: "border-amber-500/25 hover:border-amber-400/60",
+    iconCls: "bg-amber-500/15 text-amber-300",
+    tagCls: "border-amber-400/25 bg-amber-500/10 text-amber-200",
+    ctaCls: "text-amber-300",
   },
   {
     href: "/krillion-sports/",
     title: "Krillion Sports",
     desc: "Olympic hosts, tennis majors, F1 champions, NFL, MLB, NHL & global sports icons.",
-    tag: "35s Timer",
+    tag: "35s · All Sports",
     icon: Trophy,
+    cardCls: "border-emerald-500/25 hover:border-emerald-400/60",
+    iconCls: "bg-emerald-500/15 text-emerald-300",
+    tagCls: "border-emerald-400/25 bg-emerald-500/10 text-emerald-200",
+    ctaCls: "text-emerald-300",
   },
   {
     href: "/krillion-geography/",
     title: "Krillion Geography",
-    desc: "Countries, capitals, landlocked nations, island states & border puzzles via Wikidata.",
-    tag: "Open Geo DB",
+    desc: "Countries, capitals, landlocked nations, island states & border puzzles.",
+    tag: "195+ Nations",
     icon: Compass,
+    cardCls: "border-sky-500/25 hover:border-sky-400/60",
+    iconCls: "bg-sky-500/15 text-sky-300",
+    tagCls: "border-sky-400/25 bg-sky-500/10 text-sky-200",
+    ctaCls: "text-sky-300",
   },
   {
     href: "/pokekrillion/",
     title: "Pokekrillion",
     desc: "Generation 1–9 Pokémon rarity trivia covering types, starters, mythicals & dex gems.",
-    tag: "PokéAPI v2",
-    icon: Flame,
+    tag: "Gen 1–9",
+    icon: Zap,
+    cardCls: "border-yellow-500/25 hover:border-yellow-400/60",
+    iconCls: "bg-yellow-500/15 text-yellow-300",
+    tagCls: "border-yellow-400/25 bg-yellow-500/10 text-yellow-200",
+    ctaCls: "text-yellow-300",
   },
   {
     href: "/footbillion/",
     title: "Footbillion",
     desc: "40-second World Cup squads, Premier League clubs & Ballon d'Or rarity challenges.",
-    tag: "Fjelstul CSV",
-    icon: Trophy,
+    tag: "40s · World Cup",
+    icon: Award,
+    cardCls: "border-lime-500/25 hover:border-lime-400/60",
+    iconCls: "bg-lime-500/15 text-lime-300",
+    tagCls: "border-lime-400/25 bg-lime-500/10 text-lime-200",
+    ctaCls: "text-lime-300",
   },
   {
     href: "/nba-krillion/",
     title: "NBA Krillion",
     desc: "NBA champions, MVPs, #1 draft picks, scoring leaders & franchise legends.",
-    tag: "Basketball",
+    tag: "NBA & MVPs",
     icon: Flame,
+    cardCls: "border-orange-500/25 hover:border-orange-400/60",
+    iconCls: "bg-orange-500/15 text-orange-300",
+    tagCls: "border-orange-400/25 bg-orange-500/10 text-orange-200",
+    ctaCls: "text-orange-300",
   },
   {
     href: "/krillion-movies/",
     title: "Krillion Movies",
     desc: "Best Picture Oscars, acclaimed directors, Pixar classics & cinema franchises.",
-    tag: "Cinema DB",
+    tag: "Oscars & Pixar",
     icon: Film,
+    cardCls: "border-rose-500/25 hover:border-rose-400/60",
+    iconCls: "bg-rose-500/15 text-rose-300",
+    tagCls: "border-rose-400/25 bg-rose-500/10 text-rose-200",
+    ctaCls: "text-rose-300",
   },
   {
     href: "/poople-unlimited/",
     title: "Poople Unlimited",
     desc: "4-letter word ladder puzzle turning words into POOP + Daily Answer & BFS solver.",
     tag: "Word Ladder",
-    icon: Sparkles,
+    icon: Grid3x3,
+    cardCls: "border-teal-500/25 hover:border-teal-400/60",
+    iconCls: "bg-teal-500/15 text-teal-300",
+    tagCls: "border-teal-400/25 bg-teal-500/10 text-teal-200",
+    ctaCls: "text-teal-300",
   },
   {
     href: "/games-like-krillion/",
@@ -71,6 +119,10 @@ const CARDS = [
     desc: "Side-by-side matrix comparing all 9 rarity trivia modes and Daily Dles variants.",
     tag: "All 9 Modes",
     icon: Layers,
+    cardCls: "border-indigo-500/25 hover:border-indigo-400/60",
+    iconCls: "bg-indigo-500/15 text-indigo-300",
+    tagCls: "border-indigo-400/25 bg-indigo-500/10 text-indigo-200",
+    ctaCls: "text-indigo-300",
   },
 ];
 
@@ -89,25 +141,25 @@ export default function TopicPacksGrid({
           <Link
             key={card.href}
             href={card.href}
-            className="group flex flex-col justify-between rounded-2xl border border-cyan-500/20 bg-[#06192d]/80 p-5 transition hover:-translate-y-0.5 hover:border-cyan-400/50 hover:bg-[#08223d]"
+            className={`group flex flex-col justify-between rounded-2xl border bg-[#06192d]/80 p-5 transition hover:-translate-y-0.5 hover:bg-[#08223d] ${card.cardCls}`}
           >
             <div>
               <div className="flex items-center justify-between gap-2">
-                <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300">
+                <span className={`inline-flex h-9 w-9 items-center justify-center rounded-xl ${card.iconCls}`}>
                   <Icon className="h-4 w-4" />
                 </span>
-                <span className="rounded-full border border-cyan-400/25 bg-cyan-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-cyan-200">
+                <span className={`rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${card.tagCls}`}>
                   {card.tag}
                 </span>
               </div>
-              <h3 className="mt-4 text-base font-bold text-white group-hover:text-cyan-200">
+              <h3 className="mt-4 text-base font-bold text-white group-hover:text-cyan-100">
                 {card.title}
               </h3>
               <p className="mt-1.5 text-sm leading-relaxed text-slate-400">
                 {card.desc}
               </p>
             </div>
-            <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-cyan-300">
+            <span className={`mt-4 inline-flex items-center gap-1 text-xs font-bold ${card.ctaCls}`}>
               Play Now
               <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
             </span>

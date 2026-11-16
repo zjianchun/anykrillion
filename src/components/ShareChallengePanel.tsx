@@ -18,6 +18,8 @@ interface ShareChallengePanelProps {
   variant?: "inline" | "summary";
   /** Accent hint */
   accent?: "cyan" | "amber" | "emerald" | "purple";
+  /** Optional challenger CTA label shown on the primary share button */
+  ctaLabel?: string;
 }
 
 export default function ShareChallengePanel({
@@ -27,6 +29,7 @@ export default function ShareChallengePanel({
   fullResultCopyText,
   variant = "summary",
   accent = "cyan",
+  ctaLabel,
 }: ShareChallengePanelProps) {
   const [copiedChallenge, setCopiedChallenge] = useState(false);
   const [copiedGrid, setCopiedGrid] = useState(false);
@@ -143,21 +146,30 @@ export default function ShareChallengePanel({
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
+          <button
+            type="button"
+            onClick={handleNativeShare}
+            className={`inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r px-4 py-2.5 text-xs font-extrabold shadow-lg transition hover:brightness-110 sm:w-auto sm:text-sm ${accentBtn}`}
+          >
+            <Share2 className="h-4 w-4" />
+            {ctaLabel ?? "Challenge Friends"}
+          </button>
+
           <button
             type="button"
             onClick={handleCopyLink}
-            className={`inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r px-4 py-2 text-xs font-extrabold shadow-lg transition hover:brightness-110 sm:text-sm ${accentBtn}`}
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-amber-400/40 bg-amber-500/15 px-3.5 py-2 text-xs font-bold text-amber-100 transition hover:bg-amber-500/25 sm:text-sm"
           >
-            {copiedChallenge ? <Check className="h-4 w-4" /> : <Swords className="h-4 w-4" />}
-            {copiedChallenge ? "Challenge Link Copied!" : "Copy Friend Challenge Link"}
+            {copiedChallenge ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
+            {copiedChallenge ? "Link Copied!" : "Copy Challenge Link"}
           </button>
 
           {fullResultCopyText && (
             <button
               type="button"
               onClick={handleCopyGrid}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-400/40 bg-cyan-500/15 px-3.5 py-2 text-xs font-bold text-cyan-100 transition hover:bg-cyan-500/25 sm:text-sm"
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-cyan-400/40 bg-cyan-500/15 px-3.5 py-2 text-xs font-bold text-cyan-100 transition hover:bg-cyan-500/25 sm:text-sm"
             >
               {copiedGrid ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               {copiedGrid ? "Result Grid Copied!" : "Copy Emoji Grid"}
