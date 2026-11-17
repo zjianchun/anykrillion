@@ -91,6 +91,11 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <head>
         <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6007456453108035"
+          crossOrigin="anonymous"
+        />
+        <script
           defer
           src="https://www.pvuv.ai/f.js"
           data-site="CLjAnNi8"
