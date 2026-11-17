@@ -25,6 +25,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/games-like-krillion/", changeFrequency: "weekly", priority: 0.8 },
     { path: "/guides/", changeFrequency: "monthly", priority: 0.75 },
     { path: "/sources/", changeFrequency: "monthly", priority: 0.7 },
+    { path: "/about/", changeFrequency: "monthly", priority: 0.5 },
+    { path: "/contact/", changeFrequency: "monthly", priority: 0.5 },
     { path: "/privacy-policy/", changeFrequency: "monthly", priority: 0.3 },
     { path: "/terms/", changeFrequency: "monthly", priority: 0.3 },
   ];

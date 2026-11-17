@@ -109,6 +109,16 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/about/" className="hover:text-cyan-200">
+                  About AnyKrillion
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact/" className="hover:text-cyan-200">
+                  Contact Us
+                </Link>
+              </li>
+              <li>
                 <Link href="/privacy-policy/" className="hover:text-cyan-200">
                   Privacy Policy
                 </Link>
