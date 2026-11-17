@@ -27,7 +27,7 @@ import {
   X,
 } from "lucide-react";
 import OceanDiveScene from "@/components/OceanDiveScene";
-import { trackGameEvent } from "@/lib/analytics";
+import { getStickyExperimentVariant, trackGameEvent } from "@/lib/analytics";
 import { getWorldThemeMeta, getZoneNarrative } from "@/lib/worldThemesData";
 import { TierCreatureSprite } from "@/components/PixelSprites";
 import ShareChallengePanel from "@/components/ShareChallengePanel";
@@ -284,6 +284,7 @@ export default function KrillionGameEngine({
   const [exitDailyNudge, setExitDailyNudge] = useState<boolean>(false);
   const [dailyNudgeDismissed, setDailyNudgeDismissed] = useState<boolean>(false);
   const [dailyCountdown, setDailyCountdown] = useState<string>("");
+  const [hasStartedPlay, setHasStartedPlay] = useState<boolean>(false);
   const [typingPulse, setTypingPulse] = useState<number>(0);
   const [discoveredLogs, setDiscoveredLogs] = useState<string[]>([]);
   const [latestDiscovery, setLatestDiscovery] = useState<string | null>(null);
@@ -421,12 +422,27 @@ export default function KrillionGameEngine({
         pool.length >= QUESTIONS_PER_DIVE ? pool : prompts,
         QUESTIONS_PER_DIVE,
       );
+      const entryVariant = getStickyExperimentVariant("entry_v1", ["direct", "cover"]);
+      trackGameEvent("exposure", { exp: "entry_v1", variant: entryVariant });
       queueMicrotask(() => {
         setDeck(fresh);
         setTimeLeft(fresh[0]?.timerSeconds ?? 25);
+        if (entryVariant === "cover") {
+          setPhase("splash");
+          setCameraDepth(0);
+        }
       });
     }
   }, [defaultMode, defaultPack, promptById, prompts]);
+
+  // Report 60-second active gameplay retention milestone once per session
+  useEffect(() => {
+    if (!hasStartedPlay) return;
+    const t = window.setTimeout(() => {
+      trackGameEvent("play_60s", { game: defaultPack, mode: defaultMode });
+    }, 60_000);
+    return () => window.clearTimeout(t);
+  }, [defaultMode, defaultPack, hasStartedPlay]);
 
   // Listen to browser fullscreen changes
   useEffect(() => {
@@ -680,6 +696,7 @@ export default function KrillionGameEngine({
     if (!trimmed) return;
 
     if (outcomes.length === 0 && qIndex === 0) {
+      setHasStartedPlay(true);
       trackGameEvent("game_start", { game: activeThemeId, mode });
     }
 
@@ -726,6 +743,7 @@ export default function KrillionGameEngine({
     if (!currentPrompt || phase !== "playing") return;
     if (!timerActive) setTimerActive(true);
     if (outcomes.length === 0 && qIndex === 0) {
+      setHasStartedPlay(true);
       trackGameEvent("game_start", { game: activeThemeId, mode });
     }
     trackGameEvent("answer_submit", {

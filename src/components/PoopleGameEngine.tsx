@@ -200,6 +200,15 @@ export default function PoopleGameEngine() {
   const [typingPulse, setTypingPulse] = useState(0);
   const [discoveredPipes, setDiscoveredPipes] = useState<string[]>([]);
   const [latestDiscovery, setLatestDiscovery] = useState<string | null>(null);
+  const [hasStartedPlay, setHasStartedPlay] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!hasStartedPlay) return;
+    const t = window.setTimeout(() => {
+      trackGameEvent("play_60s", { game: "poople-unlimited", mode: tab });
+    }, 60_000);
+    return () => window.clearTimeout(t);
+  }, [hasStartedPlay, tab]);
 
   const handlePipeDiscovery = (label: string) => {
     setLatestDiscovery(label);
@@ -374,6 +383,7 @@ export default function PoopleGameEngine() {
 
     const nextChain = [...chain, cand];
     if (chain.length === 1) {
+      setHasStartedPlay(true);
       trackGameEvent("game_start", { game: "poople-unlimited", mode: tab });
     }
     trackGameEvent("answer_submit", {

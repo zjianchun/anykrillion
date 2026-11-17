@@ -4,6 +4,7 @@ import Link from "next/link";
 import { BookOpen, Compass, Eye, Flame, Layers } from "lucide-react";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
+import GameEngagement from "@/components/GameEngagement";
 import JsonLd from "@/components/JsonLd";
 import Navbar from "@/components/Navbar";
 import PoopleGameEngine from "@/components/PoopleGameEngine";
@@ -137,12 +138,14 @@ export default function PoopleUnlimitedPage() {
           Poople Unlimited: Free 4-Letter Word Ladder Game, Daily Answer &amp; Solver
         </h1>
 
-        <section aria-labelledby="poople-engine-heading" className="mb-14">
+        <section aria-labelledby="poople-engine-heading" className="mb-8">
           <h2 id="poople-engine-heading" className="sr-only">
             Play Poople Unlimited &amp; Daily Word Ladder
           </h2>
           <PoopleGameEngine />
         </section>
+
+        <GameEngagement gameLabel="Poople Unlimited" />
 
         <div id="poople-guide" className="space-y-8 border-t border-white/10 px-4 pt-10 sm:px-0">
           <div className="grid gap-5 rounded-2xl border border-white/10 bg-[#051629]/65 p-5 sm:grid-cols-[1fr_210px] sm:items-center sm:p-6">

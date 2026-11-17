@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { BookOpen } from "lucide-react";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
+import GameEngagement from "@/components/GameEngagement";
 import JsonLd, { type BreadcrumbItem, type FaqItem } from "@/components/JsonLd";
 import KrillionGameEngine from "@/components/KrillionGameEngine";
 import Navbar from "@/components/Navbar";
@@ -97,7 +98,7 @@ export default function PackPageShell({
         <h1 className="sr-only">{h1}</h1>
 
         {/* Full-Viewport Interactive Ocean / Arena Dive World */}
-        <section aria-labelledby="engine-heading" className="mb-14">
+        <section aria-labelledby="engine-heading" className="mb-8">
           <h2 id="engine-heading" className="sr-only">
             {engineSectionTitle}
           </h2>
@@ -109,6 +110,8 @@ export default function PackPageShell({
             themeVariant={themeVariant}
           />
         </section>
+
+        <GameEngagement gameLabel={h1.split(":")[0]} />
 
         {/* Below-the-Fold Game Guide & Reference Knowledge (for players who scroll down & search crawlers) */}
         <div
