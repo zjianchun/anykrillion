@@ -581,6 +581,31 @@ def run_audit() -> Tuple[int, List[str], List[str], List[dict]]:
     except Exception as exc:
         errors.append(f"[Check 10] Dataset validation failed: {exc}")
 
+    # Check 11: Cloudflare Pages _routes.json Sync Guard
+    routes_file = OUT_DIR / "_routes.json"
+    if not routes_file.exists():
+        errors.append("[Check 11] Missing out/_routes.json (would cause static assets to hit Pages Functions)")
+    else:
+        try:
+            routes_cfg = json.loads(routes_file.read_text(encoding="utf-8"))
+            inc = routes_cfg.get("include")
+            exc = routes_cfg.get("exclude")
+            if routes_cfg.get("version") != 1:
+                errors.append(f"[Check 11] out/_routes.json version must be 1, got {routes_cfg.get('version')}")
+            if not isinstance(inc, list) or not isinstance(exc, list):
+                errors.append("[Check 11] out/_routes.json include and exclude must be lists")
+            else:
+                if len(inc) + len(exc) > 100:
+                    errors.append(f"[Check 11] out/_routes.json has {len(inc) + len(exc)} rules (>100 Cloudflare limit)")
+                if "/api/*" not in inc:
+                    errors.append("[Check 11] out/_routes.json missing '/api/*' in include")
+                inc_set = set(inc)
+                for planned_route in PLANNED_ROUTES:
+                    if planned_route not in inc_set:
+                        errors.append(f"[Check 11] Planned route '{planned_route}' missing from out/_routes.json include")
+        except Exception as exc_err:
+            errors.append(f"[Check 11] Invalid out/_routes.json: {exc_err}")
+
     print(f"=== AnyKrillion Multi-Dimensional SEO & Content Audit ({len(rows)} Planned Routes) ===")
     print(f"{'Route':<26} {'Batch':<10} {'Title':>5} {'Desc':>4} {'Canon':>5} {'H1/H2':>6} {'Words':>6}  Schemas")
     for r in rows:
