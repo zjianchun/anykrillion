@@ -327,6 +327,55 @@ export function BottomNativeSlot({ className = "" }: { className?: string }) {
   );
 }
 
+/**
+ * Post-Game Summary High-Viewability Banner Slot
+ * Displayed inside the Game Over / Summary score card (when player has finished the game)
+ * Auto-scales smoothly on narrow mobile screens (<480px) to prevent horizontal overflow.
+ */
+export function SummaryBannerSlot({ className = "" }: { className?: string }) {
+  const [scale, setScale] = useState(1);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function updateScale() {
+      if (!containerRef.current) return;
+      const width = containerRef.current.offsetWidth;
+      if (width > 0 && width < 480) {
+        // Reserve 12px padding, scale 468px down smoothly to fit mobile container
+        setScale(Math.min(1, Math.max(0.62, (width - 12) / 468)));
+      } else {
+        setScale(1);
+      }
+    }
+    updateScale();
+    window.addEventListener("resize", updateScale, { passive: true });
+    return () => window.removeEventListener("resize", updateScale);
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className={`w-full overflow-hidden text-center ${className}`}
+    >
+      <div
+        className="mx-auto flex items-center justify-center"
+        style={{
+          transform: scale < 1 ? `scale(${scale})` : undefined,
+          transformOrigin: "center center",
+          height: scale < 1 ? `${Math.round(86 * scale)}px` : undefined,
+        }}
+      >
+        <AtOptionsIframeUnit
+          adKey={AD_KEYS.banner468}
+          width={468}
+          height={60}
+          eager={true}
+        />
+      </div>
+    </div>
+  );
+}
+
 export function GuideWithSkyscraper({
   mode,
   children,

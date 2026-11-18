@@ -18,6 +18,7 @@ import {
   VolumeX,
 } from "lucide-react";
 import ShareChallengePanel from "@/components/ShareChallengePanel";
+import { SummaryBannerSlot } from "@/components/AdPlacements";
 import PooplePipeScene from "@/components/PooplePipeScene";
 import { trackGameEvent } from "@/lib/analytics";
 import type { ScoreCardSpec } from "@/lib/scoreCardCanvas";
@@ -968,6 +969,10 @@ export default function PoopleGameEngine() {
                     <InfinityIcon className="h-3.5 w-3.5" />
                     Next Random Word
                   </button>
+                </div>
+
+                <div data-hud-interactive className="pointer-events-auto">
+                  <SummaryBannerSlot className="my-1" />
                 </div>
 
                 <div data-hud-interactive className="pointer-events-auto"><ShareChallengePanel

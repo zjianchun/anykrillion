@@ -97,6 +97,12 @@ export default function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6007456453108035"
           crossOrigin="anonymous"
         />
+        {/* Adsterra Social Bar: High-converting interactive floating unit */}
+        <script
+          async
+          data-cfasync="false"
+          src="https://bicea.org/14/d2e7e003db7ca28137356ed3effe8688"
+        />
         <script
           defer
           src="https://www.pvuv.ai/f.js"
