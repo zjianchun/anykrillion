@@ -88,6 +88,10 @@ export interface WorldThemeMeta {
   hudMetricTitle: string;
   unitPrefix: string;
   unitSuffix: string;
+  submitVerb: string;
+  promptHintText: string;
+  nextDiveLabel: string;
+  stageAriaLabel: string;
   actionDescendLabel: string;
   sinkingVerb: string;
   scanPromptLabel: string;
@@ -108,6 +112,10 @@ const WORLD_THEMES_META: Record<ThemeVariant, WorldThemeMeta> = {
     hudMetricTitle: "DEPTH",
     unitPrefix: "-",
     unitSuffix: "m",
+    submitVerb: "DIVE",
+    promptHintText: "▼ rarer answers sink deeper ▼",
+    nextDiveLabel: "NEXT DIVE →",
+    stageAriaLabel: "Interactive Krillion Ocean Dive Canvas",
     actionDescendLabel: "DESCEND ▼",
     sinkingVerb: "Sinking into the deep...",
     scanPromptLabel: "Click water to ping sonar",
@@ -159,6 +167,10 @@ const WORLD_THEMES_META: Record<ThemeVariant, WorldThemeMeta> = {
     hudMetricTitle: "ALTITUDE",
     unitPrefix: "+",
     unitSuffix: "ft",
+    submitVerb: "ASCEND",
+    promptHintText: "▲ obvious answers fly higher ▲",
+    nextDiveLabel: "NEXT FLIGHT →",
+    stageAriaLabel: "Interactive Noillirk Sky Ascent Canvas",
     actionDescendLabel: "ASCEND ▲",
     sinkingVerb: "Ascending through sky...",
     scanPromptLabel: "Click sky to scan",
@@ -199,9 +211,13 @@ const WORLD_THEMES_META: Record<ThemeVariant, WorldThemeMeta> = {
   },
 
   pitch: {
-    hudMetricTitle: "PITCH ZONE",
-    unitPrefix: "-",
+    hudMetricTitle: "STRIKE RANGE",
+    unitPrefix: "",
     unitSuffix: "yd",
+    submitVerb: "STRIKE",
+    promptHintText: "rarer clubs & players strike from further out",
+    nextDiveLabel: "NEXT MATCH →",
+    stageAriaLabel: "Interactive Footbillion Stadium Pitch Canvas",
     actionDescendLabel: "NEXT HALF ▼",
     sinkingVerb: "Driving downfield into World Cup territory...",
     scanPromptLabel: "Click pitch to flash cameras",
@@ -222,13 +238,13 @@ const WORLD_THEMES_META: Record<ThemeVariant, WorldThemeMeta> = {
       { depth: 3200, label: "WORLD CUP LEGENDS VAULT", accent: "text-amber-300/80" },
     ],
     landmarks: [
-      { id: "cornerflag", depth: 105, xRatio: 0.78, title: "Corner Flag & Arc", discoveryLog: "Corner Quadrant (-105yd): fresh chalk lines glowing under floodlights.", zone: "Kickoff Circle" },
-      { id: "goalkeeper", depth: 165, xRatio: 0.75, title: "Diving Goalkeeper", discoveryLog: "Goalframe (-165yd): keeper diving at full stretch across the top corner!", zone: "Penalty Area" },
-      { id: "flashbulbs", depth: 260, xRatio: 0.23, title: "Ultra Crowd Flashes", discoveryLog: "Grandstand Tier (-260yd): 80,000 stadium camera bulbs strobing.", zone: "Midfield Terrace" },
-      { id: "varbooth", depth: 420, xRatio: 0.74, title: "VAR Monitor Booth", discoveryLog: "Touchline VAR (-420yd): official frame review cleared in your favor!", zone: "Technical Area" },
-      { id: "goldenboot", depth: 740, xRatio: 0.24, title: "Golden Boot Plinth", discoveryLog: "Tunnel Showcase (-740yd): historic World Cup scoring boot.", zone: "Champions Tunnel" },
-      { id: "starball", depth: 1220, xRatio: 0.76, title: "European Starball", discoveryLog: "Floodlight Rafters (-1,220yd): glowing silver-star European emblem.", zone: "Knockout Night" },
-      { id: "worldcup", depth: 1950, xRatio: 0.26, title: "World Cup Trophy", discoveryLog: "Jules Rimet Vault (-1,950yd): solid gold championship pedestal!", zone: "Trophy Vault" },
+      { id: "cornerflag", depth: 105, xRatio: 0.78, title: "Corner Flag & Arc", discoveryLog: "Corner Quadrant (105yd): fresh chalk lines glowing under floodlights.", zone: "Kickoff Circle" },
+      { id: "goalkeeper", depth: 165, xRatio: 0.75, title: "Diving Goalkeeper", discoveryLog: "Goalframe (165yd): keeper diving at full stretch across the top corner!", zone: "Penalty Area" },
+      { id: "flashbulbs", depth: 260, xRatio: 0.23, title: "Ultra Crowd Flashes", discoveryLog: "Grandstand Tier (260yd): 80,000 stadium camera bulbs strobing.", zone: "Midfield Terrace" },
+      { id: "varbooth", depth: 420, xRatio: 0.74, title: "VAR Monitor Booth", discoveryLog: "Touchline VAR (420yd): official frame review cleared in your favor!", zone: "Technical Area" },
+      { id: "goldenboot", depth: 740, xRatio: 0.24, title: "Golden Boot Plinth", discoveryLog: "Tunnel Showcase (740yd): historic World Cup scoring boot.", zone: "Champions Tunnel" },
+      { id: "starball", depth: 1220, xRatio: 0.76, title: "European Starball", discoveryLog: "Floodlight Rafters (1,220yd): glowing silver-star European emblem.", zone: "Knockout Night" },
+      { id: "worldcup", depth: 1950, xRatio: 0.26, title: "World Cup Trophy", discoveryLog: "Jules Rimet Vault (1,950yd): solid gold championship pedestal!", zone: "Trophy Vault" },
     ],
     tiers: {
       miss: { title: "OFFSIDE!", tagline: "Hit the woodwork on the whistle." },
@@ -240,9 +256,13 @@ const WORLD_THEMES_META: Record<ThemeVariant, WorldThemeMeta> = {
   },
 
   hardwood: {
-    hudMetricTitle: "COURT ZONE",
-    unitPrefix: "-",
+    hudMetricTitle: "COURT RANGE",
+    unitPrefix: "",
     unitSuffix: "ft",
+    submitVerb: "SHOOT",
+    promptHintText: "deep-cut legends splash from way downtown",
+    nextDiveLabel: "NEXT GAME →",
+    stageAriaLabel: "Interactive NBA Krillion Hardwood Arena Canvas",
     actionDescendLabel: "NEXT QUARTER ▼",
     sinkingVerb: "Cutting through arena spotlights...",
     scanPromptLabel: "Click court for arena cam",
@@ -262,12 +282,12 @@ const WORLD_THEMES_META: Record<ThemeVariant, WorldThemeMeta> = {
       { depth: 1850, label: "CHAMPIONSHIP RAFTERS", accent: "text-amber-300/75" },
     ],
     landmarks: [
-      { id: "shotclock", depth: 100, xRatio: 0.77, title: "24s Shot Clock", discoveryLog: "Stanchion Clock (-100ft): crimson LED digits counting down possession.", zone: "Tip-Off Center" },
-      { id: "hoop", depth: 165, xRatio: 0.75, title: "Glass Backboard Hoop", discoveryLog: "Orange Rim (-165ft): net rippling from a nothing-but-net swish!", zone: "Three-Point Arc" },
-      { id: "jerseys", depth: 360, xRatio: 0.24, title: "Championship Banners", discoveryLog: "Arena Rafters (-360ft): golden retired jersey banners swaying.", zone: "Upper Rafters" },
-      { id: "sneaker", depth: 720, xRatio: 0.75, title: "Deadstock Sneaker Vault", discoveryLog: "Tunnel Locker (-720ft): glowing 1996 retro hardwood kicks.", zone: "Playoff Tunnel" },
-      { id: "moneyrack", depth: 1200, xRatio: 0.24, title: "All-Star 3-Pt Rack", discoveryLog: "Money Ball Rack (-1,200ft): tricolor shooters' rack lit in gold.", zone: "All-Star Floor" },
-      { id: "obrien", depth: 1900, xRatio: 0.74, title: "Gold Trophy Pedestal", discoveryLog: "Finals Vault (-1,900ft): Larry O'Brien silver-and-gold trophy.", zone: "Hall of Fame" },
+      { id: "shotclock", depth: 100, xRatio: 0.77, title: "24s Shot Clock", discoveryLog: "Stanchion Clock (100ft): crimson LED digits counting down possession.", zone: "Tip-Off Center" },
+      { id: "hoop", depth: 165, xRatio: 0.75, title: "Glass Backboard Hoop", discoveryLog: "Orange Rim (165ft): net rippling from a nothing-but-net swish!", zone: "Three-Point Arc" },
+      { id: "jerseys", depth: 360, xRatio: 0.24, title: "Championship Banners", discoveryLog: "Arena Rafters (360ft): golden retired jersey banners swaying.", zone: "Upper Rafters" },
+      { id: "sneaker", depth: 720, xRatio: 0.75, title: "Deadstock Sneaker Vault", discoveryLog: "Tunnel Locker (720ft): glowing 1996 retro hardwood kicks.", zone: "Playoff Tunnel" },
+      { id: "moneyrack", depth: 1200, xRatio: 0.24, title: "All-Star 3-Pt Rack", discoveryLog: "Money Ball Rack (1,200ft): tricolor shooters' rack lit in gold.", zone: "All-Star Floor" },
+      { id: "obrien", depth: 1900, xRatio: 0.74, title: "Gold Trophy Pedestal", discoveryLog: "Finals Vault (1,900ft): Larry O'Brien silver-and-gold trophy.", zone: "Hall of Fame" },
     ],
     tiers: {
       miss: { title: "SHOT CLOCK VIOLATION", tagline: "Buzzer sounded before release." },
@@ -280,10 +300,14 @@ const WORLD_THEMES_META: Record<ThemeVariant, WorldThemeMeta> = {
 
   pokedex: {
     hudMetricTitle: "DEX RADAR",
-    unitPrefix: "-",
+    unitPrefix: "",
     unitSuffix: "m",
+    submitVerb: "CATCH",
+    promptHintText: "rarer Pokémon hide deeper in the Pokédex",
+    nextDiveLabel: "NEXT ROUTE →",
+    stageAriaLabel: "Interactive Pokekrillion Dex Radar Canvas",
     actionDescendLabel: "NEXT ROUTE ▼",
-    sinkingVerb: "Diving Poké-Submarine sonar...",
+    sinkingVerb: "Scanning deep tall grass & caverns...",
     scanPromptLabel: "Click radar to scan wild spawns",
     specimens: [
       "Glowing Rare Candy",
@@ -301,14 +325,14 @@ const WORLD_THEMES_META: Record<ThemeVariant, WorldThemeMeta> = {
       { depth: 1850, label: "DISTORTION WORLD RIFT", accent: "text-fuchsia-300/80" },
     ],
     landmarks: [
-      { id: "tallgrass", depth: 100, xRatio: 0.77, title: "Shaking Tall Grass", discoveryLog: "Route 1 Patch (-100m): a wild encounter rustled with a ! ping.", zone: "Tall Grass" },
-      { id: "pikachu", depth: 155, xRatio: 0.75, title: "Mascot Trap", discoveryLog: "Cover Silhouette (-155m): watch out — starters only score 10–15 pts!", zone: "Tall Grass" },
-      { id: "pokestop", depth: 270, xRatio: 0.23, title: "Spinning PokéStop", discoveryLog: "Beacon Spire (-270m): rotating cyan module dropping supplies.", zone: "Cerulean Cave" },
-      { id: "badges", depth: 460, xRatio: 0.75, title: "8-Badge Case", discoveryLog: "League Gate (-460m): eight polished metallic gym badges gleaming.", zone: "Victory Road" },
-      { id: "masterball", depth: 820, xRatio: 0.24, title: "Master Ball", discoveryLog: "Silph Vault (-820m): purple-M Master Ball hovering in stasis.", zone: "Elite Four Chamber" },
-      { id: "evostone", depth: 1320, xRatio: 0.76, title: "Evolution Prisms", discoveryLog: "Celadon Altar (-1,320m): Fire, Thunder & Water stones resonating.", zone: "Mt. Silver Deep" },
-      { id: "fossil", depth: 1950, xRatio: 0.25, title: "Old Amber Helix", discoveryLog: "Cinnabar Lab (-1,950m): ancient fossilized DNA pulsing.", zone: "Fossil Trench" },
-      { id: "rift", depth: 2800, xRatio: 0.74, title: "Distortion Rift", discoveryLog: "Ultra Wormhole (-2,800m): cosmic purple rift warping space.", zone: "Distortion Rift" },
+      { id: "tallgrass", depth: 100, xRatio: 0.77, title: "Shaking Tall Grass", discoveryLog: "Route 1 Patch (100m): a wild encounter rustled with a ! ping.", zone: "Tall Grass" },
+      { id: "pikachu", depth: 155, xRatio: 0.75, title: "Mascot Trap", discoveryLog: "Cover Silhouette (155m): watch out — starters only score 10–15 pts!", zone: "Tall Grass" },
+      { id: "pokestop", depth: 270, xRatio: 0.23, title: "Spinning PokéStop", discoveryLog: "Beacon Spire (270m): rotating cyan module dropping supplies.", zone: "Cerulean Cave" },
+      { id: "badges", depth: 460, xRatio: 0.75, title: "8-Badge Case", discoveryLog: "League Gate (460m): eight polished metallic gym badges gleaming.", zone: "Victory Road" },
+      { id: "masterball", depth: 820, xRatio: 0.24, title: "Master Ball", discoveryLog: "Silph Vault (820m): purple-M Master Ball hovering in stasis.", zone: "Elite Four Chamber" },
+      { id: "evostone", depth: 1320, xRatio: 0.76, title: "Evolution Prisms", discoveryLog: "Celadon Altar (1,320m): Fire, Thunder & Water stones resonating.", zone: "Mt. Silver Deep" },
+      { id: "fossil", depth: 1950, xRatio: 0.25, title: "Old Amber Helix", discoveryLog: "Cinnabar Lab (1,950m): ancient fossilized DNA pulsing.", zone: "Fossil Trench" },
+      { id: "rift", depth: 2800, xRatio: 0.74, title: "Distortion Rift", discoveryLog: "Ultra Wormhole (2,800m): cosmic purple rift warping space.", zone: "Distortion Rift" },
     ],
     tiers: {
       miss: { title: "WILD FLED!", tagline: "Run out of Poké Balls on the clock." },
@@ -320,9 +344,13 @@ const WORLD_THEMES_META: Record<ThemeVariant, WorldThemeMeta> = {
   },
 
   atlas: {
-    hudMetricTitle: "EXPEDITION",
-    unitPrefix: "-",
+    hudMetricTitle: "DISTANCE",
+    unitPrefix: "",
     unitSuffix: "km",
+    submitVerb: "CHART",
+    promptHintText: "obscure nations chart further off-grid",
+    nextDiveLabel: "NEXT EXPEDITION →",
+    stageAriaLabel: "Interactive Krillion Geography Atlas Canvas",
     actionDescendLabel: "CHART NEXT ▼",
     sinkingVerb: "Charting uncharted coordinates...",
     scanPromptLabel: "Click map to take compass bearing",
@@ -342,13 +370,13 @@ const WORLD_THEMES_META: Record<ThemeVariant, WorldThemeMeta> = {
       { depth: 1850, label: "ANTARCTIC EXPEDITION ARC", accent: "text-emerald-300/80" },
     ],
     landmarks: [
-      { id: "compass", depth: 100, xRatio: 0.77, title: "Brass Compass Rose", discoveryLog: "Meridian 0° (-100km): magnetic needle locking onto rare territory.", zone: "Prime Meridian" },
-      { id: "pyramids", depth: 165, xRatio: 0.75, title: "Giza Pyramids", discoveryLog: "29°N Desert (-165km): limestone silhouette under desert sun.", zone: "Continental Shelf" },
-      { id: "eiffel", depth: 280, xRatio: 0.23, title: "Iron Spire Beacon", discoveryLog: "48°N Capitals (-280km): skip Paris for true 100-pt gems!", zone: "World Capitals" },
-      { id: "everest", depth: 460, xRatio: 0.75, title: "Sagarmatha Peak", discoveryLog: "Himalayan Ridge (-460km): high-altitude snowline gleaming.", zone: "Highlands Trail" },
-      { id: "airship", depth: 820, xRatio: 0.24, title: "Zeppelin Explorer", discoveryLog: "Trade Winds (-820km): survey dirigible crossing archipelago seas.", zone: "Archipelago Belt" },
-      { id: "moai", depth: 1320, xRatio: 0.76, title: "Rapa Nui Moai", discoveryLog: "Pacific Monoliths (-1,320km): volcanic stone guardians in mist.", zone: "Oceanic Outpost" },
-      { id: "aurora", depth: 2100, xRatio: 0.26, title: "Polar Aurora Arc", discoveryLog: "78°S Station (-2,100km): emerald polar ribbons over ice caps.", zone: "Terra Incognita" },
+      { id: "compass", depth: 100, xRatio: 0.77, title: "Brass Compass Rose", discoveryLog: "Meridian 0° (100km): magnetic needle locking onto rare territory.", zone: "Prime Meridian" },
+      { id: "pyramids", depth: 165, xRatio: 0.75, title: "Giza Pyramids", discoveryLog: "29°N Desert (165km): limestone silhouette under desert sun.", zone: "Continental Shelf" },
+      { id: "eiffel", depth: 280, xRatio: 0.23, title: "Iron Spire Beacon", discoveryLog: "48°N Capitals (280km): skip Paris for true 100-pt gems!", zone: "World Capitals" },
+      { id: "everest", depth: 460, xRatio: 0.75, title: "Sagarmatha Peak", discoveryLog: "Himalayan Ridge (460km): high-altitude snowline gleaming.", zone: "Highlands Trail" },
+      { id: "airship", depth: 820, xRatio: 0.24, title: "Zeppelin Explorer", discoveryLog: "Trade Winds (820km): survey dirigible crossing archipelago seas.", zone: "Archipelago Belt" },
+      { id: "moai", depth: 1320, xRatio: 0.76, title: "Rapa Nui Moai", discoveryLog: "Pacific Monoliths (1,320km): volcanic stone guardians in mist.", zone: "Oceanic Outpost" },
+      { id: "aurora", depth: 2100, xRatio: 0.26, title: "Polar Aurora Arc", discoveryLog: "78°S Station (2,100km): emerald polar ribbons over ice caps.", zone: "Terra Incognita" },
     ],
     tiers: {
       miss: { title: "LOST AT SEA", tagline: "Storm washed away your compass." },
@@ -360,9 +388,13 @@ const WORLD_THEMES_META: Record<ThemeVariant, WorldThemeMeta> = {
   },
 
   cinema: {
-    hudMetricTitle: "REEL INDEX",
-    unitPrefix: "-",
-    unitSuffix: "mm",
+    hudMetricTitle: "REEL FOOTAGE",
+    unitPrefix: "",
+    unitSuffix: "ft",
+    submitVerb: "ROLL",
+    promptHintText: "indie & archival gems earn top billing",
+    nextDiveLabel: "NEXT FEATURE →",
+    stageAriaLabel: "Interactive Krillion Movies Premiere Canvas",
     actionDescendLabel: "NEXT REEL ▼",
     sinkingVerb: "Spooling 35mm director's cut...",
     scanPromptLabel: "Click screen to spotlight props",
@@ -382,12 +414,12 @@ const WORLD_THEMES_META: Record<ThemeVariant, WorldThemeMeta> = {
       { depth: 1850, label: "CRITERION SECRET ARCHIVE", accent: "text-amber-300/80" },
     ],
     landmarks: [
-      { id: "clapper", depth: 100, xRatio: 0.77, title: "Director's Clapper", discoveryLog: "Take 1 (-100mm): black-and-white slate snapping under stage lights.", zone: "Premiere Lobby" },
-      { id: "popcorn", depth: 165, xRatio: 0.75, title: "Midnight Popcorn & 3D", discoveryLog: "Matinee Row (-165mm): retro red-cyan cinema glasses glinting.", zone: "Matinee Screen" },
-      { id: "projector", depth: 285, xRatio: 0.23, title: "35mm Twin Projector", discoveryLog: "Booth Cone (-285mm): carbon-arc projector beam slicing through haze!", zone: "Projection Booth" },
-      { id: "walkstar", depth: 520, xRatio: 0.75, title: "Walk of Fame Star", discoveryLog: "Boulevard Tile (-520mm): brass terrazzo star polished to a shine.", zone: "Festival Alley" },
-      { id: "scifi", depth: 980, xRatio: 0.24, title: "Drive-In Saucer Classic", discoveryLog: "B-Movie Vault (-980mm): practical miniature saucer glowing neon.", zone: "Cult Midnight" },
-      { id: "oscar", depth: 1680, xRatio: 0.75, title: "Golden Statuette", discoveryLog: "Academy Archive (-1,680mm): gleaming art-deco gold trophy.", zone: "Criterion Vault" },
+      { id: "clapper", depth: 100, xRatio: 0.77, title: "Director's Clapper", discoveryLog: "Take 1 (100ft): black-and-white slate snapping under stage lights.", zone: "Premiere Lobby" },
+      { id: "popcorn", depth: 165, xRatio: 0.75, title: "Midnight Popcorn & 3D", discoveryLog: "Matinee Row (165ft): retro red-cyan cinema glasses glinting.", zone: "Matinee Screen" },
+      { id: "projector", depth: 285, xRatio: 0.23, title: "35mm Twin Projector", discoveryLog: "Booth Cone (285ft): carbon-arc projector beam slicing through haze!", zone: "Projection Booth" },
+      { id: "walkstar", depth: 520, xRatio: 0.75, title: "Walk of Fame Star", discoveryLog: "Boulevard Tile (520ft): brass terrazzo star polished to a shine.", zone: "Festival Alley" },
+      { id: "scifi", depth: 980, xRatio: 0.24, title: "Drive-In Saucer Classic", discoveryLog: "B-Movie Vault (980ft): practical miniature saucer glowing neon.", zone: "Cult Midnight" },
+      { id: "oscar", depth: 1680, xRatio: 0.75, title: "Golden Statuette", discoveryLog: "Academy Archive (1,680ft): gleaming art-deco gold trophy.", zone: "Criterion Vault" },
     ],
     tiers: {
       miss: { title: "LEFT ON CUTTING FLOOR", tagline: "Scene wrapped before your cue." },
@@ -399,9 +431,13 @@ const WORLD_THEMES_META: Record<ThemeVariant, WorldThemeMeta> = {
   },
 
   stadium: {
-    hudMetricTitle: "TRACK ZONE",
-    unitPrefix: "-",
+    hudMetricTitle: "SPLIT DISTANCE",
+    unitPrefix: "",
     unitSuffix: "m",
+    submitVerb: "SPRINT",
+    promptHintText: "historic sleeper champions sprint further ahead",
+    nextDiveLabel: "NEXT EVENT →",
+    stageAriaLabel: "Interactive Krillion Sports Stadium Canvas",
     actionDescendLabel: "NEXT HEAT ▼",
     sinkingVerb: "Sprinting down Olympic lanes...",
     scanPromptLabel: "Click track for photo-finish flash",
@@ -421,12 +457,12 @@ const WORLD_THEMES_META: Record<ThemeVariant, WorldThemeMeta> = {
       { depth: 1850, label: "IMMORTAL GOAT PANTHEON", accent: "text-amber-300/80" },
     ],
     landmarks: [
-      { id: "hurdles", depth: 100, xRatio: 0.77, title: "Track Hurdles & Blocks", discoveryLog: "Lane 4 (-100m): crimson sprint lane ready for the starter pistol.", zone: "Heat Qualifier" },
-      { id: "torch", depth: 165, xRatio: 0.75, title: "Olympic Flame Relay", discoveryLog: "Cauldron Flame (-165m): golden torch embers lighting up the stadium.", zone: "Opening Track" },
-      { id: "tennis", depth: 290, xRatio: 0.23, title: "Center Court Volley", discoveryLog: "Grand Slam Turf (-290m): optic-yellow ball arcing over center net.", zone: "Grand Slam" },
-      { id: "f1car", depth: 560, xRatio: 0.74, title: "Turbo F1 Racer", discoveryLog: "Apex Chicane (-560m): titanium sparks flying off championship tarmac!", zone: "Motorsport Pit" },
-      { id: "podium", depth: 1120, xRatio: 0.25, title: "1st Place Gold Podium", discoveryLog: "Medal Ceremony (-1,120m): triple-tier gold podium illuminated.", zone: "World Podium" },
-      { id: "worldcup", depth: 1850, xRatio: 0.74, title: "Immortal GOAT Trophy", discoveryLog: "All-Sports Vault (-1,850m): eternal championship chalice.", zone: "GOAT Pantheon" },
+      { id: "hurdles", depth: 100, xRatio: 0.77, title: "Track Hurdles & Blocks", discoveryLog: "Lane 4 (100m): crimson sprint lane ready for the starter pistol.", zone: "Heat Qualifier" },
+      { id: "torch", depth: 165, xRatio: 0.75, title: "Olympic Flame Relay", discoveryLog: "Cauldron Flame (165m): golden torch embers lighting up the stadium.", zone: "Opening Track" },
+      { id: "tennis", depth: 290, xRatio: 0.23, title: "Center Court Volley", discoveryLog: "Grand Slam Turf (290m): optic-yellow ball arcing over center net.", zone: "Grand Slam" },
+      { id: "f1car", depth: 560, xRatio: 0.74, title: "Turbo F1 Racer", discoveryLog: "Apex Chicane (560m): titanium sparks flying off championship tarmac!", zone: "Motorsport Pit" },
+      { id: "podium", depth: 1120, xRatio: 0.25, title: "1st Place Gold Podium", discoveryLog: "Medal Ceremony (1,120m): triple-tier gold podium illuminated.", zone: "World Podium" },
+      { id: "worldcup", depth: 1850, xRatio: 0.74, title: "Immortal GOAT Trophy", discoveryLog: "All-Sports Vault (1,850m): eternal championship chalice.", zone: "GOAT Pantheon" },
     ],
     tiers: {
       miss: { title: "FALSE START!", tagline: "Clock beat you off the blocks." },

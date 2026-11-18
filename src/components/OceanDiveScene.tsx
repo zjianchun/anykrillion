@@ -602,9 +602,9 @@ export default function OceanDiveScene({
         })}
       </div>
 
-      {/* 4. Right-Side Vertical Scrolling Depth / Altitude Ruler */}
+      {/* 4. Right-Side Vertical Scrolling Depth / Range Ruler */}
       <div
-        className="pointer-events-none absolute bottom-0 right-0 top-0 z-20 w-14 border-l border-white/10 bg-black/15"
+        className="pointer-events-none absolute bottom-0 right-0 top-0 z-20 w-15 border-l border-white/10 bg-black/20 sm:w-16"
         aria-hidden="true"
       >
         {rulerTicks.map((m) => {
@@ -613,15 +613,18 @@ export default function OceanDiveScene({
             : SURFACE_OFFSET_PX + (m - cameraDepth) * PX_PER_METER;
           if (yPx < -20 || yPx > 980) return null;
           const isMajor = m % 100 === 0;
+          const overlapsYou = Math.abs(yPx - SURFACE_OFFSET_PX) < 16;
           return (
             <div
               key={m}
               className="absolute right-0 flex items-center gap-1"
               style={{ top: `${yPx}px` }}
             >
-              {isMajor && (
+              {isMajor && !overlapsYou && (
                 <span className="font-mono text-[9px] font-bold text-slate-300/65">
-                  {`${themeMeta.unitPrefix}${m}${themeMeta.unitSuffix}`}
+                  {m === 0
+                    ? `0${themeMeta.unitSuffix}`
+                    : `${themeMeta.unitPrefix}${m}${themeMeta.unitSuffix}`}
                 </span>
               )}
               <span
@@ -634,11 +637,11 @@ export default function OceanDiveScene({
         })}
 
         <div
-          className="absolute right-0 flex items-center gap-0.5 pr-0.5"
-          style={{ top: `${SURFACE_OFFSET_PX - 7}px` }}
+          className="absolute right-1 flex items-center gap-0.5 rounded border border-rose-400/70 bg-[#041425]/95 px-1.5 py-0.5 shadow"
+          style={{ top: `${SURFACE_OFFSET_PX - 9}px` }}
         >
-          <span className="font-pixel text-[9px] font-bold text-rose-400">YOU</span>
-          <span className="text-[10px] text-rose-400">◄</span>
+          <span className="font-pixel text-[8px] font-bold text-rose-400">YOU</span>
+          <span className="text-[9px] leading-none text-rose-400">◄</span>
         </div>
       </div>
 

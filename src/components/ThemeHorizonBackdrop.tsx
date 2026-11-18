@@ -130,13 +130,15 @@ export function ThemeHorizonBackdrop({
                 opacity="0.7"
               />
             </svg>
-            {/* Aerial Stadium Blimp */}
-            <div className="animate-bob-slow absolute right-[16%] top-[24%] flex items-center gap-1.5 opacity-90">
-              <div className="relative h-7 w-20 rounded-full border border-lime-300/60 bg-emerald-950/85 shadow-[0_0_16px_rgba(132,204,22,0.35)]">
-                <div className="absolute inset-x-3 top-1/2 h-1 -translate-y-1/2 rounded bg-lime-300/75" />
-                <div className="absolute -bottom-2 left-1/2 h-2 w-7 -translate-x-1/2 rounded-b border border-t-0 border-lime-300/50 bg-emerald-900" />
+            {/* Stadium Hanging LED Matchday Scoreboard */}
+            <div className="animate-bob-slow absolute right-[12%] top-[18%] flex flex-col items-center opacity-95">
+              <div className="flex gap-8">
+                <span className="h-2.5 w-1 bg-lime-300/60" />
+                <span className="h-2.5 w-1 bg-lime-300/60" />
               </div>
-              <div className="h-4 w-2 bg-lime-300/60" />
+              <div className="rounded-md border-2 border-lime-400/75 bg-emerald-950/90 px-3 py-1 font-mono text-[10px] font-black tracking-widest text-lime-300 shadow-[0_0_16px_rgba(163,230,53,0.35)]">
+                LIVE · MATCHDAY
+              </div>
             </div>
           </>
         )}

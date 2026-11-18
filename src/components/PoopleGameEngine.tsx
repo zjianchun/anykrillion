@@ -33,6 +33,12 @@ import {
   setSoundEnabled,
 } from "@/lib/soundEffects";
 
+const QWERTY_ROWS: ReadonlyArray<ReadonlyArray<string>> = [
+  ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+  ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
+  ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "⌫"],
+];
+
 interface PoopleDailyBoard {
   dayNumber: number;
   date: string;
@@ -230,7 +236,11 @@ export default function PoopleGameEngine() {
   const [solverStart, setSolverStart] = useState<string>("PLAN");
   const [solverTarget, setSolverTarget] = useState<string>("POOP");
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const submitWordRef = useRef<(rawWord: string) => void>(() => {});
+  const inputWordRef = useRef<string>("");
+  useEffect(() => {
+    inputWordRef.current = inputWord;
+  }, [inputWord]);
 
   const streak = useSyncExternalStore(
     subscribePoopleStreak,
@@ -311,7 +321,6 @@ export default function PoopleGameEngine() {
     setErrorMsg(null);
     setHintMode("none");
     setFriendChallengeSteps(null);
-    inputRef.current?.focus();
   };
 
   const pickRandomStarter = () => {
@@ -349,10 +358,9 @@ export default function PoopleGameEngine() {
     setFriendChallengeSteps(null);
   };
 
-  const handleSubmitStep = (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitWord = (rawWord: string) => {
     if (solved) return;
-    const cand = inputWord.trim().toUpperCase();
+    const cand = rawWord.trim().toUpperCase();
     setTypingPulse((n) => n + 1);
     if (cand.length !== 4) {
       playInvalidOrTimeoutSound();
@@ -426,6 +434,50 @@ export default function PoopleGameEngine() {
     }
   };
 
+  useEffect(() => {
+    submitWordRef.current = submitWord;
+  });
+
+  // Physical keyboard listener (works seamlessly alongside the built-in QWERTY keyboard)
+  useEffect(() => {
+    if (tab === "solver" || solved) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const activeTag = document.activeElement?.tagName;
+      if (activeTag === "INPUT" || activeTag === "TEXTAREA" || activeTag === "SELECT") {
+        return;
+      }
+      if (/^[a-zA-Z]$/.test(e.key)) {
+        const upper = e.key.toUpperCase();
+        setInputWord((prev) => (prev.length < 4 ? prev + upper : prev));
+        setTypingPulse((n) => n + 1);
+        setErrorMsg(null);
+      } else if (e.key === "Backspace") {
+        setInputWord((prev) => prev.slice(0, -1));
+        setErrorMsg(null);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        submitWordRef.current(inputWordRef.current);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [solved, tab]);
+
+  const handleKeyTap = (key: string) => {
+    if (solved) return;
+    if (key === "ENTER") {
+      submitWord(inputWord);
+    } else if (key === "⌫") {
+      setInputWord((prev) => prev.slice(0, -1));
+      setErrorMsg(null);
+    } else {
+      setInputWord((prev) => (prev.length < 4 ? prev + key : prev));
+      setTypingPulse((n) => n + 1);
+      setErrorMsg(null);
+    }
+  };
+
   const handleUndo = () => {
     if (chain.length <= 1 || solved) return;
     setChain(chain.slice(0, -1));
@@ -482,7 +534,7 @@ export default function PoopleGameEngine() {
   return (
     <section
       aria-label="Interactive Poople Pipeworks Game World"
-      className="relative h-[calc(100vh-80px)] min-h-[580px] max-h-[840px] w-full overflow-hidden border-y border-emerald-400/25 sm:rounded-3xl sm:border"
+      className="relative min-h-[620px] w-full overflow-hidden border-y border-emerald-400/25 sm:rounded-3xl sm:border"
     >
       <PooplePipeScene
         stepsTaken={stepsTaken}
@@ -589,7 +641,7 @@ export default function PoopleGameEngine() {
       {/* Mode 3: Shortest-Path BFS Solver */}
       </div>
 
-      <div className="my-auto flex max-h-[calc(100%-84px)] w-full max-w-4xl flex-col gap-2 self-center overflow-y-auto pr-0.5 sm:max-h-[calc(100%-108px)] sm:gap-3 sm:pr-1">
+      <div className="my-3 flex w-full max-w-3xl flex-col gap-3 self-center">
       {tab === "solver" ? (
         <div className="mt-6 space-y-5">
           <div data-hud-interactive className="pointer-events-auto rounded-2xl border border-emerald-400/30 bg-[#03191a]/45 p-4 backdrop-blur-[2px] sm:p-5">
@@ -799,29 +851,27 @@ export default function PoopleGameEngine() {
             </div>
           </div>
 
-          {/* Ladder Chain Visual (no heavy nested outer border) */}
+          {/* Vertical Centered 4-Letter Ladder Stack + Tactile QWERTY Keyboard */}
           <div data-hud-interactive className="pointer-events-auto rounded-2xl bg-[#03191a]/40 p-3 backdrop-blur-[2px] sm:p-5">
-            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <div className="flex flex-col items-center gap-1.5">
               {chain.map((word, idx) => (
-                <div key={`${word}-${idx}`} className="flex items-center gap-1.5 sm:gap-2">
-                  <div
-                    className={`flex gap-1 rounded-xl border px-2 py-1.5 sm:px-2.5 sm:py-2 ${
-                      word === "POOP"
-                        ? "border-emerald-400/60 bg-emerald-500/15"
-                        : idx === chain.length - 1
-                          ? "border-amber-400/60 bg-amber-500/10"
-                          : "border-emerald-300/25 bg-[#021316]/65"
-                    }`}
-                  >
+                <div key={`${word}-${idx}`} className="flex items-center gap-2">
+                  <span className="w-5 text-right font-mono text-[10px] font-bold text-slate-500">
+                    {idx === 0 ? "0" : idx}
+                  </span>
+                  <div className="flex gap-1.5">
                     {word.split("").map((letter, pos) => {
                       const matchesTarget = letter === "POOP"[pos];
+                      const isChangedFromPrev = idx > 0 && letter !== chain[idx - 1][pos];
                       return (
                         <span
                           key={pos}
-                          className={`flex h-7 w-6 items-center justify-center rounded-md font-mono text-sm font-black sm:h-9 sm:w-8 sm:text-lg ${
+                          className={`flex h-10 w-10 items-center justify-center rounded-lg font-mono text-base font-black transition sm:h-11 sm:w-11 sm:text-lg ${
                             matchesTarget
-                              ? "bg-emerald-500/30 text-emerald-200 ring-1 ring-emerald-400/50"
-                              : "bg-white/5 text-white"
+                              ? "bg-emerald-500/35 text-emerald-100 ring-1 ring-emerald-400/70 shadow-[0_0_10px_rgba(52,211,153,0.2)]"
+                              : isChangedFromPrev
+                                ? "bg-amber-500/20 text-amber-100 ring-1 ring-amber-400/65"
+                                : "border border-white/10 bg-[#021316]/85 text-white"
                           }`}
                         >
                           {letter}
@@ -829,24 +879,36 @@ export default function PoopleGameEngine() {
                       );
                     })}
                   </div>
-                  {idx < chain.length - 1 && (
-                    <span className="font-mono text-xs font-bold text-slate-500 sm:text-sm">→</span>
-                  )}
+                  <span className="w-5" aria-hidden="true" />
                 </div>
               ))}
+
               {!solved && (
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <span className="font-mono text-xs font-bold text-slate-500 sm:text-sm">→</span>
-                  <div className="flex gap-1 rounded-xl border border-dashed border-amber-400/40 bg-amber-500/5 px-2 py-1.5 sm:px-2.5 sm:py-2">
-                    {["?", "?", "?", "?"].map((q, pos) => (
-                      <span
-                        key={pos}
-                        className="flex h-7 w-6 items-center justify-center rounded-md font-mono text-sm font-bold text-amber-300/60 sm:h-9 sm:w-8 sm:text-lg"
-                      >
-                        {q}
-                      </span>
-                    ))}
+                <div className="flex items-center gap-2">
+                  <span className="w-5 text-right font-mono text-[10px] font-bold text-amber-400/80">
+                    →
+                  </span>
+                  <div className="flex gap-1.5">
+                    {[0, 1, 2, 3].map((pos) => {
+                      const ch = inputWord[pos];
+                      const isCursor = pos === inputWord.length;
+                      return (
+                        <span
+                          key={pos}
+                          className={`flex h-10 w-10 items-center justify-center rounded-lg font-mono text-base font-black transition sm:h-11 sm:w-11 sm:text-lg ${
+                            ch
+                              ? "border border-amber-300/75 bg-[#042327] text-white"
+                              : isCursor
+                                ? "border-2 border-amber-400 bg-[#021316]/75 text-amber-300 animate-pulse"
+                                : "border border-dashed border-amber-400/35 bg-[#021316]/45 text-amber-300/40"
+                          }`}
+                        >
+                          {ch ?? "?"}
+                        </span>
+                      );
+                    })}
                   </div>
+                  <span className="w-5" aria-hidden="true" />
                 </div>
               )}
             </div>
@@ -895,100 +957,139 @@ export default function PoopleGameEngine() {
                 /></div>
               </div>
             ) : (
-              <div className="mt-3 sm:mt-5">
-                <form onSubmit={handleSubmitStep} className="flex flex-col gap-2 sm:flex-row sm:gap-3">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    maxLength={4}
-                    value={inputWord}
-                    onChange={(e) => {
-                      setInputWord(e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase());
-                      setTypingPulse((n) => n + 1);
-                      if (errorMsg) setErrorMsg(null);
+              <div className="mt-4 space-y-3">
+                {/* Action Row: Undo, Progressive Hint, Solver */}
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleUndo}
+                    disabled={chain.length <= 1}
+                    className="inline-flex items-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-slate-200 transition hover:bg-white/10 disabled:opacity-40"
+                  >
+                    <Undo2 className="h-3.5 w-3.5" />
+                    Undo
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setHintMode((prev) =>
+                        prev === "none" ? "letter" : prev === "letter" ? "word" : "none",
+                      )
+                    }
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-400/35 bg-cyan-500/10 px-2.5 py-1.5 text-xs font-bold text-cyan-200 hover:bg-cyan-500/20"
+                  >
+                    <Lightbulb className="h-3.5 w-3.5" />
+                    {hintMode === "none"
+                      ? "Hint"
+                      : hintMode === "letter"
+                        ? "Next Word"
+                        : "Hide Hint"}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSolverStart(currentWord);
+                      setSolverTarget("POOP");
+                      setTab("solver");
                     }}
-                    placeholder={`Change 1 letter in ${currentWord}...`}
-                    aria-label="Enter next 4-letter ladder word"
-                    className="flex-1 rounded-xl border border-amber-400/45 bg-[#021215]/75 px-3.5 py-2 font-mono text-base font-black uppercase tracking-widest text-white placeholder:text-xs placeholder:font-normal placeholder:normal-case placeholder:tracking-normal placeholder:text-slate-500 focus:border-amber-300 focus:outline-none sm:px-4 sm:py-2.5 sm:text-lg sm:placeholder:text-sm"
-                  />
-                  <div className="grid grid-cols-[1fr_auto] gap-2 sm:flex sm:gap-3">
-                    <button
-                      type="submit"
-                      className="rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 px-5 py-2.5 text-sm font-extrabold text-slate-950 transition hover:brightness-110 sm:px-6 sm:py-3"
-                    >
-                      Step Ladder
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleUndo}
-                      disabled={chain.length <= 1}
-                      className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/10 disabled:opacity-40 sm:py-3"
-                    >
-                      <Undo2 className="h-4 w-4" />
-                      Undo
-                    </button>
-                  </div>
-                </form>
+                    className="inline-flex items-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-slate-300 hover:bg-white/10"
+                  >
+                    <Compass className="h-3.5 w-3.5" />
+                    Solve ({currentWord})
+                  </button>
+                </div>
 
                 {errorMsg && (
-                  <p className="mt-2.5 rounded-xl border border-rose-500/35 bg-rose-500/10 px-3 py-2 text-xs font-medium text-rose-200">
+                  <p className="mx-auto max-w-md rounded-xl border border-rose-500/35 bg-rose-500/15 px-3 py-1.5 text-center text-xs font-medium text-rose-200">
                     {errorMsg}
                   </p>
                 )}
 
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setHintMode((prev) =>
-                          prev === "none" ? "letter" : prev === "letter" ? "word" : "none",
-                        )
-                      }
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-400/35 bg-cyan-500/10 px-3 py-1.5 text-xs font-bold text-cyan-200 hover:bg-cyan-500/20"
-                    >
-                      <Lightbulb className="h-3.5 w-3.5" />
-                      {hintMode === "none"
-                        ? "Hint: Which Letter Position?"
-                        : hintMode === "letter"
-                          ? "Hint: Reveal Next Word"
-                          : "Hide Hint"}
-                    </button>
+                {hintMode === "letter" && nextHintPos !== null && (
+                  <p className="mx-auto max-w-md rounded-lg border border-cyan-400/30 bg-cyan-950/50 px-3 py-1.5 text-center text-xs text-cyan-200">
+                    Optimal Hint: Change letter <strong>#{nextHintPos + 1}</strong> (currently{" "}
+                    <code>{currentWord[nextHintPos]}</code>)
+                  </p>
+                )}
 
+                {hintMode === "word" && nextHintWord && (
+                  <p className="mx-auto max-w-md rounded-lg border border-amber-400/35 bg-amber-950/50 px-3 py-1.5 text-center text-xs text-amber-200">
+                    Optimal Next Rung:{" "}
                     <button
                       type="button"
-                      onClick={() => {
-                        setSolverStart(currentWord);
-                        setSolverTarget("POOP");
-                        setTab("solver");
-                      }}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:bg-white/10"
+                      onClick={() => setInputWord(nextHintWord)}
+                      className="font-mono font-bold underline"
                     >
-                      <Compass className="h-3.5 w-3.5" />
-                      Solve From {currentWord}
-                    </button>
+                      {nextHintWord}
+                    </button>{" "}
+                    ({optimalFromCurrent ? optimalFromCurrent.length - 1 : "?"} steps left)
+                  </p>
+                )}
+
+                {/* Built-In Tactile 3-Row QWERTY Keyboard */}
+                <div
+                  className="mx-auto flex w-full max-w-lg flex-col gap-1.5 pt-1"
+                  role="group"
+                  aria-label="On-screen word ladder keyboard"
+                >
+                  <div className="grid grid-cols-10 gap-1">
+                    {QWERTY_ROWS[0].map((key) => {
+                      const isGoalKey = key === "P" || key === "O";
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => handleKeyTap(key)}
+                          className={`flex h-10 items-center justify-center rounded-lg border font-mono text-xs font-extrabold transition active:scale-95 sm:h-11 sm:text-sm ${
+                            isGoalKey
+                              ? "border-emerald-400/45 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25"
+                              : "border-white/15 bg-white/10 text-white hover:bg-white/20"
+                          }`}
+                        >
+                          {key}
+                        </button>
+                      );
+                    })}
                   </div>
 
-                  {hintMode === "letter" && nextHintPos !== null && (
-                    <span className="rounded-lg border border-cyan-400/30 bg-cyan-950/40 px-3 py-1 text-xs text-cyan-200">
-                      Optimal Hint: Change letter <strong>#{nextHintPos + 1}</strong> (currently{" "}
-                      <code>{currentWord[nextHintPos]}</code>)
-                    </span>
-                  )}
-
-                  {hintMode === "word" && nextHintWord && (
-                    <span className="rounded-lg border border-amber-400/35 bg-amber-950/40 px-3 py-1 text-xs text-amber-200">
-                      Optimal Next Rung:{" "}
+                  <div className="mx-auto grid w-[92%] grid-cols-9 gap-1">
+                    {QWERTY_ROWS[1].map((key) => (
                       <button
+                        key={key}
                         type="button"
-                        onClick={() => setInputWord(nextHintWord)}
-                        className="font-mono font-bold underline"
+                        onClick={() => handleKeyTap(key)}
+                        className="flex h-10 items-center justify-center rounded-lg border border-white/15 bg-white/10 font-mono text-xs font-extrabold text-white transition hover:bg-white/20 active:scale-95 sm:h-11 sm:text-sm"
                       >
-                        {nextHintWord}
-                      </button>{" "}
-                      ({optimalFromCurrent ? optimalFromCurrent.length - 1 : "?"} steps left)
-                    </span>
-                  )}
+                        {key}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-[1.6fr_repeat(7,1fr)_1.4fr] gap-1">
+                    {QWERTY_ROWS[2].map((key) => {
+                      const isEnter = key === "ENTER";
+                      const isBack = key === "⌫";
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => handleKeyTap(key)}
+                          aria-label={isBack ? "Backspace" : isEnter ? "Submit step" : key}
+                          className={`flex h-10 items-center justify-center rounded-lg border font-mono font-extrabold transition active:scale-95 sm:h-11 ${
+                            isEnter
+                              ? "border-amber-300 bg-amber-400 text-[10px] text-slate-950 hover:brightness-110 sm:text-xs"
+                              : isBack
+                                ? "border-rose-400/40 bg-rose-500/15 text-sm text-rose-200 hover:bg-rose-500/25"
+                                : "border-white/15 bg-white/10 text-xs text-white hover:bg-white/20 sm:text-sm"
+                          }`}
+                        >
+                          {key}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             )}

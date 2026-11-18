@@ -168,9 +168,16 @@ function getCreatureTitleAndTagline(
   titleColorClass: string;
 } {
   const { tiers } = getWorldThemeMeta(themeId, isReverse);
+  if (outcome.tier === "Skipped") {
+    return {
+      title: "SKIPPED",
+      tagline: "Skipped — saving focus for the next prompt.",
+      titleColorClass: "text-slate-300 drop-shadow-[0_0_12px_rgba(148,163,184,0.45)]",
+    };
+  }
   if (!outcome.matchedAnswer || outcome.points <= 0) {
     return {
-      title: outcome.tier === "Skipped" ? "SKIPPED ROUTE" : tiers.miss.title,
+      title: tiers.miss.title,
       tagline: tiers.miss.tagline,
       titleColorClass: "text-rose-300 drop-shadow-[0_0_16px_rgba(244,63,94,0.65)]",
     };
@@ -202,6 +209,138 @@ function getCreatureTitleAndTagline(
     titleColorClass: "text-slate-200 drop-shadow-[0_0_12px_rgba(226,232,240,0.5)]",
   };
 }
+
+interface ThemeAccentClasses {
+  stageBorder: string;
+  plaqueBorder: string;
+  metricText: string;
+  promptBorder: string;
+  reticle: string;
+  inputBorder: string;
+  submitBtn: string;
+  summaryBtn: string;
+}
+
+function getThemeAccentClasses(
+  themeId: ThemeVariant,
+  isReverse: boolean,
+): ThemeAccentClasses {
+  if (isReverse || themeId === "sky") {
+    return {
+      stageBorder: "border-amber-400/30",
+      plaqueBorder: "border-amber-400/35",
+      metricText: "text-amber-300",
+      promptBorder: "border-amber-300/40",
+      reticle: "border-amber-300/85",
+      inputBorder: "border-amber-300/50 shadow-[0_0_24px_rgba(251,191,36,0.18)]",
+      submitBtn: "bg-amber-400 text-slate-950 shadow-[0_0_18px_rgba(251,191,36,0.45)]",
+      summaryBtn: "border-amber-300 bg-amber-400 text-slate-950 shadow-[0_0_20px_rgba(251,191,36,0.35)]",
+    };
+  }
+  switch (themeId) {
+    case "pitch":
+      return {
+        stageBorder: "border-lime-400/30",
+        plaqueBorder: "border-lime-400/35",
+        metricText: "text-lime-300",
+        promptBorder: "border-lime-400/45",
+        reticle: "border-lime-300/90",
+        inputBorder: "border-lime-400/50 shadow-[0_0_24px_rgba(163,230,53,0.18)]",
+        submitBtn: "bg-lime-400 text-slate-950 shadow-[0_0_18px_rgba(163,230,53,0.45)]",
+        summaryBtn: "border-lime-300 bg-lime-400 text-slate-950 shadow-[0_0_20px_rgba(163,230,53,0.35)]",
+      };
+    case "hardwood":
+      return {
+        stageBorder: "border-orange-400/30",
+        plaqueBorder: "border-orange-400/35",
+        metricText: "text-orange-300",
+        promptBorder: "border-orange-400/45",
+        reticle: "border-orange-300/90",
+        inputBorder: "border-orange-400/50 shadow-[0_0_24px_rgba(251,146,60,0.2)]",
+        submitBtn: "bg-orange-500 text-white shadow-[0_0_18px_rgba(249,115,22,0.5)]",
+        summaryBtn: "border-orange-300 bg-orange-400 text-slate-950 shadow-[0_0_20px_rgba(251,146,60,0.35)]",
+      };
+    case "pokedex":
+      return {
+        stageBorder: "border-rose-400/30",
+        plaqueBorder: "border-rose-400/35",
+        metricText: "text-yellow-300",
+        promptBorder: "border-rose-400/45",
+        reticle: "border-yellow-300/90",
+        inputBorder: "border-rose-400/50 shadow-[0_0_24px_rgba(244,63,94,0.2)]",
+        submitBtn: "bg-rose-500 text-white shadow-[0_0_18px_rgba(244,63,94,0.5)]",
+        summaryBtn: "border-yellow-300 bg-yellow-400 text-slate-950 shadow-[0_0_20px_rgba(250,204,21,0.35)]",
+      };
+    case "cinema":
+      return {
+        stageBorder: "border-fuchsia-400/30",
+        plaqueBorder: "border-fuchsia-400/35",
+        metricText: "text-fuchsia-300",
+        promptBorder: "border-fuchsia-400/45",
+        reticle: "border-amber-300/90",
+        inputBorder: "border-fuchsia-400/50 shadow-[0_0_24px_rgba(232,121,249,0.2)]",
+        submitBtn: "bg-amber-400 text-slate-950 shadow-[0_0_18px_rgba(251,191,36,0.45)]",
+        summaryBtn: "border-fuchsia-300 bg-fuchsia-400 text-slate-950 shadow-[0_0_20px_rgba(232,121,249,0.35)]",
+      };
+    case "atlas":
+      return {
+        stageBorder: "border-teal-300/30",
+        plaqueBorder: "border-teal-300/35",
+        metricText: "text-teal-300",
+        promptBorder: "border-teal-300/45",
+        reticle: "border-teal-300/90",
+        inputBorder: "border-teal-300/50 shadow-[0_0_24px_rgba(45,212,191,0.18)]",
+        submitBtn: "bg-teal-400 text-slate-950 shadow-[0_0_18px_rgba(45,212,191,0.45)]",
+        summaryBtn: "border-teal-300 bg-teal-400 text-slate-950 shadow-[0_0_20px_rgba(45,212,191,0.35)]",
+      };
+    case "stadium":
+      return {
+        stageBorder: "border-amber-300/30",
+        plaqueBorder: "border-amber-300/35",
+        metricText: "text-amber-300",
+        promptBorder: "border-amber-300/45",
+        reticle: "border-amber-300/90",
+        inputBorder: "border-amber-300/50 shadow-[0_0_24px_rgba(251,191,36,0.18)]",
+        submitBtn: "bg-amber-400 text-slate-950 shadow-[0_0_18px_rgba(251,191,36,0.45)]",
+        summaryBtn: "border-amber-300 bg-amber-400 text-slate-950 shadow-[0_0_20px_rgba(251,191,36,0.35)]",
+      };
+    default:
+      return {
+        stageBorder: "border-cyan-400/25",
+        plaqueBorder: "border-cyan-400/30",
+        metricText: "text-cyan-300",
+        promptBorder: "border-cyan-300/35",
+        reticle: "border-cyan-300/85",
+        inputBorder: "border-cyan-300/50 shadow-[0_0_24px_rgba(34,211,238,0.18)]",
+        submitBtn: "bg-[#ff2a6d] text-white shadow-[0_0_18px_rgba(255,42,109,0.55)]",
+        summaryBtn: "border-cyan-300 bg-cyan-400 text-slate-950 shadow-[0_0_20px_rgba(34,211,238,0.35)]",
+      };
+  }
+}
+
+function computePercentile(score: number): number {
+  const z = (score - 260) / 135;
+  const sign = z < 0 ? -1 : 1;
+  const absZ = Math.abs(z) / Math.SQRT2;
+  const t = 1 / (1 + 0.3275911 * absZ);
+  const erf =
+    1 -
+    (((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) *
+      t) *
+      Math.exp(-absZ * absZ);
+  const cdf = 0.5 * (1 + sign * erf);
+  return Math.max(4, Math.min(99, Math.round(cdf * 100)));
+}
+
+const BELL_CURVE_POINTS = Array.from({ length: 41 }, (_, i) => {
+  const s = (i / 40) * 700;
+  const z = (s - 260) / 135;
+  const x = 14 + (i / 40) * 212;
+  const y = 64 - 50 * Math.exp(-0.5 * z * z);
+  return `${x.toFixed(1)},${y.toFixed(1)}`;
+});
+const BELL_CURVE_LINE_PATH = `M ${BELL_CURVE_POINTS.join(" L ")}`;
+const BELL_CURVE_AREA_PATH = `M 14,64 L ${BELL_CURVE_POINTS.join(" L ")} L 226,64 Z`;
 
 function getWorldDisplayTitle(themeId: ThemeVariant, isReverse: boolean): {
   logoText: string;
@@ -279,6 +418,7 @@ export default function KrillionGameEngine({
   const [friendChallenge, setFriendChallenge] = useState<ActiveFriendChallenge | null>(null);
   const [copiedQuickInvite, setCopiedQuickInvite] = useState<boolean>(false);
   const [showCompareDrawer, setShowCompareDrawer] = useState<boolean>(false);
+  const [expandedRoundIdx, setExpandedRoundIdx] = useState<number | null>(null);
   const [showControlsMenu, setShowControlsMenu] = useState<boolean>(false);
   const [timerActive, setTimerActive] = useState<boolean>(false);
   const [exitDailyNudge, setExitDailyNudge] = useState<boolean>(false);
@@ -360,11 +500,11 @@ export default function KrillionGameEngine({
   const [feedbackError, setFeedbackError] = useState<string | null>(null);
   const [revealedHints, setRevealedHints] = useState<number>(0);
 
-  // Core game phase & physical camera coordinates (start directly on Q1, timer starts on first keystroke)
+  // Core game phase & physical camera coordinates (start cleanly at surface 0, timer starts on first keystroke)
   const [phase, setPhase] = useState<EnginePhase>("playing");
   const [countdownNum, setCountdownNum] = useState<number>(2);
   const [timeLeft, setTimeLeft] = useState<number>(initialDeck[0]?.timerSeconds ?? 25);
-  const [cameraDepth, setCameraDepth] = useState<number>(72);
+  const [cameraDepth, setCameraDepth] = useState<number>(0);
   const [displayScore, setDisplayScore] = useState<number>(0);
   const [sinkingText, setSinkingText] = useState<string>("");
 
@@ -403,7 +543,8 @@ export default function KrillionGameEngine({
             setOutcomes([]);
             setPhase("playing");
             setTimerActive(false);
-            setCameraDepth(72);
+            setExpandedRoundIdx(null);
+            setCameraDepth(0);
             setDisplayScore(0);
             setTimeLeft(resolved[0]?.timerSeconds ?? 25);
             setFriendChallenge({ score: decoded.s, metric: decoded.d });
@@ -518,11 +659,12 @@ export default function KrillionGameEngine({
       setFeedbackError(null);
       setRevealedHints(0);
       setShowCompareDrawer(false);
+      setExpandedRoundIdx(null);
       setShowControlsMenu(false);
       setDisplayScore(0);
       setTimeLeft(nextDeck[0]?.timerSeconds ?? 25);
       setFriendChallenge(null);
-      setCameraDepth(72);
+      setCameraDepth(0);
 
       if (autoEnterGame) {
         setTimerActive(true);
@@ -819,7 +961,12 @@ export default function KrillionGameEngine({
     };
   }, [currentPrompt, isReverse]);
 
-  const depthMetricLabel = `${worldMeta.unitPrefix}${cameraDepth.toLocaleString()}${worldMeta.unitSuffix}`;
+  const themeAccent = getThemeAccentClasses(activeThemeId, isReverse);
+
+  const depthMetricLabel =
+    cameraDepth === 0
+      ? `0${worldMeta.unitSuffix}`
+      : `${worldMeta.unitPrefix}${cameraDepth.toLocaleString()}${worldMeta.unitSuffix}`;
 
   const zoneStory = getZoneNarrative(cameraDepth, isReverse, activeThemeId);
 
@@ -852,16 +999,21 @@ export default function KrillionGameEngine({
     }
   };
 
+  const summaryPercentile = computePercentile(totalScore);
+  const summaryMarkerX = 14 + (Math.max(0, Math.min(700, totalScore)) / 700) * 212;
+  const summaryZYou = (totalScore - 260) / 135;
+  const summaryMarkerY = 64 - 50 * Math.exp(-0.5 * summaryZYou * summaryZYou);
+
   return (
     <section
       ref={stageRef}
-      aria-label="Interactive Krillion Ocean Dive Canvas"
+      aria-label={worldMeta.stageAriaLabel}
       onMouseLeave={() => {
         if (mode !== "daily" && !dailyNudgeDismissed && outcomes.length === 0) {
           setExitDailyNudge(true);
         }
       }}
-      className={`relative overflow-hidden border-y border-cyan-400/25 sm:rounded-3xl sm:border ${
+      className={`relative overflow-hidden border-y sm:rounded-3xl sm:border ${themeAccent.stageBorder} ${
         isFullscreen
           ? "fixed inset-0 z-50 h-screen w-screen rounded-none border-0"
           : "h-[calc(100vh-64px)] min-h-[560px] max-h-[820px] w-full sm:h-[calc(100vh-80px)]"
@@ -881,16 +1033,12 @@ export default function KrillionGameEngine({
         {/* TOP HUD BAR: DEPTH + ROUND PIPS + SCORE + QUICK CONTROLS */}
         <div className="flex flex-col gap-2">
           <div className="flex items-start justify-between gap-2">
-            {/* Top Left: Depth / Altitude Plaque */}
-            <div className="pointer-events-auto rounded-xl border border-cyan-400/30 bg-[#041425]/45 px-3 py-1.5 backdrop-blur-[2px] sm:px-4 sm:py-2">
+            {/* Top Left: Depth / Range Plaque */}
+            <div className={`pointer-events-auto rounded-xl border bg-[#041425]/45 px-3 py-1.5 backdrop-blur-[2px] sm:px-4 sm:py-2 ${themeAccent.plaqueBorder}`}>
               <span className="block font-mono text-[10px] font-bold uppercase tracking-widest text-slate-300/80">
                 {worldMeta.hudMetricTitle}
               </span>
-              <span
-                className={`font-pixel text-base font-bold sm:text-xl ${
-                  isReverse ? "text-amber-300" : "text-cyan-300"
-                }`}
-              >
+              <span className={`font-pixel text-base font-bold sm:text-xl ${themeAccent.metricText}`}>
                 {depthMetricLabel}
               </span>
             </div>
@@ -905,10 +1053,12 @@ export default function KrillionGameEngine({
                   if (out) {
                     cls =
                       out.points >= 85
-                        ? "bg-amber-300 border-amber-200 shadow-[0_0_8px_rgba(252,211,77,0.8)]"
-                        : out.points > 0
+                        ? "bg-amber-300 border-amber-100 shadow-[0_0_8px_rgba(252,211,77,0.8)]"
+                        : out.points >= 55
                           ? "bg-cyan-400 border-cyan-200"
-                          : "bg-rose-500 border-rose-300";
+                          : out.points > 0
+                            ? "bg-sky-400/85 border-sky-200/75"
+                            : "bg-slate-900/90 border-slate-500/60";
                   } else if (isCurrent) {
                     cls = "bg-rose-400 border-white animate-pulse";
                   }
@@ -1126,27 +1276,25 @@ export default function KrillionGameEngine({
           {phase === "playing" && currentPrompt && (
             <div className="flex w-full max-w-2xl flex-col items-center gap-3.5">
               {/* Ultra-sheer Cockpit HUD Prompt Card (background creatures & beams shine right through!) */}
-              <div className="relative w-full rounded-2xl border border-cyan-300/35 bg-[#03101f]/20 px-5 py-4 text-center shadow-[0_6px_28px_rgba(0,0,0,0.16)] backdrop-blur-[2px] sm:px-7 sm:py-5">
+              <div className={`relative w-full rounded-2xl border bg-[#03101f]/25 px-5 py-4 text-center shadow-[0_6px_28px_rgba(0,0,0,0.16)] backdrop-blur-[2px] sm:px-7 sm:py-5 ${themeAccent.promptBorder}`}>
                 {/* HUD Corner Reticle Brackets */}
-                <span className="pointer-events-none absolute -left-[1px] -top-[1px] h-3 w-3 rounded-tl-xl border-l-2 border-t-2 border-cyan-300/85" aria-hidden="true" />
-                <span className="pointer-events-none absolute -right-[1px] -top-[1px] h-3 w-3 rounded-tr-xl border-r-2 border-t-2 border-cyan-300/85" aria-hidden="true" />
-                <span className="pointer-events-none absolute -bottom-[1px] -left-[1px] h-3 w-3 rounded-bl-xl border-b-2 border-l-2 border-cyan-300/85" aria-hidden="true" />
-                <span className="pointer-events-none absolute -bottom-[1px] -right-[1px] h-3 w-3 rounded-br-xl border-b-2 border-r-2 border-cyan-300/85" aria-hidden="true" />
+                <span className={`pointer-events-none absolute -left-[1px] -top-[1px] h-3 w-3 rounded-tl-xl border-l-2 border-t-2 ${themeAccent.reticle}`} aria-hidden="true" />
+                <span className={`pointer-events-none absolute -right-[1px] -top-[1px] h-3 w-3 rounded-tr-xl border-r-2 border-t-2 ${themeAccent.reticle}`} aria-hidden="true" />
+                <span className={`pointer-events-none absolute -bottom-[1px] -left-[1px] h-3 w-3 rounded-bl-xl border-b-2 border-l-2 ${themeAccent.reticle}`} aria-hidden="true" />
+                <span className={`pointer-events-none absolute -bottom-[1px] -right-[1px] h-3 w-3 rounded-br-xl border-b-2 border-r-2 ${themeAccent.reticle}`} aria-hidden="true" />
 
                 <div className="flex items-center justify-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)]">
                   <span className="text-rose-300">PROMPT {qIndex + 1} OF {deck.length}</span>
                   <span className="text-slate-300/70">·</span>
-                  <span className="text-cyan-200">{currentPrompt.categoryLabel}</span>
+                  <span className={themeAccent.metricText}>{currentPrompt.categoryLabel}</span>
                 </div>
 
                 <p className="mt-2.5 text-xl font-black leading-snug text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] [text-shadow:0_1px_3px_rgba(0,0,0,0.95)] sm:text-3xl">
                   {currentPrompt.question}
                 </p>
 
-                <p className="mt-2 font-mono text-[11px] tracking-wider text-cyan-100/85 drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)]">
-                  {isReverse
-                    ? "▲ obvious answers fly higher ▲"
-                    : "▼ rarer answers sink deeper ▼"}
+                <p className="mt-2 font-mono text-[11px] tracking-wider text-slate-200/85 drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)]">
+                  {worldMeta.promptHintText}
                 </p>
 
                 {revealedHints > 0 && (
@@ -1191,7 +1339,7 @@ export default function KrillionGameEngine({
               {/* Bottom Arcade Input Bar with Sheer Glass & Keystroke Sonar Pulse */}
               <form
                 onSubmit={handleFormSubmit}
-                className="pointer-events-auto flex w-full items-center gap-2.5 rounded-xl border border-cyan-300/50 bg-[#03101d]/35 p-2 shadow-[0_0_24px_rgba(34,211,238,0.18)] backdrop-blur-[3px]"
+                className={`pointer-events-auto flex w-full items-center gap-2.5 rounded-xl border bg-[#03101d]/35 p-2 backdrop-blur-[3px] ${themeAccent.inputBorder}`}
               >
                 {/* Radial SVG Countdown Ring */}
                 <div className="relative flex h-11 w-11 shrink-0 items-center justify-center">
@@ -1264,9 +1412,9 @@ export default function KrillionGameEngine({
 
                 <button
                   type="submit"
-                  className="shrink-0 rounded-lg bg-[#ff2a6d] px-4 py-2.5 font-pixel text-xs font-bold tracking-wider text-white shadow-[0_0_18px_rgba(255,42,109,0.55)] transition hover:brightness-110 active:scale-95 sm:px-5"
+                  className={`shrink-0 rounded-lg px-4 py-2.5 font-pixel text-xs font-bold tracking-wider transition hover:brightness-110 active:scale-95 sm:px-5 ${themeAccent.submitBtn}`}
                 >
-                  {isReverse ? "ASCEND" : "DIVE"}
+                  {worldMeta.submitVerb}
                 </button>
               </form>
 
@@ -1393,121 +1541,324 @@ export default function KrillionGameEngine({
             </div>
           )}
 
-          {/* PHASE 6: SCREENSHOT-READY EXPEDITION SCORE CARD */}
+          {/* PHASE 6: KRILLION.IO-CALIBER EXPEDITION SUMMARY SCORE CARD */}
           {phase === "summary" && (
-            <div className="pointer-events-auto w-full max-w-2xl space-y-3 overflow-y-auto max-h-[74vh] rounded-2xl border-2 border-cyan-400/50 bg-gradient-to-b from-[#04182d]/90 to-[#020c18]/90 p-4 shadow-[0_0_40px_rgba(34,211,238,0.2)] backdrop-blur-md sm:p-6">
-              <div className="flex flex-wrap items-start justify-between gap-3 border-b border-white/10 pb-3">
-                <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-cyan-300">
-                      {worldTitle.logoText} · {isReverse ? "FLIGHT COMPLETE" : "DIVE COMPLETE"}
-                    </span>
-                    {bestScore > 0 && (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/40 bg-amber-500/15 px-2 py-0.5 font-mono text-[10px] font-bold text-amber-200">
-                        <Flame className="h-3 w-3 text-amber-300" />
-                        {totalScore >= bestScore ? "NEW BEST!" : `Best: ${bestScore}`}
+              <div className={`pointer-events-auto w-full max-w-2xl space-y-3 overflow-y-auto max-h-[76vh] rounded-2xl border-2 bg-gradient-to-b from-[#04182d]/92 to-[#020c18]/92 p-4 shadow-[0_0_40px_rgba(34,211,238,0.2)] backdrop-blur-md sm:p-6 ${themeAccent.plaqueBorder}`}>
+                {/* Header */}
+                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-white/10 pb-3">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`font-mono text-[11px] font-bold uppercase tracking-widest ${themeAccent.metricText}`}>
+                        {worldTitle.logoText} · {isReverse ? "FLIGHT COMPLETE" : "DIVE COMPLETE"}
+                      </span>
+                      {bestScore > 0 && (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/40 bg-amber-500/15 px-2 py-0.5 font-mono text-[10px] font-bold text-amber-200">
+                          <Flame className="h-3 w-3 text-amber-300" />
+                          {totalScore >= bestScore ? "NEW BEST!" : `Best: ${bestScore}`}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="mt-1.5 flex flex-wrap items-baseline gap-2.5 text-white">
+                      <span>
+                        <span className="font-pixel text-2xl font-bold text-amber-300 sm:text-3xl">
+                          {totalScore}
+                        </span>
+                        <span className="ml-1 font-mono text-sm font-bold text-slate-400">
+                          / 700
+                        </span>
+                      </span>
+                      <span className={`rounded-lg border px-2.5 py-0.5 font-mono text-sm font-black ${themeAccent.plaqueBorder} bg-white/[0.05] ${themeAccent.metricText}`}>
+                        {depthMetricLabel}
+                      </span>
+                    </h3>
+                    <p className="mt-1 font-mono text-[11px] text-slate-300">
+                      Zone Reached: <strong className="text-white">{zoneStory.zone}</strong> ·{" "}
+                      <span className="tracking-widest">{emojiGrid}</span>
+                    </p>
+                    {friendChallenge && typeof friendChallenge.score === "number" && (
+                      <p className="mt-1.5 inline-flex items-center gap-1.5 rounded-lg bg-amber-400/20 px-2.5 py-1 font-mono text-xs font-bold text-amber-200">
+                        <Swords className="h-3.5 w-3.5" />
+                        {totalScore > friendChallenge.score
+                          ? `VICTORY! Beat friend's ${friendChallenge.score} pts!`
+                          : totalScore === friendChallenge.score
+                            ? `TIE at ${totalScore} pts!`
+                            : `Friend scored ${friendChallenge.score} pts — run it back!`}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col items-end gap-1">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        startFreshDive(
+                          mode === "daily" ? "unlimited" : mode,
+                          packFilter,
+                          selectedDate,
+                          false,
+                        )
+                      }
+                      className={`rounded-lg border-2 px-4 py-2 font-pixel text-xs font-bold hover:brightness-110 ${themeAccent.summaryBtn}`}
+                    >
+                      {worldMeta.nextDiveLabel}
+                    </button>
+                    {dailyCountdown && (
+                      <span className="font-mono text-[10px] text-slate-400">
+                        Next Daily in <strong className={themeAccent.metricText}>{dailyCountdown}</strong>
                       </span>
                     )}
                   </div>
-                  <h3 className="mt-1 font-pixel text-2xl font-bold text-white sm:text-3xl">
-                    <span className="text-amber-300">{totalScore}</span> / 700 ·{" "}
-                    <span className="text-cyan-300">{depthMetricLabel}</span>
-                  </h3>
-                  <p className="mt-0.5 font-mono text-[11px] text-slate-300">
-                    Zone Reached: <strong className="text-cyan-200">{zoneStory.zone}</strong> ·{" "}
-                    <span className="tracking-widest">{emojiGrid}</span>
-                  </p>
-                  {friendChallenge && typeof friendChallenge.score === "number" && (
-                    <p className="mt-1.5 inline-flex items-center gap-1.5 rounded-lg bg-amber-400/20 px-2.5 py-1 font-mono text-xs font-bold text-amber-200">
-                      <Swords className="h-3.5 w-3.5" />
-                      {totalScore > friendChallenge.score
-                        ? `VICTORY! Beat friend's ${friendChallenge.score} pts!`
-                        : totalScore === friendChallenge.score
-                          ? `TIE at ${totalScore} pts!`
-                          : `Friend scored ${friendChallenge.score} pts — run it back!`}
-                    </p>
-                  )}
                 </div>
 
-                <div className="flex flex-col items-end gap-1">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      startFreshDive(
-                        mode === "daily" ? "unlimited" : mode,
-                        packFilter,
-                        selectedDate,
-                        true,
-                      )
-                    }
-                    className="rounded-lg border-2 border-cyan-300 bg-cyan-400 px-4 py-2 font-pixel text-xs font-bold text-slate-950 shadow-[0_0_20px_rgba(34,211,238,0.35)] hover:brightness-110"
-                  >
-                    NEXT DIVE →
-                  </button>
-                  {dailyCountdown && (
-                    <span className="font-mono text-[10px] text-slate-400">
-                      Next Daily in <strong className="text-cyan-200">{dailyCountdown}</strong>
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Round Plaques */}
-              <div className="grid gap-1.5 sm:grid-cols-2">
-                {outcomes.map((item, idx) => (
-                  <div
-                    key={item.prompt.id}
-                    className="flex items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 font-mono text-xs"
-                  >
-                    <span className="truncate text-slate-200">
-                      Q{idx + 1}: {item.matchedAnswer ? item.matchedAnswer.name : item.tier}
-                    </span>
-                    <span
-                      className={`shrink-0 font-bold ${
-                        item.points >= 85
-                          ? "text-amber-300"
-                          : item.points > 0
-                            ? "text-cyan-300"
-                            : "text-rose-400"
-                      }`}
+                {/* Bell Curve Percentile & 7-Round Dive Log Chart */}
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {/* Left: Bell Curve Distribution */}
+                  <div className="rounded-xl border border-white/10 bg-[#03101d]/70 p-3">
+                    <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-slate-400">
+                      <span>Score Bell Curve</span>
+                      <span className="font-bold text-cyan-200">Top {100 - summaryPercentile}%</span>
+                    </div>
+                    <svg
+                      viewBox="0 0 240 76"
+                      className="mt-1 h-16 w-full"
+                      role="img"
+                      aria-label={`Your score ${totalScore} ranks better than ${summaryPercentile}% of players`}
                     >
-                      +{item.points}
-                    </span>
+                      <defs>
+                        <linearGradient id="akBellGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.32" />
+                          <stop offset="100%" stopColor="#22d3ee" stopOpacity="0.02" />
+                        </linearGradient>
+                      </defs>
+                      <line x1="14" y1="64" x2="226" y2="64" stroke="rgba(148,163,184,0.25)" strokeWidth="1" />
+                      <path d={BELL_CURVE_AREA_PATH} fill="url(#akBellGrad)" />
+                      <path d={BELL_CURVE_LINE_PATH} fill="none" stroke="#22d3ee" strokeWidth="1.8" />
+                      <line
+                        x1={summaryMarkerX}
+                        y1={summaryMarkerY}
+                        x2={summaryMarkerX}
+                        y2="64"
+                        stroke="#fb7185"
+                        strokeWidth="1.5"
+                        strokeDasharray="2 2"
+                      />
+                      <circle cx={summaryMarkerX} cy={summaryMarkerY} r="4" fill="#fb7185" stroke="#ffffff" strokeWidth="1.2" />
+                      <text
+                        x={Math.min(212, Math.max(28, summaryMarkerX))}
+                        y="73"
+                        textAnchor="middle"
+                        fill="#fda4af"
+                        fontSize="7"
+                        fontFamily="monospace"
+                        fontWeight="bold"
+                      >
+                        YOU
+                      </text>
+                    </svg>
+                    <p className="font-mono text-[11px] font-bold text-slate-200">
+                      Better than <span className="text-amber-300">{summaryPercentile}%</span> of players today
+                    </p>
                   </div>
-                ))}
-              </div>
 
-              <ShareChallengePanel
-                variant="summary"
-                accent={isReverse ? "amber" : "cyan"}
-                challengeUrl={challengeUrl}
-                shareText={summaryShareText}
-                shareTitle={`${worldTitle.logoText}: ${totalScore}/700 (${depthMetricLabel})`}
-                fullResultCopyText={fullCopyGridText}
-                ctaLabel={`Can you beat ${depthMetricLabel}? Challenge Friends`}
-              />
+                  {/* Right: 7-Round Dive Log Drop Chart */}
+                  <div className="rounded-xl border border-white/10 bg-[#03101d]/70 p-3">
+                    <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-slate-400">
+                      <span>Dive Log (7 Rounds)</span>
+                      <span>{isReverse ? "Higher = Better" : "Deeper = Rarer"}</span>
+                    </div>
+                    <div className="mt-2 grid h-16 grid-cols-7 gap-1.5 border-y border-dashed border-white/10 py-1">
+                      {outcomes.map((item, idx) => {
+                        const pct = item.points > 0 ? Math.max(14, item.points) : 8;
+                        const dotCls =
+                          item.points >= 85
+                            ? "bg-amber-300 shadow-[0_0_8px_rgba(252,211,77,0.9)]"
+                            : item.points >= 55
+                              ? "bg-cyan-300 shadow-[0_0_6px_rgba(34,211,238,0.8)]"
+                              : item.points > 0
+                                ? "bg-sky-400"
+                                : "border border-slate-500 bg-slate-800";
+                        const stemCls =
+                          item.points >= 85
+                            ? "bg-amber-300/60"
+                            : item.points >= 55
+                              ? "bg-cyan-400/50"
+                              : item.points > 0
+                                ? "bg-sky-400/40"
+                                : "bg-slate-600/40";
+                        return (
+                          <div
+                            key={item.prompt.id}
+                            className={`relative flex flex-col items-center ${isReverse ? "justify-end" : "justify-start"}`}
+                            title={`Q${idx + 1}: +${item.points} pts`}
+                          >
+                            {!isReverse && (
+                              <div className="flex flex-col items-center" style={{ height: `${pct}%` }}>
+                                <span className={`w-[2px] flex-1 ${stemCls}`} />
+                                <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${dotCls}`} />
+                              </div>
+                            )}
+                            {isReverse && (
+                              <div className="flex flex-col items-center" style={{ height: `${pct}%` }}>
+                                <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${dotCls}`} />
+                                <span className={`w-[2px] flex-1 ${stemCls}`} />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div className="mt-1 grid grid-cols-7 gap-1.5 text-center font-mono text-[9px] font-bold">
+                      {outcomes.map((item, idx) => (
+                        <span
+                          key={item.prompt.id}
+                          className={
+                            item.points >= 85
+                              ? "text-amber-300"
+                              : item.points > 0
+                                ? "text-cyan-300"
+                                : "text-slate-500"
+                          }
+                        >
+                          Q{idx + 1}:{item.points}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
 
-              <div className="flex flex-wrap items-center justify-between gap-2 pt-1 font-mono text-[11px] text-slate-400">
-                <span>Switch Worlds:</span>
-                <div className="flex flex-wrap gap-1.5">
-                  <Link href="/noillirk/" className="text-amber-300 hover:underline">
-                    Noillirk
-                  </Link>
-                  <Link href="/footbillion/" className="text-emerald-300 hover:underline">
-                    Footbillion
-                  </Link>
-                  <Link href="/nba-krillion/" className="text-orange-300 hover:underline">
-                    NBA Krillion
-                  </Link>
-                  <Link href="/pokekrillion/" className="text-rose-300 hover:underline">
-                    Pokekrillion
-                  </Link>
-                  <Link href="/poople-unlimited/" className="text-cyan-300 hover:underline">
-                    Poople
-                  </Link>
+                {/* THE CATCH: Expandable Answer Sheets */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-slate-400">
+                    <span>The Catch — Tap a round for all answers</span>
+                    <span>{outcomes.filter((o) => o.points > 0).length}/7 landed</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    {outcomes.map((item, idx) => {
+                      const isExpanded = expandedRoundIdx === idx;
+                      const sortedPool = isExpanded
+                        ? [...item.prompt.answers].sort(
+                            (a, b) =>
+                              computeRoundPoints(b.rarity, mode) - computeRoundPoints(a.rarity, mode),
+                          )
+                        : [];
+                      return (
+                        <div
+                          key={item.prompt.id}
+                          className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.04]"
+                        >
+                          <button
+                            type="button"
+                            onClick={() => setExpandedRoundIdx(isExpanded ? null : idx)}
+                            className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left font-mono text-xs transition hover:bg-white/[0.05]"
+                          >
+                            <div className="min-w-0 flex-1">
+                              <span className="text-[10px] text-slate-400">
+                                Q{idx + 1} · {item.prompt.categoryLabel}
+                              </span>
+                              <p className="truncate font-bold text-slate-100">
+                                {item.matchedAnswer ? item.matchedAnswer.name : `— (${item.tier})`}
+                              </p>
+                            </div>
+                            <div className="flex shrink-0 items-center gap-2">
+                              <span
+                                className={`font-bold ${
+                                  item.points >= 85
+                                    ? "text-amber-300"
+                                    : item.points > 0
+                                      ? "text-cyan-300"
+                                      : "text-slate-400"
+                                }`}
+                              >
+                                +{item.points}
+                              </span>
+                              <span className="rounded border border-white/15 bg-black/30 px-1.5 py-0.5 text-[10px] text-slate-300">
+                                {item.prompt.answers.length} {isExpanded ? "▲" : "▾"}
+                              </span>
+                            </div>
+                          </button>
+
+                          {isExpanded && (
+                            <div className="border-t border-white/10 bg-[#020b15]/85 p-3">
+                              <p className="mb-2 text-xs font-semibold text-cyan-100">
+                                {item.prompt.question}
+                              </p>
+                              <div className="grid max-h-44 gap-1.5 overflow-y-auto pr-1 sm:grid-cols-2">
+                                {sortedPool.map((ans) => {
+                                  const pts = computeRoundPoints(ans.rarity, mode);
+                                  const isMine = item.matchedAnswer?.name === ans.name;
+                                  return (
+                                    <div
+                                      key={ans.name}
+                                      className={`flex items-center justify-between gap-2 rounded-lg border px-2.5 py-1 font-mono text-[11px] ${
+                                        isMine
+                                          ? "border-amber-300/70 bg-amber-400/15 text-amber-100"
+                                          : "border-white/10 bg-white/[0.03] text-slate-300"
+                                      }`}
+                                    >
+                                      <span className="truncate">
+                                        {ans.name}
+                                        {isMine && (
+                                          <span className="ml-1.5 rounded bg-amber-300 px-1 py-0.2 text-[9px] font-black text-slate-950">
+                                            YOU
+                                          </span>
+                                        )}
+                                      </span>
+                                      <span
+                                        className={`shrink-0 font-bold ${
+                                          pts >= 85
+                                            ? "text-amber-300"
+                                            : pts >= 55
+                                              ? "text-cyan-300"
+                                              : pts <= 19
+                                                ? "text-rose-300"
+                                                : "text-slate-300"
+                                        }`}
+                                      >
+                                        +{pts}
+                                      </span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <ShareChallengePanel
+                  variant="summary"
+                  accent={isReverse ? "amber" : "cyan"}
+                  challengeUrl={challengeUrl}
+                  shareText={summaryShareText}
+                  shareTitle={`${worldTitle.logoText}: ${totalScore}/700 (${depthMetricLabel})`}
+                  fullResultCopyText={fullCopyGridText}
+                  ctaLabel={`Can you beat ${depthMetricLabel}? Challenge Friends`}
+                />
+
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-1 font-mono text-[11px] text-slate-400">
+                  <span>Switch Worlds:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    <Link href="/noillirk/" className="text-amber-300 hover:underline">
+                      Noillirk
+                    </Link>
+                    <Link href="/footbillion/" className="text-emerald-300 hover:underline">
+                      Footbillion
+                    </Link>
+                    <Link href="/nba-krillion/" className="text-orange-300 hover:underline">
+                      NBA Krillion
+                    </Link>
+                    <Link href="/pokekrillion/" className="text-rose-300 hover:underline">
+                      Pokekrillion
+                    </Link>
+                    <Link href="/poople-unlimited/" className="text-cyan-300 hover:underline">
+                      Poople
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
           )}
         </div>
 

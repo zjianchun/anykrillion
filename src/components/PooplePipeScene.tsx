@@ -407,7 +407,7 @@ export default function PooplePipeScene({
   return (
     <div
       ref={stageRef}
-      className="relative h-full w-full cursor-crosshair overflow-hidden select-none"
+      className="relative h-full min-h-[620px] w-full cursor-crosshair overflow-hidden select-none"
     >
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
