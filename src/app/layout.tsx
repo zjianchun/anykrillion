@@ -90,6 +90,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
+        <link rel="dns-prefetch" href="https://bicea.org" />
+        <link rel="preconnect" href="https://bicea.org" crossOrigin="anonymous" />
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6007456453108035"

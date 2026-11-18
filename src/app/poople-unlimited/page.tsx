@@ -2,6 +2,13 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { BookOpen, Compass, Eye, Flame, Layers } from "lucide-react";
+import {
+  BottomNativeSlot,
+  GuideWithSkyscraper,
+  MidContentBannerSlot,
+  MobilePostGameNativeSlot,
+  PrimaryLeaderboardSlot,
+} from "@/components/AdPlacements";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
 import GameEngagement from "@/components/GameEngagement";
@@ -138,16 +145,21 @@ export default function PoopleUnlimitedPage() {
           Poople Unlimited: Free 4-Letter Word Ladder Game, Daily Answer &amp; Solver
         </h1>
 
-        <section aria-labelledby="poople-engine-heading" className="mb-8">
+        <section aria-labelledby="poople-engine-heading" className="mb-6">
           <h2 id="poople-engine-heading" className="sr-only">
             Play Poople Unlimited &amp; Daily Word Ladder
           </h2>
           <PoopleGameEngine />
         </section>
 
+        <PrimaryLeaderboardSlot className="mb-6 px-4 sm:px-0" />
+
         <GameEngagement gameLabel="Poople Unlimited" />
 
-        <div id="poople-guide" className="space-y-8 border-t border-white/10 px-4 pt-10 sm:px-0">
+        <MobilePostGameNativeSlot className="mb-8 px-4 sm:px-0" />
+
+        <div id="poople-guide" className="border-t border-white/10 px-4 pt-10 sm:px-0">
+          <GuideWithSkyscraper mode="game">
           <div className="grid gap-5 rounded-2xl border border-white/10 bg-[#051629]/65 p-5 sm:grid-cols-[1fr_210px] sm:items-center sm:p-6">
             <div>
               <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-cyan-300">
@@ -232,6 +244,8 @@ export default function PoopleUnlimitedPage() {
               </div>
             </div>
           </section>
+
+          <MidContentBannerSlot />
 
           <section
             aria-labelledby="how-poople-works"
@@ -320,6 +334,8 @@ export default function PoopleUnlimitedPage() {
             </div>
           </section>
 
+          <BottomNativeSlot />
+
           <section aria-labelledby="poople-packs-heading">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-2">
               <h2
@@ -347,6 +363,7 @@ export default function PoopleUnlimitedPage() {
             </h2>
             <FaqAccordion faqs={FAQS} />
           </section>
+          </GuideWithSkyscraper>
         </div>
       </main>
 

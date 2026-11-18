@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BookOpen, Compass, Flame, Lightbulb, ShieldCheck, Wind } from "lucide-react";
+import {
+  BottomNativeSlot,
+  GuideWithSkyscraper,
+  MidContentBannerSlot,
+  MobilePostGameNativeSlot,
+  PrimaryLeaderboardSlot,
+} from "@/components/AdPlacements";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
@@ -146,8 +153,8 @@ export default function GuidesPage() {
 
       <Navbar />
 
-      <main className="mx-auto max-w-5xl px-4 pb-16 pt-8">
-        <header className="mb-10 rounded-2xl border border-cyan-500/25 bg-[#06192d]/85 p-6 sm:p-8">
+      <main className="mx-auto max-w-6xl px-4 pb-16 pt-8">
+        <header className="mb-8 rounded-2xl border border-cyan-500/25 bg-[#06192d]/85 p-6 sm:p-8">
           <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-cyan-300">
             <BookOpen className="h-3.5 w-3.5" />
             Player Manual • {stats.totalPrompts} Curated Prompts
@@ -161,7 +168,10 @@ export default function GuidesPage() {
           </p>
         </header>
 
-        <div className="space-y-8">
+        <PrimaryLeaderboardSlot className="mb-8" />
+        <MobilePostGameNativeSlot className="mb-8" />
+
+        <GuideWithSkyscraper mode="content">
           <section className="rounded-2xl border border-cyan-500/20 bg-[#05182b]/75 p-6 sm:p-8">
             <div className="flex items-center gap-2 text-cyan-300">
               <Lightbulb className="h-5 w-5" />
@@ -247,6 +257,8 @@ export default function GuidesPage() {
               perennial MVP superstars.
             </p>
           </section>
+
+          <MidContentBannerSlot />
 
           <section className="rounded-2xl border border-cyan-500/20 bg-[#05182b]/75 p-6 sm:p-8">
             <div className="flex items-center gap-2 text-sky-300">
@@ -393,6 +405,8 @@ export default function GuidesPage() {
             </ol>
           </section>
 
+          <BottomNativeSlot />
+
           <section aria-labelledby="guides-faq-heading">
             <h2
               id="guides-faq-heading"
@@ -402,7 +416,7 @@ export default function GuidesPage() {
             </h2>
             <FaqAccordion faqs={FAQS} />
           </section>
-        </div>
+        </GuideWithSkyscraper>
       </main>
 
       <Footer />

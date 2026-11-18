@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronDown, Eye, ShieldAlert, Sparkles, Trophy } from "lucide-react";
+import {
+  BottomNativeSlot,
+  GuideWithSkyscraper,
+  MidContentBannerSlot,
+  MobilePostGameNativeSlot,
+  PrimaryLeaderboardSlot,
+} from "@/components/AdPlacements";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
@@ -130,7 +137,11 @@ export default function KrillionAnswersTodayPage() {
           </p>
         </header>
 
-        <section aria-labelledby="today-prompts-heading" className="mb-12">
+        <PrimaryLeaderboardSlot className="mb-8" />
+        <MobilePostGameNativeSlot className="mb-8" />
+
+        <GuideWithSkyscraper mode="content">
+        <section aria-labelledby="today-prompts-heading">
           <h2
             id="today-prompts-heading"
             className="mb-4 text-xl font-extrabold tracking-tight text-white sm:text-2xl"
@@ -238,9 +249,11 @@ export default function KrillionAnswersTodayPage() {
           </div>
         </section>
 
+        <MidContentBannerSlot />
+
         <section
           aria-labelledby="best-picks-heading"
-          className="mb-12 rounded-2xl border border-emerald-500/25 bg-[#05182b]/80 p-6 sm:p-8"
+          className="rounded-2xl border border-emerald-500/25 bg-[#05182b]/80 p-6 sm:p-8"
         >
           <div className="flex items-center gap-2 text-emerald-300">
             <Trophy className="h-5 w-5" />
@@ -287,7 +300,7 @@ export default function KrillionAnswersTodayPage() {
 
         <section
           aria-labelledby="plankton-traps-heading"
-          className="mb-12 rounded-2xl border border-rose-500/25 bg-[#05182b]/80 p-6 sm:p-8"
+          className="rounded-2xl border border-rose-500/25 bg-[#05182b]/80 p-6 sm:p-8"
         >
           <div className="flex items-center gap-2 text-rose-300">
             <ShieldAlert className="h-5 w-5" />
@@ -328,7 +341,7 @@ export default function KrillionAnswersTodayPage() {
           </div>
         </section>
 
-        <section aria-labelledby="recent-boards-strip" className="mb-12">
+        <section aria-labelledby="recent-boards-strip">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
             <h2
               id="recent-boards-strip"
@@ -360,7 +373,9 @@ export default function KrillionAnswersTodayPage() {
           </div>
         </section>
 
-        <section aria-labelledby="other-packs" className="mb-12">
+        <BottomNativeSlot />
+
+        <section aria-labelledby="other-packs">
           <h2 id="other-packs" className="mb-4 text-xl font-extrabold text-white sm:text-2xl">
             Practice Unlimited Topic Packs
           </h2>
@@ -376,6 +391,7 @@ export default function KrillionAnswersTodayPage() {
           </h2>
           <FaqAccordion faqs={FAQS} />
         </section>
+        </GuideWithSkyscraper>
       </main>
 
       <Footer />

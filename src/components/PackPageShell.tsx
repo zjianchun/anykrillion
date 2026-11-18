@@ -1,7 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import { BookOpen } from "lucide-react";
+import {
+  BottomNativeSlot,
+  GuideWithSkyscraper,
+  MidContentBannerSlot,
+  MobilePostGameNativeSlot,
+  PrimaryLeaderboardSlot,
+} from "@/components/AdPlacements";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
 import GameEngagement from "@/components/GameEngagement";
@@ -98,7 +105,7 @@ export default function PackPageShell({
         <h1 className="sr-only">{h1}</h1>
 
         {/* Full-Viewport Interactive Ocean / Arena Dive World */}
-        <section aria-labelledby="engine-heading" className="mb-8">
+        <section aria-labelledby="engine-heading" className="mb-6">
           <h2 id="engine-heading" className="sr-only">
             {engineSectionTitle}
           </h2>
@@ -111,13 +118,18 @@ export default function PackPageShell({
           />
         </section>
 
+        <PrimaryLeaderboardSlot className="mb-6 px-4 sm:px-0" />
+
         <GameEngagement gameLabel={h1.split(":")[0]} />
+
+        <MobilePostGameNativeSlot className="mb-8 px-4 sm:px-0" />
 
         {/* Below-the-Fold Game Guide & Reference Knowledge (for players who scroll down & search crawlers) */}
         <div
           id="game-guide"
-          className="space-y-8 border-t border-white/10 px-4 pt-10 sm:px-0"
+          className="border-t border-white/10 px-4 pt-10 sm:px-0"
         >
+          <GuideWithSkyscraper mode="game">
           <div className="grid gap-5 rounded-2xl border border-white/10 bg-[#051629]/65 p-5 sm:grid-cols-[1fr_210px] sm:items-center sm:p-6">
             <div>
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -157,28 +169,32 @@ export default function PackPageShell({
             />
           </div>
 
-          {sections.map((section) => (
-            <section
-              key={section.id}
-              aria-labelledby={section.id}
-              className="rounded-2xl border border-cyan-500/15 bg-[#05182b]/65 p-6 sm:p-8"
-            >
-              <h2
-                id={section.id}
-                className="text-xl font-extrabold tracking-tight text-white sm:text-2xl"
+          {sections.map((section, idx) => (
+            <Fragment key={section.id}>
+              <section
+                aria-labelledby={section.id}
+                className="rounded-2xl border border-cyan-500/15 bg-[#05182b]/65 p-6 sm:p-8"
               >
-                {section.heading}
-              </h2>
-              <div className="mt-4 space-y-4 text-sm leading-relaxed text-slate-300 sm:text-base">
-                {section.body}
-              </div>
-              {section.includeRarityTable && (
-                <div className="mt-6">
-                  <RarityScaleTable reverse={reverseScoring} />
+                <h2
+                  id={section.id}
+                  className="text-xl font-extrabold tracking-tight text-white sm:text-2xl"
+                >
+                  {section.heading}
+                </h2>
+                <div className="mt-4 space-y-4 text-sm leading-relaxed text-slate-300 sm:text-base">
+                  {section.body}
                 </div>
-              )}
-            </section>
+                {section.includeRarityTable && (
+                  <div className="mt-6">
+                    <RarityScaleTable reverse={reverseScoring} />
+                  </div>
+                )}
+              </section>
+              {idx === 0 && <MidContentBannerSlot />}
+            </Fragment>
           ))}
+
+          <BottomNativeSlot />
 
           <section aria-labelledby="topic-packs-heading">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-2">
@@ -207,6 +223,7 @@ export default function PackPageShell({
             </h2>
             <FaqAccordion faqs={faqs} />
           </section>
+          </GuideWithSkyscraper>
         </div>
       </main>
 

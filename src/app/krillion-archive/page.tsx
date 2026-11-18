@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import {
+  BottomNativeSlot,
+  GuideWithSkyscraper,
+  MidContentBannerSlot,
+  MobilePostGameNativeSlot,
+  PrimaryLeaderboardSlot,
+} from "@/components/AdPlacements";
 import ArchiveExplorer from "@/components/ArchiveExplorer";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
@@ -91,28 +98,37 @@ export default function KrillionArchivePage() {
 
         <ArchiveExplorer />
 
-        <p className="mt-8 rounded-2xl border border-white/10 bg-[#051629]/60 p-5 text-sm leading-relaxed text-slate-300">
-          Missed yesterday&apos;s dive or want to binge past daily sets? Pick any archived board
-          above to replay all 7 rounds under official timer rules or test yourself in reverse
-          Noillirk mode.
-        </p>
+        <PrimaryLeaderboardSlot className="mt-8" />
+        <MobilePostGameNativeSlot className="mt-6" />
 
-        <section aria-labelledby="archive-packs" className="mt-14">
-          <h2 id="archive-packs" className="mb-4 text-xl font-extrabold text-white sm:text-2xl">
-            Explore Endless Topic Packs
-          </h2>
-          <TopicPacksGrid />
-        </section>
+        <GuideWithSkyscraper mode="game" className="mt-8">
+          <p className="rounded-2xl border border-white/10 bg-[#051629]/60 p-5 text-sm leading-relaxed text-slate-300">
+            Missed yesterday&apos;s dive or want to binge past daily sets? Pick any archived board
+            above to replay all 7 rounds under official timer rules or test yourself in reverse
+            Noillirk mode.
+          </p>
 
-        <section aria-labelledby="archive-faq-heading" className="mt-12">
-          <h2
-            id="archive-faq-heading"
-            className="mb-4 text-xl font-extrabold tracking-tight text-white sm:text-2xl"
-          >
-            Krillion Archive FAQ
-          </h2>
-          <FaqAccordion faqs={FAQS} />
-        </section>
+          <MidContentBannerSlot />
+
+          <section aria-labelledby="archive-packs">
+            <h2 id="archive-packs" className="mb-4 text-xl font-extrabold text-white sm:text-2xl">
+              Explore Endless Topic Packs
+            </h2>
+            <TopicPacksGrid />
+          </section>
+
+          <BottomNativeSlot />
+
+          <section aria-labelledby="archive-faq-heading">
+            <h2
+              id="archive-faq-heading"
+              className="mb-4 text-xl font-extrabold tracking-tight text-white sm:text-2xl"
+            >
+              Krillion Archive FAQ
+            </h2>
+            <FaqAccordion faqs={FAQS} />
+          </section>
+        </GuideWithSkyscraper>
       </main>
 
       <Footer />

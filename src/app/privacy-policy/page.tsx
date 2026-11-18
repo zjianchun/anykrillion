@@ -86,10 +86,11 @@ export default function PrivacyPolicyPage() {
                 3. Third-Party Advertising &amp; Google AdSense Cookies
               </h2>
               <p className="mt-2">
-                We use <strong>Google AdSense</strong> to display advertisements and keep
-                AnyKrillion free to play. Third-party vendors, including Google, use cookies, web
-                beacons, and IP addresses to serve ads based on a user&apos;s prior visits to this
-                website or other websites on the internet.
+                We use <strong>Google AdSense</strong> and third-party display and native advertising
+                networks to display advertisements and keep AnyKrillion free to play. Third-party
+                vendors, including Google and independent ad partners, use cookies, web beacons,
+                and IP addresses to serve ads based on a user&apos;s prior visits to this website or
+                other websites on the internet.
               </p>
               <p className="mt-2">
                 Google&apos;s use of advertising cookies enables it and its partners to serve ads to

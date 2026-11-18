@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Compass, Film, Flame, Layers, Sparkles, Trophy, Waves, Wind } from "lucide-react";
+import {
+  BottomNativeSlot,
+  GuideWithSkyscraper,
+  MidContentBannerSlot,
+  MobilePostGameNativeSlot,
+  PrimaryLeaderboardSlot,
+} from "@/components/AdPlacements";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
@@ -208,7 +215,10 @@ export default function GamesLikeKrillionPage() {
           </p>
         </header>
 
-        <div className="space-y-10">
+        <PrimaryLeaderboardSlot className="mb-8" />
+        <MobilePostGameNativeSlot className="mb-8" />
+
+        <GuideWithSkyscraper mode="content">
           <section aria-labelledby="all-alternatives-grid">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-2">
               <h2
@@ -307,6 +317,8 @@ export default function GamesLikeKrillionPage() {
               </table>
             </div>
           </section>
+
+          <MidContentBannerSlot />
 
           <section
             aria-labelledby="reverse-general-alternatives"
@@ -435,6 +447,8 @@ export default function GamesLikeKrillionPage() {
             </div>
           </section>
 
+          <BottomNativeSlot />
+
           <section aria-labelledby="games-like-faq-heading">
             <h2
               id="games-like-faq-heading"
@@ -444,7 +458,7 @@ export default function GamesLikeKrillionPage() {
             </h2>
             <FaqAccordion faqs={FAQS} />
           </section>
-        </div>
+        </GuideWithSkyscraper>
       </main>
 
       <Footer />
