@@ -356,32 +356,32 @@ function getWorldDisplayTitle(themeId: ThemeVariant, isReverse: boolean): {
     case "pitch":
       return {
         logoText: "FOOTBILLION",
-        subtitle: "WORLD CUP & CLUB DIVE: 7 prompts · 40s clock · rarest players sink deeper",
+        subtitle: "WORLD CUP & CLUB CHALLENGE: 7 prompts · 40s clock · rarest players strike from further out",
       };
     case "hardwood":
       return {
         logoText: "NBA KRILLION",
-        subtitle: "BASKETBALL ARENA DIVE: 7 prompts · 30s clock · deep-cut picks score highest",
+        subtitle: "BASKETBALL ARENA CHALLENGE: 7 prompts · 30s clock · deep-cut picks shoot from deeper range",
       };
     case "pokedex":
       return {
         logoText: "POKEKRILLION",
-        subtitle: "GEN 1–9 DEX DIVE: 7 prompts · avoid Pikachu traps · catch rare spawns",
+        subtitle: "GEN 1–9 DEX EXPEDITION: 7 prompts · avoid Pikachu traps · catch rare spawns",
       };
     case "atlas":
       return {
         logoText: "KRILLION GEO",
-        subtitle: "WORLD ATLAS DIVE: 7 prompts · chart obscure nations & capitals",
+        subtitle: "WORLD ATLAS EXPEDITION: 7 prompts · chart obscure nations & capitals",
       };
     case "cinema":
       return {
         logoText: "CINE KRILLION",
-        subtitle: "ACADEMY ARCHIVE DIVE: 7 prompts · skip blockbusters · pick indie gems",
+        subtitle: "ACADEMY ARCHIVE REEL: 7 prompts · skip blockbusters · pick indie gems",
       };
     case "stadium":
       return {
         logoText: "SPORTS KRILLION",
-        subtitle: "ALL-SPORTS DIVE: 7 prompts · 35s clock · rarest champions go deepest",
+        subtitle: "ALL-SPORTS ARENA CHALLENGE: 7 prompts · 35s clock · rarest champions break world records",
       };
     default:
       return {
@@ -613,6 +613,19 @@ export default function KrillionGameEngine({
   const theme = THEME_CONFIGS[activeThemeId];
   const worldTitle = getWorldDisplayTitle(activeThemeId, isReverse);
   const worldMeta = getWorldThemeMeta(activeThemeId, isReverse);
+  const splashStartLabelMap: Record<ThemeVariant, string> = {
+    abyss: "▼ BEGIN DESCENT ▼",
+    sky: "▲ BEGIN ASCENT ▲",
+    pitch: "▼ KICK OFF MATCH ▼",
+    hardwood: "▼ TIP OFF GAME ▼",
+    pokedex: "▼ START DEX SCAN ▼",
+    atlas: "▼ LAUNCH EXPEDITION ▼",
+    cinema: "▼ ROLL CAMERA ▼",
+    stadium: "▼ START EVENT ▼",
+  };
+  const splashStartLabel = isReverse
+    ? "▲ BEGIN ASCENT ▲"
+    : (splashStartLabelMap[activeThemeId] ?? "▼ BEGIN DESCENT ▼");
 
   const totalScore = useMemo(
     () => outcomes.reduce((sum, item) => sum + item.points, 0),
@@ -620,24 +633,12 @@ export default function KrillionGameEngine({
   );
 
   const beginRunFromSplash = useCallback(() => {
+    window.cancelAnimationFrame(animRafRef.current);
     playLockInSound();
+    setCameraDepth(0);
     setPhase("countdown");
     setCountdownNum(2);
-    // Smooth glide from horizon 0m -> initial underwater view 72m
-    const startT = performance.now();
-    const startD = cameraDepth;
-    const targetD = 72;
-    const glide = (now: number) => {
-      const p = Math.min(1, (now - startT) / 850);
-      const eased = 1 - Math.pow(1 - p, 3);
-      setCameraDepth(Math.round(startD + (targetD - startD) * eased));
-      if (p < 1) {
-        animRafRef.current = window.requestAnimationFrame(glide);
-      }
-    };
-    window.cancelAnimationFrame(animRafRef.current);
-    animRafRef.current = window.requestAnimationFrame(glide);
-  }, [cameraDepth]);
+  }, []);
 
   const startFreshDive = useCallback(
     (
@@ -699,8 +700,8 @@ export default function KrillionGameEngine({
       const updated = [...outcomes, outcome];
       const prevScore = outcomes.reduce((acc, r) => acc + r.points, 0);
       const nextScore = prevScore + outcome.points;
-      const prevDepth = Math.max(72, prevScore * 10);
-      const targetDepth = Math.max(72, nextScore * 10);
+      const prevDepth = cameraDepth;
+      const targetDepth = nextScore * 10;
 
       setOutcomes(updated);
       setFeedbackError(null);
@@ -767,7 +768,7 @@ export default function KrillionGameEngine({
 
       animRafRef.current = window.requestAnimationFrame(stepFrame);
     },
-    [bestScore, deck.length, mode, outcomes],
+    [bestScore, cameraDepth, deck.length, mode, outcomes],
   );
 
   // Live countdown to next Daily Dive (UTC midnight) on summary screen
@@ -1251,7 +1252,7 @@ export default function KrillionGameEngine({
                 autoFocus
                 className="pointer-events-auto mt-8 inline-flex items-center gap-3 rounded-lg border-2 border-cyan-300 bg-[#041527]/55 px-8 py-4 font-pixel text-sm font-bold tracking-widest text-white backdrop-blur-sm shadow-[0_0_32px_rgba(34,211,238,0.45)] transition hover:scale-[1.03] hover:bg-cyan-400 hover:text-slate-950 sm:text-base"
               >
-                {isReverse ? "▲ BEGIN ASCENT ▲" : "▼ BEGIN DESCENT ▼"}
+                {splashStartLabel}
               </button>
 
               {bestScore > 0 && (
@@ -1266,7 +1267,7 @@ export default function KrillionGameEngine({
           {phase === "countdown" && (
             <div className="rounded-xl border border-cyan-400/40 bg-[#041425]/45 px-6 py-3 text-center backdrop-blur-[2px]">
               <p className="font-mono text-sm font-bold tracking-wider text-cyan-200 drop-shadow">
-                {isReverse ? "ascending" : "descending"} · the clock starts in{" "}
+                {isReverse ? "ascending" : activeThemeId === "abyss" ? "descending" : "getting set"} · the clock starts in{" "}
                 <span className="font-pixel text-lg text-amber-300">{countdownNum}</span>
               </p>
             </div>
