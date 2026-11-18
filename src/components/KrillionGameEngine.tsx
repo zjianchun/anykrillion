@@ -31,6 +31,7 @@ import { getStickyExperimentVariant, trackGameEvent } from "@/lib/analytics";
 import { getWorldThemeMeta, getZoneNarrative } from "@/lib/worldThemesData";
 import { TierCreatureSprite } from "@/components/PixelSprites";
 import ShareChallengePanel from "@/components/ShareChallengePanel";
+import type { ScoreCardSpec } from "@/lib/scoreCardCanvas";
 import type {
   AnswerEntity,
   DailyBoard,
@@ -48,6 +49,7 @@ import {
   matchAnswer,
 } from "@/lib/fuzzyMatch";
 import {
+  buildSocialShareLinks,
   decodeKrillionChallenge,
   encodeKrillionChallenge,
 } from "@/lib/challengeCodec";
@@ -420,6 +422,8 @@ export default function KrillionGameEngine({
   const [showCompareDrawer, setShowCompareDrawer] = useState<boolean>(false);
   const [expandedRoundIdx, setExpandedRoundIdx] = useState<number | null>(null);
   const [showControlsMenu, setShowControlsMenu] = useState<boolean>(false);
+  const [showShareMenu, setShowShareMenu] = useState<boolean>(false);
+  const [copiedDiscordQuick, setCopiedDiscordQuick] = useState<boolean>(false);
   const [timerActive, setTimerActive] = useState<boolean>(false);
   const [exitDailyNudge, setExitDailyNudge] = useState<boolean>(false);
   const [dailyNudgeDismissed, setDailyNudgeDismissed] = useState<boolean>(false);
@@ -662,6 +666,7 @@ export default function KrillionGameEngine({
       setShowCompareDrawer(false);
       setExpandedRoundIdx(null);
       setShowControlsMenu(false);
+      setShowShareMenu(false);
       setDisplayScore(0);
       setTimeLeft(nextDeck[0]?.timerSeconds ?? 25);
       setFriendChallenge(null);
@@ -1005,6 +1010,54 @@ export default function KrillionGameEngine({
   const summaryZYou = (totalScore - 260) / 135;
   const summaryMarkerY = 64 - 50 * Math.exp(-0.5 * summaryZYou * summaryZYou);
 
+  const quickShareText =
+    outcomes.length > 0
+      ? summaryShareText
+      : `Can you beat me on this exact 7-question ${worldTitle.logoText} board?`;
+  const quickShareLinks = buildSocialShareLinks({
+    text: quickShareText,
+    url: challengeUrl,
+    title:
+      outcomes.length > 0
+        ? `${worldTitle.logoText}: ${totalScore}/700 (${depthMetricLabel})`
+        : `${worldTitle.logoText} — Friend PK Challenge`,
+  });
+  const quickDiscordText = `⚔️ **${worldTitle.logoText}** — Play my exact 7-question board:\n${challengeUrl}`;
+  const summaryDiscordText = `🏆 **${worldTitle.logoText}** · **${totalScore}/700** (\`${depthMetricLabel}\` · Top ${Math.max(1, 100 - summaryPercentile)}%)\n${emojiGrid}\n⚔️ Beat my exact 7-question board:\n${challengeUrl}`;
+  const krillionCardSpec: ScoreCardSpec = {
+    kind: "krillion",
+    gameTitle: worldTitle.logoText,
+    modeBadge:
+      mode === "daily"
+        ? "DAILY DIVE"
+        : isReverse
+          ? "NOILLIRK REVERSE"
+          : "ENDLESS 7",
+    themeId: activeThemeId,
+    isReverse,
+    totalScore,
+    maxScore: deck.length * 100,
+    metricLabel: depthMetricLabel,
+    zoneTitle: zoneStory.zone,
+    percentile: summaryPercentile,
+    rounds: outcomes.map((item) => ({
+      category: item.prompt.categoryLabel,
+      points: item.points,
+    })),
+  };
+  const krillionCardFilename = `${worldTitle.logoText.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${totalScore}.png`;
+
+  const handleQuickDiscordCopy = async () => {
+    trackGameEvent("share_click", { channel: "quick_discord", game: activeThemeId });
+    try {
+      await navigator.clipboard.writeText(quickDiscordText);
+      setCopiedDiscordQuick(true);
+      window.setTimeout(() => setCopiedDiscordQuick(false), 2200);
+    } catch {
+      // ignore
+    }
+  };
+
   return (
     <section
       ref={stageRef}
@@ -1129,17 +1182,29 @@ export default function KrillionGameEngine({
             <div className="pointer-events-auto relative flex items-center gap-1 rounded-xl border border-white/10 bg-[#041425]/45 p-1 backdrop-blur-[2px]">
               <button
                 type="button"
-                onClick={handleQuickInviteCopy}
-                className="inline-flex items-center gap-1 rounded-lg bg-amber-400/20 px-2 py-1 text-[11px] font-bold text-amber-200 hover:bg-amber-400/30"
-                title="Copy Friend Challenge URL (same 7 questions)"
+                onClick={() => {
+                  setShowControlsMenu(false);
+                  setShowShareMenu((v) => !v);
+                }}
+                aria-expanded={showShareMenu}
+                aria-label="Share challenge or PK a friend"
+                className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold transition ${
+                  showShareMenu
+                    ? "bg-amber-400 text-slate-950"
+                    : "bg-amber-400/20 text-amber-200 hover:bg-amber-400/30"
+                }`}
+                title="Share board on X, Telegram, Discord, or copy PK link"
               >
                 {copiedQuickInvite ? <Check className="h-3.5 w-3.5" /> : <Swords className="h-3.5 w-3.5" />}
-                <span className="hidden sm:inline">{copiedQuickInvite ? "Copied!" : "PK Friend"}</span>
+                <span className="hidden sm:inline">{copiedQuickInvite ? "Copied!" : "PK / Share"}</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => setShowControlsMenu((v) => !v)}
+                onClick={() => {
+                  setShowShareMenu(false);
+                  setShowControlsMenu((v) => !v);
+                }}
                 aria-expanded={showControlsMenu}
                 aria-label="Game settings"
                 className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold transition ${
@@ -1152,6 +1217,70 @@ export default function KrillionGameEngine({
                 <Settings className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Options</span>
               </button>
+
+              {showShareMenu && (
+                <div className="absolute right-0 top-full z-40 mt-1.5 flex w-60 flex-col gap-2 rounded-xl border border-amber-400/40 bg-[#041425]/95 p-3 shadow-2xl backdrop-blur-md">
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-amber-300">
+                    Challenge Friends (Same Board)
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleQuickInviteCopy}
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-amber-400 px-2.5 py-1.5 text-xs font-extrabold text-slate-950 transition hover:brightness-110"
+                  >
+                    {copiedQuickInvite ? <Check className="h-3.5 w-3.5" /> : <Swords className="h-3.5 w-3.5" />}
+                    {copiedQuickInvite ? "Copied PK Link!" : "Copy Same-Board PK Link"}
+                  </button>
+                  <div className="grid grid-cols-2 gap-1.5 text-[11px] font-bold">
+                    <a
+                      href={quickShareLinks.xUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() =>
+                        trackGameEvent("share_click", { channel: "quick_x", game: activeThemeId })
+                      }
+                      className="inline-flex items-center justify-center rounded-lg border border-white/15 bg-white/5 px-2 py-1.5 text-slate-100 hover:bg-white/10"
+                    >
+                      𝕏 Post
+                    </a>
+                    <a
+                      href={quickShareLinks.telegramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() =>
+                        trackGameEvent("share_click", {
+                          channel: "quick_telegram",
+                          game: activeThemeId,
+                        })
+                      }
+                      className="inline-flex items-center justify-center rounded-lg border border-sky-400/35 bg-sky-500/15 px-2 py-1.5 text-sky-200 hover:bg-sky-500/25"
+                    >
+                      Telegram
+                    </a>
+                    <button
+                      type="button"
+                      onClick={handleQuickDiscordCopy}
+                      className="inline-flex items-center justify-center rounded-lg border border-indigo-400/35 bg-indigo-500/15 px-2 py-1.5 text-indigo-200 hover:bg-indigo-500/25"
+                    >
+                      {copiedDiscordQuick ? "Copied!" : "Discord"}
+                    </button>
+                    <a
+                      href={quickShareLinks.whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() =>
+                        trackGameEvent("share_click", {
+                          channel: "quick_whatsapp",
+                          game: activeThemeId,
+                        })
+                      }
+                      className="inline-flex items-center justify-center rounded-lg border border-emerald-400/35 bg-emerald-500/15 px-2 py-1.5 text-emerald-200 hover:bg-emerald-500/25"
+                    >
+                      WhatsApp
+                    </a>
+                  </div>
+                </div>
+              )}
 
               {showControlsMenu && (
                 <div className="absolute right-0 top-full z-40 mt-1.5 flex w-60 flex-col gap-2 rounded-xl border border-cyan-400/35 bg-[#041425]/95 p-3 shadow-2xl backdrop-blur-md">
@@ -1836,6 +1965,9 @@ export default function KrillionGameEngine({
                   shareText={summaryShareText}
                   shareTitle={`${worldTitle.logoText}: ${totalScore}/700 (${depthMetricLabel})`}
                   fullResultCopyText={fullCopyGridText}
+                  discordCopyText={summaryDiscordText}
+                  scoreCardSpec={krillionCardSpec}
+                  scoreCardFilename={krillionCardFilename}
                   ctaLabel={`Can you beat ${depthMetricLabel}? Challenge Friends`}
                 />
 

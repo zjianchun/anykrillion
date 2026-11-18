@@ -89,17 +89,26 @@ export function buildSocialShareLinks(opts: {
   url: string;
   title: string;
 }): {
+  xUrl: string;
   twitterUrl: string;
+  telegramUrl: string;
   whatsappUrl: string;
+  blueskyUrl: string;
   redditUrl: string;
+  facebookUrl: string;
 } {
   const encodedUrl = encodeURIComponent(opts.url);
   const encodedText = encodeURIComponent(opts.text);
   const encodedTitle = encodeURIComponent(opts.title);
+  const xUrl = `https://x.com/intent/post?text=${encodedText}&url=${encodedUrl}`;
 
   return {
-    twitterUrl: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
+    xUrl,
+    twitterUrl: xUrl,
+    telegramUrl: `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`,
     whatsappUrl: `https://api.whatsapp.com/send?text=${encodeURIComponent(`${opts.text} ${opts.url}`)}`,
+    blueskyUrl: `https://bsky.app/intent/compose?text=${encodeURIComponent(`${opts.text}\n${opts.url}`)}`,
     redditUrl: `https://www.reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
+    facebookUrl: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
   };
 }

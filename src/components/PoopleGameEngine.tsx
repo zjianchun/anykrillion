@@ -20,6 +20,7 @@ import {
 import ShareChallengePanel from "@/components/ShareChallengePanel";
 import PooplePipeScene from "@/components/PooplePipeScene";
 import { trackGameEvent } from "@/lib/analytics";
+import type { ScoreCardSpec } from "@/lib/scoreCardCanvas";
 import poopleDataRaw from "@/data/poople_words.json";
 import {
   decodePoopleChallenge,
@@ -516,6 +517,28 @@ export default function PoopleGameEngine() {
     ? `I solved ${modeLabel} (${startWord} → POOP) in ${stepsTaken} steps (Par ${parSteps})! Can you beat me?`
     : `Play this 4-letter Word Ladder with me on AnyKrillion: turn ${startWord} into POOP!`;
   const poopleFullCopyText = `${modeLabel} (${startWord} → POOP) • ${stepsTaken} steps (Par ${parSteps})\n${emojiSteps}\nChallenge link: ${poopleChallengeUrl}`;
+  const poopleDiscordText = `🦆 **${modeLabel}** (\`${startWord}\` → \`POOP\`) · **${stepsTaken} steps** (Par ${parSteps})\n${emojiSteps}\n⚔️ Beat my board:\n${poopleChallengeUrl}`;
+  const poopleTileRows: Array<Array<"match" | "changed" | "same">> = chain
+    .slice(1)
+    .map((word, idx) => {
+      const prev = chain[idx];
+      return Array.from({ length: 4 }, (_, pos) => {
+        if (word[pos] === "POOP"[pos]) return "match";
+        if (word[pos] !== prev[pos]) return "changed";
+        return "same";
+      });
+    });
+  const poopleCardSpec: ScoreCardSpec = {
+    kind: "poople",
+    gameTitle: "POOPLE UNLIMITED",
+    modeBadge: tab === "daily" ? `DAILY #${activeDailyBoard.dayNumber}` : "UNLIMITED",
+    startWord,
+    targetWord: "POOP",
+    stepsTaken,
+    parSteps,
+    tileRows: poopleTileRows,
+  };
+  const poopleCardFilename = `poople-${startWord.toLowerCase()}-to-poop.png`;
 
   const handleQuickInvite = async () => {
     trackGameEvent("share_click", { channel: "quick_invite", game: "poople-unlimited" });
@@ -954,6 +977,9 @@ export default function PoopleGameEngine() {
                   shareText={poopleShareText}
                   shareTitle={`${modeLabel}: ${startWord} → POOP in ${stepsTaken} steps`}
                   fullResultCopyText={poopleFullCopyText}
+                  discordCopyText={poopleDiscordText}
+                  scoreCardSpec={poopleCardSpec}
+                  scoreCardFilename={poopleCardFilename}
                 /></div>
               </div>
             ) : (
