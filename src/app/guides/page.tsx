@@ -372,6 +372,14 @@ export default function GuidesPage() {
                 </article>
               ))}
             </div>
+            <p className="mt-4 rounded-xl border border-cyan-500/20 bg-[#03111f] px-4 py-3 text-xs leading-relaxed text-slate-300 sm:text-sm">
+              <strong className="text-white">Daily Trivia Companion:</strong> Also playing Daily Orbs
+              alongside Today&apos;s Daily Dive? Open our{" "}
+              <Link href="/daily-orbs-hint/" className="font-semibold text-cyan-300 hover:underline">
+                Daily Orbs Hint Today
+              </Link>{" "}
+              page for progressive spoiler-free clues and a 6-orb/3-heart planner.
+            </p>
           </section>
 
           <section className="rounded-2xl border border-cyan-500/20 bg-[#05182b]/75 p-6 sm:p-8">

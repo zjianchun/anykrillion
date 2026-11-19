@@ -443,6 +443,18 @@ export default function GamesLikeKrillionPage() {
                   replaces trivia rarity with rapid 4-letter English word transformations into{" "}
                   <code>POOP</code>, complete with Today&apos;s Daily Answer and an instant BFS solver.
                 </li>
+                <li>
+                  <strong className="text-white">Daily Orbs Spoiler-Free Hints:</strong> Playing the
+                  four-puzzle Daily Orbs trivia board too? Visit our{" "}
+                  <Link
+                    href="/daily-orbs-hint/"
+                    className="font-semibold text-cyan-300 hover:underline"
+                  >
+                    Daily Orbs Hint Today
+                  </Link>{" "}
+                  companion guide for progressive zero-spoiler clues, letter masks, and a 6-orb win
+                  planner.
+                </li>
               </ul>
             </div>
           </section>

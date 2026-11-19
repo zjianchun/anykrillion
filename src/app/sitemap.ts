@@ -1,21 +1,30 @@
 import { MetadataRoute } from "next";
+import dailyOrbsData from "@/data/daily_orbs_hints.json";
 
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://anykrillion.com";
   const lastModified = "2026-11-14T18:00:00.000Z";
+  const dailyOrbsLastModified = dailyOrbsData.updatedAt || lastModified;
 
   const routes: Array<{
     path: string;
     changeFrequency: "daily" | "weekly" | "monthly";
     priority: number;
+    lastmod?: string;
   }> = [
     { path: "/", changeFrequency: "daily", priority: 1.0 },
     { path: "/krillion-answers-today/", changeFrequency: "daily", priority: 0.95 },
     { path: "/noillirk/", changeFrequency: "weekly", priority: 0.95 },
     { path: "/krillion-sports/", changeFrequency: "weekly", priority: 0.9 },
     { path: "/krillion-geography/", changeFrequency: "weekly", priority: 0.9 },
+    {
+      path: "/daily-orbs-hint/",
+      changeFrequency: "daily",
+      priority: 0.9,
+      lastmod: dailyOrbsLastModified,
+    },
     { path: "/krillion-archive/", changeFrequency: "daily", priority: 0.85 },
     { path: "/pokekrillion/", changeFrequency: "weekly", priority: 0.85 },
     { path: "/footbillion/", changeFrequency: "weekly", priority: 0.85 },
@@ -33,7 +42,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return routes.map((r) => ({
     url: `${baseUrl}${r.path}`,
-    lastModified,
+    lastModified: r.lastmod ?? lastModified,
     changeFrequency: r.changeFrequency,
     priority: r.priority,
   }));

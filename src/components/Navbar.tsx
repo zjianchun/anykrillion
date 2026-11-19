@@ -30,6 +30,7 @@ const PACK_LINKS = [
   { href: "/nba-krillion/", label: "NBA Krillion", badge: "Basketball" },
   { href: "/krillion-movies/", label: "Krillion Movies", badge: "Cinema" },
   { href: "/poople-unlimited/", label: "Poople Unlimited", badge: "Word Ladder" },
+  { href: "/daily-orbs-hint/", label: "Daily Orbs Hint", badge: "Daily" },
   { href: "/games-like-krillion/", label: "Games Like Krillion", badge: "All 9 Modes" },
   { href: "/guides/", label: "Strategy Guides", badge: "Wiki" },
   { href: "/sources/", label: "Data Sources", badge: "Open DB" },

@@ -19,6 +19,7 @@
 - [Games Like Krillion](https://anykrillion.com/games-like-krillion/): Side-by-side interactive comparison hub covering all 9 rarity trivia & Daily Dles alternatives on AnyKrillion.
 
 ## Strategy Guides & Data Sources
+- [Daily Orbs Hint Today](https://anykrillion.com/daily-orbs-hint/): Daily spoiler-free hints, per-row letter masks, 6-orb win planner, and verified solutions across all 4 Daily Orbs boards (updated daily).
 - [Strategy Guides](https://anykrillion.com/guides/): Rarity scoring math, avoiding Plankton traps, Noillirk inversion tactics, and geography/sports heuristics.
 - [Data Sources & Methodology](https://anykrillion.com/sources/): Full attribution and inverse-popularity quantile scoring formula across Wikidata, Fjelstul World Cup DB, PokéAPI, and cinema archives.
 

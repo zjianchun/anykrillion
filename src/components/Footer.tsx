@@ -99,6 +99,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/daily-orbs-hint/" className="hover:text-cyan-200">
+                  Daily Orbs Hint Today
+                </Link>
+              </li>
+              <li>
                 <Link href="/guides/" className="hover:text-cyan-200">
                   Strategy Guides &amp; Scoring Math
                 </Link>

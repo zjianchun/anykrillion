@@ -1,0 +1,46 @@
+name: Sync Daily Orbs Hints
+
+on:
+  schedule:
+    # Daily Orbs resets at 10:00 UTC (18:00 Beijing Time); primary run + backup retry
+    - cron: "15 10 * * *"
+    - cron: "0 11 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-orbs-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Fetch Daily Orbs board and update JSON
+        run: node scripts/sync_daily_orbs.mjs
+
+      - name: Commit, push, and ping IndexNow if updated
+        run: |
+          if [ -n "$(git status --porcelain src/data/daily_orbs_hints.json)" ]; then
+            DATE=$(node -e "const d=require('./src/data/daily_orbs_hints.json'); console.log(d.today.date);")
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/data/daily_orbs_hints.json
+            git commit -m "chore(daily-orbs): update hints for ${DATE}"
+            git push origin HEAD:main
+            echo "Pushed Daily Orbs hints for ${DATE}; waiting 60s for Cloudflare Pages deployment..."
+            sleep 60
+            node scripts/sync_daily_orbs.mjs --ping-indexnow
+          else
+            echo "Already up to date; skipping commit."
+          fi
