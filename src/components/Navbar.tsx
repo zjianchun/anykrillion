@@ -15,9 +15,15 @@ import {
 } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 
-const PRIMARY_LINKS = [
+const PRIMARY_LINKS: Array<{
+  href: string;
+  label: string;
+  icon: typeof Waves | null;
+  orbDots?: boolean;
+}> = [
   { href: "/", label: "Unlimited", icon: Waves },
   { href: "/krillion-answers-today/", label: "Today's Answers", icon: Sparkles },
+  { href: "/daily-orbs-hint/", label: "Daily Orbs", icon: null, orbDots: true },
   { href: "/noillirk/", label: "Noillirk", icon: Wind },
   { href: "/krillion-sports/", label: "Sports", icon: Trophy },
   { href: "/krillion-geography/", label: "Geography", icon: Compass },
@@ -30,11 +36,21 @@ const PACK_LINKS = [
   { href: "/nba-krillion/", label: "NBA Krillion", badge: "Basketball" },
   { href: "/krillion-movies/", label: "Krillion Movies", badge: "Cinema" },
   { href: "/poople-unlimited/", label: "Poople Unlimited", badge: "Word Ladder" },
-  { href: "/daily-orbs-hint/", label: "Daily Orbs Hint", badge: "Daily" },
   { href: "/games-like-krillion/", label: "Games Like Krillion", badge: "All 9 Modes" },
   { href: "/guides/", label: "Strategy Guides", badge: "Wiki" },
   { href: "/sources/", label: "Data Sources", badge: "Open DB" },
 ];
+
+function FourOrbDots() {
+  return (
+    <span className="inline-flex items-center gap-0.5" aria-hidden="true">
+      <span className="h-1.5 w-1.5 rounded-full bg-orange-400 shadow-[0_0_6px_rgba(251,146,60,0.85)]" />
+      <span className="h-1.5 w-1.5 rounded-full bg-purple-400 shadow-[0_0_6px_rgba(192,132,252,0.85)]" />
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.85)]" />
+      <span className="h-1.5 w-1.5 rounded-full bg-sky-400 shadow-[0_0_6px_rgba(56,189,248,0.85)]" />
+    </span>
+  );
+}
 
 export default function Navbar() {
   const pathname = usePathname() || "/";
@@ -70,6 +86,7 @@ export default function Navbar() {
                 }`}
               >
                 {Icon && <Icon className="h-3.5 w-3.5 text-cyan-300/80" />}
+                {item.orbDots && <FourOrbDots />}
                 {item.label}
               </Link>
             );
@@ -131,9 +148,10 @@ export default function Navbar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-slate-100"
+                className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-slate-100"
               >
-                {item.label}
+                {item.orbDots && <FourOrbDots />}
+                <span>{item.label}</span>
               </Link>
             ))}
           </div>

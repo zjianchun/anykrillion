@@ -109,3 +109,34 @@ code, kbd, samp, pre {
 .animate-ak-float {
   animation: ak-float-slow 3.6s ease-in-out infinite;
 }
+
+@keyframes ak-orb-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+@keyframes ak-orb-pop {
+  0% { transform: scale(0.85); opacity: 0.7; }
+  60% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes ak-heart-blink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.92); }
+}
+
+.animate-ak-shake {
+  animation: ak-orb-shake 0.32s ease-in-out;
+}
+
+.animate-ak-pop {
+  animation: ak-orb-pop 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animate-ak-heart-blink {
+  animation: ak-heart-blink 0.9s ease-in-out infinite;
+}

@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   ArrowRight,
   Award,
+  CircleDot,
   Compass,
   Film,
   Flame,
@@ -13,7 +14,20 @@ import {
   Zap,
 } from "lucide-react";
 
-const CARDS = [
+interface TopicCard {
+  href: string;
+  title: string;
+  desc: string;
+  tag: string;
+  ctaLabel?: string;
+  icon: typeof Sparkles;
+  cardCls: string;
+  iconCls: string;
+  tagCls: string;
+  ctaCls: string;
+}
+
+const CARDS: TopicCard[] = [
   {
     href: "/krillion-answers-today/",
     title: "Krillion Answers Today",
@@ -24,6 +38,19 @@ const CARDS = [
     iconCls: "bg-cyan-500/15 text-cyan-300",
     tagCls: "border-cyan-400/25 bg-cyan-500/10 text-cyan-200",
     ctaCls: "text-cyan-300",
+  },
+  {
+    href: "/daily-orbs-hint/",
+    title: "Daily Orbs Hints & Sandbox",
+    desc: "Interactive 4-Orb practice board, zero-spoiler nudges, and today's verified solutions.",
+    tag: "Live Daily · 4 Orbs",
+    ctaLabel: "Open Sandbox & Hints",
+    icon: CircleDot,
+    cardCls:
+      "border-purple-500/30 bg-gradient-to-br from-[#081d34] via-[#06192d] to-[#14132a] hover:border-orange-400/60",
+    iconCls: "bg-gradient-to-br from-orange-500/25 to-purple-500/25 text-orange-200",
+    tagCls: "border-orange-400/35 bg-orange-500/15 text-orange-200",
+    ctaCls: "text-orange-300",
   },
   {
     href: "/noillirk/",
@@ -160,7 +187,7 @@ export default function TopicPacksGrid({
               </p>
             </div>
             <span className={`mt-4 inline-flex items-center gap-1 text-xs font-bold ${card.ctaCls}`}>
-              Play Now
+              {card.ctaLabel ?? "Play Now"}
               <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
             </span>
           </Link>

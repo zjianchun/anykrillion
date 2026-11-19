@@ -18,6 +18,7 @@ export interface DailyOrbsHintRow {
   label: string;
   clueMask: string;
   answer: string;
+  patternTip?: string;
 }
 
 export interface DailyOrbsPuzzleEntry {
@@ -30,6 +31,9 @@ export interface DailyOrbsPuzzleEntry {
   prompt: string;
   starThresholds: [number, number, number];
   totalCount: number;
+  seriesEdition?: number;
+  separator?: string;
+  noHeartPenalty?: boolean;
   columnA?: string;
   columnB?: string;
   categories?: DailyOrbsCategoryGroup[];

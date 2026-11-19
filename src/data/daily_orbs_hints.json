@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-11-19T17:12:28.139Z",
+  "updatedAt": "2026-11-19T17:34:51.376Z",
   "today": {
     "date": "2026-11-19",
-    "nextRolloverUtc": "2026-11-20T10:00:00.825Z",
-    "fetchedAt": "2026-11-19T17:12:28.139Z",
+    "nextRolloverUtc": "2026-11-20T10:00:00.959Z",
+    "fetchedAt": "2026-11-19T17:34:51.376Z",
     "puzzles": [
       {
         "color": "orange",
@@ -21,6 +21,7 @@
           9
         ],
         "totalCount": 10,
+        "seriesEdition": 8,
         "columnA": "Figure or device",
         "columnB": "Phrase",
         "hint1": "One-to-one matching board (10 pairs linking Figure or device to Phrase). Lock your highest-confidence pairs first to shrink the pool; 2 correct earns 1 Orb, 5 earns 2 Orbs, and 9 reaches 3 Orbs with a 3-heart allowance.",
@@ -30,52 +31,62 @@
           {
             "label": "Antithesis",
             "clueMask": "I g___ e________ a_____ a__ m___ t_______ d________. (8 words, 45 chars)",
-            "answer": "I give excellent advice and make terrible decisions."
+            "answer": "I give excellent advice and make terrible decisions.",
+            "patternTip": "8-word phrase/sentence in longer form (Phrase) (52 chars total)."
           },
           {
             "label": "Correctio",
             "clueMask": "I'__ t__ o__ o_ t__ o_ t____ c____. A_______, l____ t__ b__. (12 words, 49 chars)",
-            "answer": "I'll try one or two of those chips. Actually, leave the bag."
+            "answer": "I'll try one or two of those chips. Actually, leave the bag.",
+            "patternTip": "12-word phrase/sentence in longer form (Phrase) (60 chars total)."
           },
           {
             "label": "Onomatopoeia",
             "clueMask": "H__ t___ t_____, t_____, t_____, I_ t__ i__ a__ o_ n____! (11 words, 47 chars)",
-            "answer": "How they tinkle, tinkle, tinkle, In the icy air of night!"
+            "answer": "How they tinkle, tinkle, tinkle, In the icy air of night!",
+            "patternTip": "11-word phrase/sentence (57 chars) that ends with an exclamation (!)."
           },
           {
             "label": "Xenism",
             "clueMask": "L___ a_ t__ m______ p_____. \"C'___ d_ v__!\" (8 words, 36 chars)",
-            "answer": "Look at the minibar prices. \"C'est du vol!\""
+            "answer": "Look at the minibar prices. \"C'est du vol!\"",
+            "patternTip": "8-word phrase/sentence (43 chars) that includes quoted speech (\"...\") and ends with an exclamation (!)."
           },
           {
             "label": "Personification",
             "clueMask": "K___ t__ e______ m___. (4 words, 19 chars)",
-            "answer": "Kill the envious moon."
+            "answer": "Kill the envious moon.",
+            "patternTip": "4-word entry in longer form (Phrase) (22 chars total)."
           },
           {
             "label": "Palindrome",
             "clueMask": "W__ i_ a r__ I s__? (6 words, 14 chars)",
-            "answer": "Was it a rat I saw?"
+            "answer": "Was it a rat I saw?",
+            "patternTip": "6-word phrase/sentence (19 chars) that contains a question mark (?)."
           },
           {
             "label": "Hypophora",
             "clueMask": "A_ I s_ o__ o_ t____? N_, i_'_ t__ c_______ w__ a__ w____. (13 words, 46 chars)",
-            "answer": "Am I so out of touch? No, it's the children who are wrong."
+            "answer": "Am I so out of touch? No, it's the children who are wrong.",
+            "patternTip": "13-word phrase/sentence (58 chars) that contains a question mark (?)."
           },
           {
             "label": "Aposiopesis",
             "clueMask": "I_ y__ t____ t___ t_________ a____... (6 words, 32 chars)",
-            "answer": "If you touch that thermostat again..."
+            "answer": "If you touch that thermostat again...",
+            "patternTip": "6-word phrase/sentence (37 chars) that trails off with an ellipsis (...)."
           },
           {
             "label": "Metonymy",
             "clueMask": "T___ t___, w_'__ r______ P____, K___ a__ N________. (8 words, 44 chars)",
-            "answer": "This term, we're reading Plato, Kant and Nietzsche."
+            "answer": "This term, we're reading Plato, Kant and Nietzsche.",
+            "patternTip": "8-word phrase/sentence in longer form (Phrase) (51 chars total)."
           },
           {
             "label": "Understatement",
             "clueMask": "W_ h___ a s____ p______. A__ f___ e______ h___ s______. (10 words, 46 chars)",
-            "answer": "We have a small problem. All four engines have stopped."
+            "answer": "We have a small problem. All four engines have stopped.",
+            "patternTip": "10-word phrase/sentence in longer form (Phrase) (55 chars total)."
           }
         ]
       },
@@ -95,6 +106,8 @@
           9
         ],
         "totalCount": 10,
+        "seriesEdition": 1,
+        "separator": "↔",
         "columnA": "Song",
         "columnB": "Genre",
         "hint1": "One-to-one matching board (10 pairs linking Song to Genre). Lock your highest-confidence pairs first to shrink the pool; 2 correct earns 1 Orb, 5 earns 2 Orbs, and 9 reaches 3 Orbs with a 3-heart allowance.",
@@ -104,52 +117,62 @@
           {
             "label": "Smooth Operator (Sade)",
             "clueMask": "S_______-___ (12 chars)",
-            "answer": "Sophisti-Pop"
+            "answer": "Sophisti-Pop",
+            "patternTip": "Single-word entry (12 chars) that uses a hyphenated compound."
           },
           {
             "label": "Believe (Cher)",
             "clueMask": "E________ (9 chars)",
-            "answer": "Eurodance"
+            "answer": "Eurodance",
+            "patternTip": "Single-word entry in medium-length form (Genre) (9 chars total)."
           },
           {
             "label": "Crazy Little Thing Called Love (Queen)",
             "clueMask": "R_________ (10 chars)",
-            "answer": "Rockabilly"
+            "answer": "Rockabilly",
+            "patternTip": "Single-word entry in medium-length form (Genre) (10 chars total)."
           },
           {
             "label": "Wonderwall (Oasis)",
             "clueMask": "B______ (7 chars)",
-            "answer": "Britpop"
+            "answer": "Britpop",
+            "patternTip": "Single-word entry in short form (Genre) (7 chars total)."
           },
           {
             "label": "Eleanor Rigby (The Beatles)",
             "clueMask": "B______ P__ (2 words, 10 chars)",
-            "answer": "Baroque Pop"
+            "answer": "Baroque Pop",
+            "patternTip": "2-word entry in medium-length form (Genre) (11 chars total)."
           },
           {
             "label": "9 to 5 (Dolly Parton)",
             "clueMask": "C______ P__ (2 words, 10 chars)",
-            "answer": "Country Pop"
+            "answer": "Country Pop",
+            "patternTip": "2-word entry in medium-length form (Genre) (11 chars total)."
           },
           {
             "label": "No Woman, No Cry (Bob Marley & the Wailers, 1975 live recording)",
             "clueMask": "R____ R_____ (2 words, 11 chars)",
-            "answer": "Roots Reggae"
+            "answer": "Roots Reggae",
+            "patternTip": "2-word entry in medium-length form (Genre) (12 chars total)."
           },
           {
             "label": "La Isla Bonita (Madonna)",
             "clueMask": "L____ P__ (2 words, 8 chars)",
-            "answer": "Latin Pop"
+            "answer": "Latin Pop",
+            "patternTip": "2-word entry in medium-length form (Genre) (9 chars total)."
           },
           {
             "label": "Uptown Girl (Billy Joel)",
             "clueMask": "D__-___ (7 chars)",
-            "answer": "Doo-Wop"
+            "answer": "Doo-Wop",
+            "patternTip": "Single-word entry (7 chars) that uses a hyphenated compound."
           },
           {
             "label": "U Can't Touch This (MC Hammer)",
             "clueMask": "P__ R__ (2 words, 6 chars)",
-            "answer": "Pop Rap"
+            "answer": "Pop Rap",
+            "patternTip": "2-word entry in short form (Genre) (7 chars total)."
           }
         ]
       },
@@ -171,6 +194,7 @@
           9
         ],
         "totalCount": 11,
+        "seriesEdition": 3,
         "categories": [
           {
             "name": "Americas",
@@ -209,57 +233,68 @@
           {
             "label": "Corn",
             "clueMask": "A_______ (8 chars)",
-            "answer": "Americas"
+            "answer": "Americas",
+            "patternTip": "Belongs to one of today's 3 buckets — look for the group holding 3 of 11 items."
           },
           {
             "label": "Domestic cats",
             "clueMask": "O__ W____ (2 words, 8 chars)",
-            "answer": "Old World"
+            "answer": "Old World",
+            "patternTip": "Belongs to one of today's 3 buckets — look for the group holding 4 of 11 items."
           },
           {
             "label": "Domestic dogs",
             "clueMask": "B___ (4 chars)",
-            "answer": "Both"
+            "answer": "Both",
+            "patternTip": "Belongs to one of today's 3 buckets — look for the group holding 4 of 11 items."
           },
           {
             "label": "Horses",
             "clueMask": "O__ W____ (2 words, 8 chars)",
-            "answer": "Old World"
+            "answer": "Old World",
+            "patternTip": "Belongs to one of today's 3 buckets — look for the group holding 4 of 11 items."
           },
           {
             "label": "Mirrors",
             "clueMask": "B___ (4 chars)",
-            "answer": "Both"
+            "answer": "Both",
+            "patternTip": "Belongs to one of today's 3 buckets — look for the group holding 4 of 11 items."
           },
           {
             "label": "Sunflower",
             "clueMask": "A_______ (8 chars)",
-            "answer": "Americas"
+            "answer": "Americas",
+            "patternTip": "Belongs to one of today's 3 buckets — look for the group holding 3 of 11 items."
           },
           {
             "label": "Tattoos",
             "clueMask": "B___ (4 chars)",
-            "answer": "Both"
+            "answer": "Both",
+            "patternTip": "Belongs to one of today's 3 buckets — look for the group holding 4 of 11 items."
           },
           {
             "label": "Vanilla",
             "clueMask": "A_______ (8 chars)",
-            "answer": "Americas"
+            "answer": "Americas",
+            "patternTip": "Belongs to one of today's 3 buckets — look for the group holding 3 of 11 items."
           },
           {
             "label": "Watermelon",
             "clueMask": "O__ W____ (2 words, 8 chars)",
-            "answer": "Old World"
+            "answer": "Old World",
+            "patternTip": "Belongs to one of today's 3 buckets — look for the group holding 4 of 11 items."
           },
           {
             "label": "Wheat",
             "clueMask": "O__ W____ (2 words, 8 chars)",
-            "answer": "Old World"
+            "answer": "Old World",
+            "patternTip": "Belongs to one of today's 3 buckets — look for the group holding 4 of 11 items."
           },
           {
             "label": "Zero",
             "clueMask": "B___ (4 chars)",
-            "answer": "Both"
+            "answer": "Both",
+            "patternTip": "Belongs to one of today's 3 buckets — look for the group holding 4 of 11 items."
           }
         ]
       },
@@ -279,6 +314,8 @@
           9
         ],
         "totalCount": 10,
+        "seriesEdition": 3,
+        "separator": "≈",
         "columnA": "Flag",
         "columnB": "Lookalike Flag",
         "hint1": "One-to-one matching board (10 pairs linking Flag to Lookalike Flag). Lock your highest-confidence pairs first to shrink the pool; 2 correct earns 1 Orb, 5 earns 2 Orbs, and 9 reaches 3 Orbs with a 3-heart allowance.",
@@ -288,52 +325,62 @@
           {
             "label": "Texas",
             "clueMask": "C____ (5 chars)",
-            "answer": "Chile"
+            "answer": "Chile",
+            "patternTip": "Single-word entry in short form (Lookalike Flag) (5 chars total)."
           },
           {
             "label": "Curaçao",
             "clueMask": "N____ (5 chars)",
-            "answer": "Nauru"
+            "answer": "Nauru",
+            "patternTip": "Single-word entry in short form (Lookalike Flag) (5 chars total)."
           },
           {
             "label": "Russia",
             "clueMask": "S_______ (8 chars)",
-            "answer": "Slovenia"
+            "answer": "Slovenia",
+            "patternTip": "Single-word entry in medium-length form (Lookalike Flag) (8 chars total)."
           },
           {
             "label": "Cuba",
             "clueMask": "P_____ R___ (2 words, 10 chars)",
-            "answer": "Puerto Rico"
+            "answer": "Puerto Rico",
+            "patternTip": "2-word entry in medium-length form (Lookalike Flag) (11 chars total)."
           },
           {
             "label": "Hungary",
             "clueMask": "T_________ (10 chars)",
-            "answer": "Tajikistan"
+            "answer": "Tajikistan",
+            "patternTip": "Single-word entry in medium-length form (Lookalike Flag) (10 chars total)."
           },
           {
             "label": "Taiwan",
             "clueMask": "S____ (5 chars)",
-            "answer": "Samoa"
+            "answer": "Samoa",
+            "patternTip": "Single-word entry in short form (Lookalike Flag) (5 chars total)."
           },
           {
             "label": "Scotland",
             "clueMask": "T_______ (8 chars)",
-            "answer": "Tenerife"
+            "answer": "Tenerife",
+            "patternTip": "Single-word entry in medium-length form (Lookalike Flag) (8 chars total)."
           },
           {
             "label": "China",
             "clueMask": "S_____ U____ (2 words, 11 chars)",
-            "answer": "Soviet Union"
+            "answer": "Soviet Union",
+            "patternTip": "2-word entry in medium-length form (Lookalike Flag) (12 chars total)."
           },
           {
             "label": "Denmark",
             "clueMask": "N_____ (6 chars)",
-            "answer": "Norway"
+            "answer": "Norway",
+            "patternTip": "Single-word entry in short form (Lookalike Flag) (6 chars total)."
           },
           {
             "label": "Egypt",
             "clueMask": "Y____ (5 chars)",
-            "answer": "Yemen"
+            "answer": "Yemen",
+            "patternTip": "Single-word entry in short form (Lookalike Flag) (5 chars total)."
           }
         ]
       }

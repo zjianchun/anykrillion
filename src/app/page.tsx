@@ -73,6 +73,7 @@ export default function HomePage() {
       badgeText={`Endless Mode • ${stats.totalPrompts} Prompts • ${stats.totalAnswers.toLocaleString()} Entities`}
       quickLinks={[
         { href: "/krillion-answers-today/", label: "Today's Answers & Hints" },
+        { href: "/daily-orbs-hint/", label: "Daily Orbs Hints & Sandbox" },
         { href: "/noillirk/", label: "Play Noillirk Reverse" },
         { href: "/krillion-archive/", label: "30-Day Archive" },
       ]}

@@ -11,6 +11,7 @@ import {
 import DailyOrbsHintBoard from "@/components/DailyOrbsHintBoard";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
+import GameEngagement from "@/components/GameEngagement";
 import JsonLd, { type FaqItem } from "@/components/JsonLd";
 import Navbar from "@/components/Navbar";
 import TopicPacksGrid from "@/components/TopicPacksGrid";
@@ -18,6 +19,7 @@ import dailyOrbsRaw from "@/data/daily_orbs_hints.json";
 import type { DailyOrbsDataset } from "@/types/dailyOrbs";
 
 const dataset = dailyOrbsRaw as unknown as DailyOrbsDataset;
+const puzzleTitles = dataset.today.puzzles.map((p) => p.title).join(", ");
 
 export const metadata: Metadata = {
   title: "Daily Orbs Hint Today — Spoiler-Free Clues, Answers & Guide | AnyKrillion",
@@ -129,6 +131,12 @@ export default function DailyOrbsHintPage() {
         pageTitle="Daily Orbs Hint Today — Spoiler-Free Clues, Answers & Guide | AnyKrillion"
         pageDescription="Get today's Daily Orbs hints without spoilers, per-row letter clues, verified answers for all 4 puzzles, and a 6-orb win strategy. Updated daily after refresh."
         pageType="WebPage"
+        webAppSchema={{
+          name: "Daily Orbs Hint & Interactive Practice Sandbox — AnyKrillion",
+          description:
+            "Interactive 4-Orb Daily Orbs practice sandbox, zero-spoiler per-item clues, and daily verified answers.",
+          applicationCategory: "GameApplication",
+        }}
         faqs={FAQS}
         breadcrumbs={[
           { name: "Krillion Unlimited", url: "https://anykrillion.com/" },
@@ -174,10 +182,10 @@ export default function DailyOrbsHintPage() {
             Daily Orbs Hint Today — Spoiler-Free Clues &amp; Step-by-Step Guide
           </h1>
           <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-300 sm:text-base">
-            Stuck on today&apos;s Orange, Purple, Green, or Blue puzzle? Expand tiered,{" "}
-            <strong>spoiler-free Daily Orbs hints</strong>, check per-row letter masks, plan a
-            safe <strong>6-orb daily win</strong> with 3 hearts intact, or reveal verified solutions
-            for {dataset.today.date}.
+            Stuck on today&apos;s {dataset.today.date} puzzles ({puzzleTitles})? Play the{" "}
+            <strong>interactive 4-Orb practice sandbox</strong>, search a single item without
+            spoiling the rest of the board, plan a <strong>6-orb win</strong>, or expand verified
+            answers across Orange, Purple, Green, and Blue.
           </p>
         </header>
 
@@ -186,6 +194,8 @@ export default function DailyOrbsHintPage() {
 
         <GuideWithSkyscraper mode="content">
           <DailyOrbsHintBoard dataset={dataset} />
+
+          <GameEngagement gameLabel="Daily Orbs Hints & Sandbox" />
 
           <MidContentBannerSlot />
 
@@ -308,7 +318,7 @@ export default function DailyOrbsHintPage() {
             >
               Explore All AnyKrillion Topic Packs
             </h2>
-            <TopicPacksGrid />
+            <TopicPacksGrid excludeHref="/daily-orbs-hint/" />
           </section>
 
           <section aria-labelledby="daily-orbs-faq-heading">

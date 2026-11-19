@@ -137,6 +137,27 @@ export default function KrillionAnswersTodayPage() {
           </p>
         </header>
 
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-purple-500/25 bg-gradient-to-r from-[#071c31] via-[#0a1830] to-[#13152c] px-4 py-3 text-xs sm:px-5 sm:text-sm">
+          <div className="flex flex-wrap items-center gap-2.5 text-slate-200">
+            <span className="inline-flex items-center gap-1" aria-hidden="true">
+              <span className="h-2 w-2 rounded-full bg-orange-400" />
+              <span className="h-2 w-2 rounded-full bg-purple-400" />
+              <span className="h-2 w-2 rounded-full bg-emerald-400" />
+              <span className="h-2 w-2 rounded-full bg-sky-400" />
+            </span>
+            <span>
+              Also solving today&apos;s <strong className="text-white">Daily Orbs</strong> quartet?
+              Try our interactive zero-spoiler practice sandbox &amp; progressive clues.
+            </span>
+          </div>
+          <Link
+            href="/daily-orbs-hint/"
+            className="shrink-0 rounded-lg border border-orange-400/40 bg-orange-500/15 px-3 py-1.5 text-xs font-bold text-orange-200 transition hover:bg-orange-500/25"
+          >
+            Open Daily Orbs Hints →
+          </Link>
+        </div>
+
         <PrimaryLeaderboardSlot className="mb-8" />
         <MobilePostGameNativeSlot className="mb-8" />
 

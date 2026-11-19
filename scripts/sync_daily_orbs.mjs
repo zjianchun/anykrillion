@@ -190,6 +190,41 @@ function endWithPeriod(text) {
   return /[.!?…]$/.test(trimmed) ? trimmed : `${trimmed}.`;
 }
 
+function buildRowPatternTip(format, _label, answer, extra = {}) {
+  if (format === "categorization") {
+    const { catCount = 3, bucketSize = 0, totalCount = 0 } = extra;
+    if (bucketSize > 0 && totalCount > 0) {
+      return `Belongs to one of today's ${catCount} buckets — look for the group holding ${bucketSize} of ${totalCount} items.`;
+    }
+    return `Fits cleanly into one of today's ${catCount} category buckets.`;
+  }
+
+  const cleanAns = String(answer || "").trim();
+  if (!cleanAns) return "Look for direct semantic cues in the prompt.";
+
+  const words = cleanAns.split(/\s+/).filter(Boolean);
+  const charCount = cleanAns.length;
+  const wordLabel =
+    words.length === 1
+      ? "Single-word entry"
+      : `${words.length}-word ${words.length >= 6 ? "phrase/sentence" : "entry"}`;
+
+  const cues = [];
+  if (/"[^"]+"/.test(cleanAns)) cues.push('includes quoted speech ("...")');
+  if (/\?/.test(cleanAns)) cues.push("contains a question mark (?)");
+  if (/!/.test(cleanAns)) cues.push("ends with an exclamation (!)");
+  if (/\.{3}|…/.test(cleanAns)) cues.push("trails off with an ellipsis (...)");
+  if (words.length <= 3 && /-/.test(cleanAns)) cues.push("uses a hyphenated compound");
+  if (/\d/.test(cleanAns)) cues.push("contains numbers");
+
+  if (cues.length > 0) {
+    return `${wordLabel} (${charCount} chars) that ${cues.join(" and ")}.`;
+  }
+  const colHint = extra.colB ? ` (${extra.colB})` : "";
+  const lenBand = charCount <= 7 ? "short" : charCount <= 16 ? "medium-length" : "longer";
+  return `${wordLabel} in ${lenBand} form${colHint} (${charCount} chars total).`;
+}
+
 function synthesizePuzzle(color, raw) {
   const rawFormat = String(raw.type || "other");
   const format = KNOWN_FORMATS.has(rawFormat) ? rawFormat : "other";
@@ -200,11 +235,25 @@ function synthesizePuzzle(color, raw) {
   const topics = Array.isArray(raw.topics)
     ? raw.topics.map((t) => cleanInlineMarkup(t)).filter(Boolean)
     : [];
+  const rawEdition = Number(raw.series?.edition);
+  const seriesEdition =
+    Number.isInteger(rawEdition) && rawEdition > 0 ? rawEdition : undefined;
+  const separator =
+    typeof raw.separator === "string" && raw.separator.trim() ? raw.separator.trim() : undefined;
+  const noHeartPenalty = format === "long-list" ? true : undefined;
+
+  const baseMeta = {
+    ...(seriesEdition !== undefined ? { seriesEdition } : {}),
+    ...(separator !== undefined ? { separator } : {}),
+    ...(noHeartPenalty !== undefined ? { noHeartPenalty } : {}),
+  };
 
   const [orb1, orb2, orb3] = thresholds;
 
   if (format === "bijection") {
     const rawPairs = Array.isArray(raw.pairs) ? raw.pairs : [];
+    const colA = cleanInlineMarkup(raw.columnA) || "Prompt";
+    const colB = cleanInlineMarkup(raw.columnB) || "Match";
     const pairs = rawPairs
       .map((p) => ({
         label: cleanInlineMarkup(p.itemA),
@@ -216,10 +265,9 @@ function synthesizePuzzle(color, raw) {
       label: p.label,
       clueMask: makeClueMask(p.answer),
       answer: p.answer,
+      patternTip: buildRowPatternTip("bijection", p.label, p.answer, { colB }),
     }));
 
-    const colA = cleanInlineMarkup(raw.columnA) || "Prompt";
-    const colB = cleanInlineMarkup(raw.columnB) || "Match";
     const totalCount = pairs.length;
     const anchorPair = pairs[0] ? `${pairs[0].label} -> ${pairs[0].answer}` : "";
 
@@ -240,6 +288,7 @@ function synthesizePuzzle(color, raw) {
       prompt,
       starThresholds: thresholds,
       totalCount,
+      ...baseMeta,
       columnA: colA,
       columnB: colB,
       hint1,
@@ -271,13 +320,19 @@ function synthesizePuzzle(color, raw) {
       return { name, count: items.length, items };
     });
 
+    const catCountMap = new Map(categories.map((c) => [c.name, c.count]));
+    const totalCount = cleanedItems.length;
     const rows = cleanedItems.map((item) => ({
       label: item.text,
       clueMask: makeClueMask(item.category),
       answer: item.category,
+      patternTip: buildRowPatternTip("categorization", item.text, item.category, {
+        catCount: categories.length,
+        bucketSize: catCountMap.get(item.category) || 0,
+        totalCount,
+      }),
     }));
 
-    const totalCount = cleanedItems.length;
     const distribution = categories.map((c) => `${c.name} (${c.count})`).join(", ");
     const bucketAnchors = categories
       .filter((c) => c.items.length > 0)
@@ -297,6 +352,7 @@ function synthesizePuzzle(color, raw) {
       prompt,
       starThresholds: thresholds,
       totalCount,
+      ...baseMeta,
       categories,
       hint1,
       hint2,
@@ -320,6 +376,7 @@ function synthesizePuzzle(color, raw) {
         label: clueLabel || `Clue #${rows.length + 1}`,
         clueMask: makeClueMask(topAnswer || joined),
         answer: joined,
+        patternTip: buildRowPatternTip("themed", clueLabel, topAnswer || joined),
       });
     }
 
@@ -337,6 +394,7 @@ function synthesizePuzzle(color, raw) {
       prompt,
       starThresholds: thresholds,
       totalCount,
+      ...baseMeta,
       hint1: `Themed clue board (${totalCount} clues around ${topicLabel}). Milestones sit at ${orb1} / ${orb2} / ${orb3} solved clues with 3 hearts. Knock out clear literal matches before tackling wordplay.`,
       hint2: endWithPeriod(
         `Focus closely on each clue's exact constraint rather than loose associations. Starter anchor: ${starterAnchor}`
@@ -355,6 +413,7 @@ function synthesizePuzzle(color, raw) {
       label: `Valid Pick #${idx + 1}`,
       clueMask: makeClueMask(ans),
       answer: ans,
+      patternTip: buildRowPatternTip(format, `Valid Pick #${idx + 1}`, ans),
     }));
 
     const anchor = answers[0] || "";
@@ -373,6 +432,7 @@ function synthesizePuzzle(color, raw) {
       prompt,
       starThresholds: thresholds,
       totalCount,
+      ...baseMeta,
       hint1: `${noHeartsNote} Collect ${orb1} answers for 1 Orb, ${orb2} for 2 Orbs, and ${orb3} for all 3 Orbs (${totalCount} valid targets exist).`,
       hint2: endWithPeriod(`${topLetterSummary(answers)} Safe starter answer: ${anchor || "open clues below"}`),
       starterAnchor: anchor || "Reveal a row clue below.",
@@ -386,13 +446,27 @@ function synthesizePuzzle(color, raw) {
     for (const p of raw.pairs.slice(0, 40)) {
       const a = cleanInlineMarkup(p.itemA);
       const b = cleanInlineMarkup(p.itemB);
-      if (a || b) fallbackRows.push({ label: a || "Item", clueMask: makeClueMask(b), answer: b });
+      if (a || b) {
+        fallbackRows.push({
+          label: a || "Item",
+          clueMask: makeClueMask(b),
+          answer: b,
+          patternTip: buildRowPatternTip("other", a || "Item", b),
+        });
+      }
     }
   } else if (Array.isArray(raw.items)) {
     for (const it of raw.items.slice(0, 40)) {
       const t = cleanInlineMarkup(it.text || it.name);
       const c = cleanInlineMarkup(it.category || it.answer);
-      if (t) fallbackRows.push({ label: t, clueMask: makeClueMask(c || t), answer: c || t });
+      if (t) {
+        fallbackRows.push({
+          label: t,
+          clueMask: makeClueMask(c || t),
+          answer: c || t,
+          patternTip: buildRowPatternTip("other", t, c || t),
+        });
+      }
     }
   } else if (Array.isArray(raw.answers)) {
     for (const a of raw.answers.slice(0, 40)) {
@@ -402,6 +476,7 @@ function synthesizePuzzle(color, raw) {
           label: `Entry #${fallbackRows.length + 1}`,
           clueMask: makeClueMask(ans),
           answer: ans,
+          patternTip: buildRowPatternTip("other", `Entry #${fallbackRows.length + 1}`, ans),
         });
       }
     }
@@ -417,6 +492,7 @@ function synthesizePuzzle(color, raw) {
     prompt,
     starThresholds: thresholds,
     totalCount: fallbackRows.length,
+    ...baseMeta,
     hint1: `Collect ${orb1}, ${orb2}, and ${orb3} verified matches to earn 1, 2, or 3 Orbs.`,
     hint2: fallbackRows[0]
       ? `Starter anchor: ${fallbackRows[0].label} -> ${fallbackRows[0].answer}.`
