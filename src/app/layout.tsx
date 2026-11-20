@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Silkscreen } from "next/font/google";
 import Script from "next/script";
-import DeferredSocialBar from "@/components/DeferredSocialBar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -123,7 +122,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${pixelFont.variable} min-h-screen antialiased bg-[#03111f] text-slate-100 selection:bg-cyan-400 selection:text-slate-950`}
       >
         {children}
-        <DeferredSocialBar />
       </body>
     </html>
   );
