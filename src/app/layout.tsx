@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Silkscreen } from "next/font/google";
 import Script from "next/script";
+import DeferredSocialBar from "@/components/DeferredSocialBar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -90,18 +91,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        <link rel="dns-prefetch" href="https://bicea.org" />
-        <link rel="preconnect" href="https://bicea.org" crossOrigin="anonymous" />
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6007456453108035"
           crossOrigin="anonymous"
-        />
-        {/* Adsterra Social Bar: High-converting interactive floating unit */}
-        <script
-          async
-          data-cfasync="false"
-          src="https://bicea.org/14/d2e7e003db7ca28137356ed3effe8688"
         />
         <script
           defer
@@ -130,6 +123,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${pixelFont.variable} min-h-screen antialiased bg-[#03111f] text-slate-100 selection:bg-cyan-400 selection:text-slate-950`}
       >
         {children}
+        <DeferredSocialBar />
       </body>
     </html>
   );

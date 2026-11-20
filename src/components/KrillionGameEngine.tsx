@@ -31,7 +31,6 @@ import { getStickyExperimentVariant, trackGameEvent } from "@/lib/analytics";
 import { getWorldThemeMeta, getZoneNarrative } from "@/lib/worldThemesData";
 import { TierCreatureSprite } from "@/components/PixelSprites";
 import ShareChallengePanel from "@/components/ShareChallengePanel";
-import { SummaryBannerSlot } from "@/components/AdPlacements";
 import type { ScoreCardSpec } from "@/lib/scoreCardCanvas";
 import type {
   AnswerEntity,
@@ -1958,8 +1957,6 @@ export default function KrillionGameEngine({
                     })}
                   </div>
                 </div>
-
-                <SummaryBannerSlot className="my-1.5" />
 
                 <ShareChallengePanel
                   variant="summary"

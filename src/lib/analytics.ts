@@ -30,6 +30,16 @@ export function trackGameEvent(eventName: string, params?: EventParams): void {
   } catch {
     // Analytics must never interrupt gameplay
   }
+
+  if (eventName === "game_complete") {
+    try {
+      window.dispatchEvent(
+        new CustomEvent("ak:game_complete", { detail: cleanParams }),
+      );
+    } catch {
+      // Never interrupt gameplay
+    }
+  }
 }
 
 const EXP_PREFIX = "anykrillion_exp_";

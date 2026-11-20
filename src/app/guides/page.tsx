@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BookOpen, Compass, Flame, Lightbulb, ShieldCheck, Wind } from "lucide-react";
-import {
-  BottomNativeSlot,
-  GuideWithSkyscraper,
-  MidContentBannerSlot,
-  MobilePostGameNativeSlot,
-  PrimaryLeaderboardSlot,
-} from "@/components/AdPlacements";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
@@ -168,10 +161,7 @@ export default function GuidesPage() {
           </p>
         </header>
 
-        <PrimaryLeaderboardSlot className="mb-8" />
-        <MobilePostGameNativeSlot className="mb-8" />
-
-        <GuideWithSkyscraper mode="content">
+        <div className="space-y-8">
           <section className="rounded-2xl border border-cyan-500/20 bg-[#05182b]/75 p-6 sm:p-8">
             <div className="flex items-center gap-2 text-cyan-300">
               <Lightbulb className="h-5 w-5" />
@@ -257,8 +247,6 @@ export default function GuidesPage() {
               perennial MVP superstars.
             </p>
           </section>
-
-          <MidContentBannerSlot />
 
           <section className="rounded-2xl border border-cyan-500/20 bg-[#05182b]/75 p-6 sm:p-8">
             <div className="flex items-center gap-2 text-sky-300">
@@ -413,8 +401,6 @@ export default function GuidesPage() {
             </ol>
           </section>
 
-          <BottomNativeSlot />
-
           <section aria-labelledby="guides-faq-heading">
             <h2
               id="guides-faq-heading"
@@ -424,7 +410,7 @@ export default function GuidesPage() {
             </h2>
             <FaqAccordion faqs={FAQS} />
           </section>
-        </GuideWithSkyscraper>
+        </div>
       </main>
 
       <Footer />

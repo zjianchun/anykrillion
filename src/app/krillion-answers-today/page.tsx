@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronDown, Eye, ShieldAlert, Sparkles, Trophy } from "lucide-react";
-import {
-  BottomNativeSlot,
-  GuideWithSkyscraper,
-  MidContentBannerSlot,
-  MobilePostGameNativeSlot,
-  PrimaryLeaderboardSlot,
-} from "@/components/AdPlacements";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
@@ -158,10 +151,7 @@ export default function KrillionAnswersTodayPage() {
           </Link>
         </div>
 
-        <PrimaryLeaderboardSlot className="mb-8" />
-        <MobilePostGameNativeSlot className="mb-8" />
-
-        <GuideWithSkyscraper mode="content">
+        <div className="space-y-8">
         <section aria-labelledby="today-prompts-heading">
           <h2
             id="today-prompts-heading"
@@ -269,8 +259,6 @@ export default function KrillionAnswersTodayPage() {
             })}
           </div>
         </section>
-
-        <MidContentBannerSlot />
 
         <section
           aria-labelledby="best-picks-heading"
@@ -394,8 +382,6 @@ export default function KrillionAnswersTodayPage() {
           </div>
         </section>
 
-        <BottomNativeSlot />
-
         <section aria-labelledby="other-packs">
           <h2 id="other-packs" className="mb-4 text-xl font-extrabold text-white sm:text-2xl">
             Practice Unlimited Topic Packs
@@ -412,7 +398,7 @@ export default function KrillionAnswersTodayPage() {
           </h2>
           <FaqAccordion faqs={FAQS} />
         </section>
-        </GuideWithSkyscraper>
+        </div>
       </main>
 
       <Footer />

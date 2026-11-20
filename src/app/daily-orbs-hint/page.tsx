@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Compass, Layers, Sparkles, Trophy, Waves, Wind } from "lucide-react";
-import {
-  BottomNativeSlot,
-  GuideWithSkyscraper,
-  MidContentBannerSlot,
-  MobilePostGameNativeSlot,
-  PrimaryLeaderboardSlot,
-} from "@/components/AdPlacements";
 import DailyOrbsHintBoard from "@/components/DailyOrbsHintBoard";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
@@ -189,15 +182,10 @@ export default function DailyOrbsHintPage() {
           </p>
         </header>
 
-        <PrimaryLeaderboardSlot className="mb-8" />
-        <MobilePostGameNativeSlot className="mb-8" />
-
-        <GuideWithSkyscraper mode="content">
+        <div className="space-y-8">
           <DailyOrbsHintBoard dataset={dataset} />
 
           <GameEngagement gameLabel="Daily Orbs Hints & Sandbox" />
-
-          <MidContentBannerSlot />
 
           {/* Evergreen 4-Format Daily Orbs Playbook */}
           <section
@@ -309,8 +297,6 @@ export default function DailyOrbsHintPage() {
             </div>
           </section>
 
-          <BottomNativeSlot />
-
           <section aria-labelledby="more-packs-heading">
             <h2
               id="more-packs-heading"
@@ -336,7 +322,7 @@ export default function DailyOrbsHintPage() {
             AnyKrillion.com is an independent trivia hub and fan-made hint resource. It is not
             affiliated with, endorsed by, or sponsored by Daily Orbs (dailyorbs.com) or Listdle.
           </aside>
-        </GuideWithSkyscraper>
+        </div>
       </main>
 
       <Footer />
