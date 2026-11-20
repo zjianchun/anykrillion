@@ -198,6 +198,20 @@ PLANNED_ROUTES: Dict[str, dict] = {
         "required_schemas": {"CollectionPage", "FAQPage", "BreadcrumbList"},
         "min_words": 950,
     },
+    "/daily-orbs-hint/": {
+        "batch": "P2",
+        "primary_kw": "daily orbs hint today",
+        "expected_title": "Daily Orbs Hint Today — Spoiler-Free Clues, Answers & Guide | AnyKrillion",
+        "expected_h1": "Daily Orbs Hint Today — Spoiler-Free Clues & Step-by-Step Guide",
+        "required_h2s": [
+            "4-Format Daily Orbs Playbook: How to Win Consistently",
+            "Finished Today's Daily Orbs? Play Krillion Daily Dive & Unlimited Next",
+            "Explore All AnyKrillion Topic Packs",
+            "Daily Orbs Hint & Gameplay FAQ",
+        ],
+        "required_schemas": {"WebPage", "FAQPage", "BreadcrumbList"},
+        "min_words": 950,
+    },
     "/guides/": {
         "batch": "Compliance",
         "primary_kw": "krillion rules & strategy",
