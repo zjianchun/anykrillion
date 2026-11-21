@@ -809,6 +809,78 @@ export default function DailyOrbsHintBoard({ dataset }: { dataset: DailyOrbsData
             );
           })}
         </div>
+
+        {/* Promoted Hero Practice Game Canvas */}
+        <div className="mt-6 border-t border-cyan-500/20 pt-5">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-400/35 bg-cyan-500/15 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-cyan-200">
+                  <Gamepad2 className="h-3 w-3" />
+                  Playable Practice Arena
+                </span>
+                <span className="text-xs font-semibold text-slate-300">
+                  Active Board: <strong className="text-white">{activePuzzle.title}</strong>
+                </span>
+              </div>
+              <h2
+                id="active-arena-heading"
+                className="mt-1 text-xl font-extrabold tracking-tight text-white sm:text-2xl"
+              >
+                Today&apos;s 4-Orb Practice Sandbox &amp; Live Clues
+              </h2>
+              <p className="mt-0.5 text-xs text-slate-300 sm:text-sm">
+                Warm up risk-free on today&apos;s matching &amp; sorting boards before spending real
+                hearts on dailyorbs.com.
+              </p>
+            </div>
+
+            <div className="inline-flex rounded-xl border border-cyan-500/25 bg-[#03111f] p-1 text-xs font-bold">
+              <button
+                type="button"
+                onClick={() => setArenaTab("sandbox")}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${
+                  arenaTab === "sandbox"
+                    ? "bg-cyan-400 text-[#03111f]"
+                    : "text-slate-300 hover:text-white"
+                }`}
+              >
+                <Gamepad2 className="h-3.5 w-3.5" />
+                Play Practice Sandbox
+              </button>
+              <button
+                type="button"
+                onClick={() => setArenaTab("hints")}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${
+                  arenaTab === "hints"
+                    ? "bg-cyan-400 text-[#03111f]"
+                    : "text-slate-300 hover:text-white"
+                }`}
+              >
+                <Lightbulb className="h-3.5 w-3.5" />
+                Quick Spoiler-Free Hints
+              </button>
+            </div>
+          </div>
+
+          {arenaTab === "sandbox" ? (
+            <DailyOrbsSandbox
+              key={activePuzzle.id}
+              dateKey={today.date}
+              puzzle={activePuzzle}
+              progress={progressMap[activePuzzle.color]}
+              onSolveRow={(rowIdx) => handleSolveRow(activePuzzle.color, rowIdx)}
+              onMissPenalty={() => handleMissPenalty(activePuzzle.color)}
+              onResetPuzzle={() => handleResetPuzzle(activePuzzle.color)}
+            />
+          ) : (
+            <OrbReferenceCard
+              key={`quick-${activePuzzle.id}`}
+              puzzle={activePuzzle}
+              defaultOpenHints={true}
+            />
+          )}
+        </div>
       </section>
 
       {/* 2. Instant "Stuck on Just 1 Item?" Single-Item Anti-Spoiler Rescue Bar */}
@@ -952,70 +1024,7 @@ export default function DailyOrbsHintBoard({ dataset }: { dataset: DailyOrbsData
         )}
       </section>
 
-      {/* 3. Active Orb Interactive Arena */}
-      <section aria-labelledby="active-arena-heading" className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2
-              id="active-arena-heading"
-              className="text-xl font-extrabold tracking-tight text-white sm:text-2xl"
-            >
-              Interactive Practice Sandbox &amp; Live Clues
-            </h2>
-            <p className="mt-0.5 text-sm text-slate-300">
-              Warm up risk-free on today&apos;s matching &amp; sorting boards before spending real
-              hearts on dailyorbs.com.
-            </p>
-          </div>
-
-          <div className="inline-flex rounded-xl border border-cyan-500/25 bg-[#03111f] p-1 text-xs font-bold">
-            <button
-              type="button"
-              onClick={() => setArenaTab("sandbox")}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${
-                arenaTab === "sandbox"
-                  ? "bg-cyan-400 text-[#03111f]"
-                  : "text-slate-300 hover:text-white"
-              }`}
-            >
-              <Gamepad2 className="h-3.5 w-3.5" />
-              Play Practice Sandbox
-            </button>
-            <button
-              type="button"
-              onClick={() => setArenaTab("hints")}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${
-                arenaTab === "hints"
-                  ? "bg-cyan-400 text-[#03111f]"
-                  : "text-slate-300 hover:text-white"
-              }`}
-            >
-              <Lightbulb className="h-3.5 w-3.5" />
-              Quick Spoiler-Free Hints
-            </button>
-          </div>
-        </div>
-
-        {arenaTab === "sandbox" ? (
-          <DailyOrbsSandbox
-            key={activePuzzle.id}
-            dateKey={today.date}
-            puzzle={activePuzzle}
-            progress={progressMap[activePuzzle.color]}
-            onSolveRow={(rowIdx) => handleSolveRow(activePuzzle.color, rowIdx)}
-            onMissPenalty={() => handleMissPenalty(activePuzzle.color)}
-            onResetPuzzle={() => handleResetPuzzle(activePuzzle.color)}
-          />
-        ) : (
-          <OrbReferenceCard
-            key={`quick-${activePuzzle.id}`}
-            puzzle={activePuzzle}
-            defaultOpenHints={true}
-          />
-        )}
-      </section>
-
-      {/* 4. Full 4-Orb Reference & Crawlability Section */}
+      {/* 3. Full 4-Orb Reference & Crawlability Section */}
       <section id="all-orbs-reference" aria-labelledby="today-puzzles-heading" className="space-y-5">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
@@ -1043,7 +1052,7 @@ export default function DailyOrbsHintBoard({ dataset }: { dataset: DailyOrbsData
         </div>
       </section>
 
-      {/* 5. 6-Orb / 3-Heart Win Planner */}
+      {/* 4. 6-Orb / 3-Heart Win Planner */}
       <section
         aria-labelledby="win-planner-heading"
         className="rounded-2xl border border-cyan-500/25 bg-[#05182b]/85 p-6 sm:p-8"
@@ -1187,7 +1196,7 @@ export default function DailyOrbsHintBoard({ dataset }: { dataset: DailyOrbsData
         </div>
       </section>
 
-      {/* 6. Rolling 30-Day Archive */}
+      {/* 5. Rolling 30-Day Archive */}
       <section
         aria-labelledby="daily-orbs-archive-heading"
         className="rounded-2xl border border-cyan-500/20 bg-[#05182b]/75 p-6 sm:p-8"

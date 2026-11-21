@@ -176,9 +176,9 @@ export default function DailyOrbsHintPage() {
           </h1>
           <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-300 sm:text-base">
             Stuck on today&apos;s {dataset.today.date} puzzles ({puzzleTitles})? Play the{" "}
-            <strong>interactive 4-Orb practice sandbox</strong>, search a single item without
-            spoiling the rest of the board, plan a <strong>6-orb win</strong>, or expand verified
-            answers across Orange, Purple, Green, and Blue.
+            <strong>interactive 4-Orb practice sandbox below risk-free</strong>, search a single item
+            without spoiling the rest of the board, plan a <strong>6-orb win</strong>, or expand
+            verified answers across Orange, Purple, Green, and Blue.
           </p>
         </header>
 

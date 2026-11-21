@@ -1973,7 +1973,7 @@ export default function KrillionGameEngine({
 
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-1 font-mono text-[11px] text-slate-400">
                   <span>Switch Worlds:</span>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     <Link href="/noillirk/" className="text-amber-300 hover:underline">
                       Noillirk
                     </Link>
@@ -1988,6 +1988,13 @@ export default function KrillionGameEngine({
                     </Link>
                     <Link href="/poople-unlimited/" className="text-cyan-300 hover:underline">
                       Poople
+                    </Link>
+                    <Link
+                      href="/daily-orbs-hint/"
+                      className="inline-flex items-center gap-1 rounded bg-purple-500/20 px-1.5 py-0.5 text-purple-300 transition hover:bg-purple-500/30 hover:text-purple-100"
+                    >
+                      <span>🔮</span>
+                      <span>Daily Orbs</span>
                     </Link>
                   </div>
                 </div>
